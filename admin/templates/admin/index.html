@@ -1,0 +1,117 @@
+{% extends 'admin/master.html' %}
+{% block body %}
+{{ super() }}
+
+{% if current_user.is_authenticated %}
+
+<!-- Content Header (Page header) -->
+<h1>Текст</h1>
+<!--<section class="content-header">-->
+<!--  <h1>-->
+<!--    Dashboard-->
+<!--    <small>Control panel</small>-->
+<!--  </h1>-->
+<!--  <ol class="breadcrumb">-->
+<!--    <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>-->
+<!--    <li class="active">Dashboard</li>-->
+<!--  </ol>-->
+<!--</section>-->
+
+<!--<section class="content">-->
+<!--  &lt;!&ndash; Small boxes (Stat box) &ndash;&gt;-->
+<!--  <div class="row">-->
+<!--    <div class="col-lg-3 col-xs-6">-->
+<!--      &lt;!&ndash; small box &ndash;&gt;-->
+<!--      <div class="small-box bg-aqua">-->
+<!--        <div class="inner">-->
+<!--          <h3>150</h3>-->
+<!--          <p>Заказов сегодня</p>-->
+<!--        </div>-->
+<!--        <div class="icon">-->
+<!--          <i class="ion ion-bag"></i>-->
+<!--        </div>-->
+<!--&lt;!&ndash;        <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>&ndash;&gt;-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    &lt;!&ndash; ./col &ndash;&gt;-->
+<!--    <div class="col-lg-3 col-xs-6">-->
+<!--      &lt;!&ndash; small box &ndash;&gt;-->
+<!--      <div class="small-box bg-green">-->
+<!--        <div class="inner">-->
+<!--          <h3>53<sup style="font-size: 20px">%</sup></h3>-->
+
+<!--          <p>Заказов за месяц</p>-->
+<!--        </div>-->
+<!--        <div class="icon">-->
+<!--          <i class="ion ion-stats-bars"></i>-->
+<!--        </div>-->
+<!--&lt;!&ndash;        <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>&ndash;&gt;-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    &lt;!&ndash; ./col &ndash;&gt;-->
+
+<!--    &lt;!&ndash; ./col &ndash;&gt;-->
+<!--  </div>-->
+<!--  &lt;!&ndash; /.row &ndash;&gt;-->
+<!--  &lt;!&ndash; Main row &ndash;&gt;-->
+<!--  <div class="row">-->
+<!--    &lt;!&ndash; Left col &ndash;&gt;-->
+<!--    <section class="col-lg-7 connectedSortable">-->
+<!--      &lt;!&ndash; Custom tabs (Charts with tabs)&ndash;&gt;-->
+<!--      <div class="nav-tabs-custom">-->
+<!--        &lt;!&ndash; Tabs within a box &ndash;&gt;-->
+<!--        <ul class="nav nav-tabs pull-right">-->
+<!--&lt;!&ndash;          <li><a href="#sales-chart" data-toggle="tab">Donut</a></li>&ndash;&gt;-->
+<!--          <li class="pull-left header"><i class="fa fa-inbox"></i>Продажи</li>-->
+<!--        </ul>-->
+<!--        <div class="tab-content no-padding">-->
+<!--          &lt;!&ndash; Morris chart - Sales &ndash;&gt;-->
+<!--          <div class="chart tab-pane active" id="revenue-chart" style="position: relative; height: 300px;"></div>-->
+<!--          <div class="chart tab-pane" id="sales-chart" style="position: relative; height: 300px;"></div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      &lt;!&ndash; /.nav-tabs-custom &ndash;&gt;-->
+
+<!--      &lt;!&ndash; Chat box &ndash;&gt;-->
+<!--      &lt;!&ndash; /.box (chat box) &ndash;&gt;-->
+
+<!--      &lt;!&ndash; TO DO List &ndash;&gt;-->
+<!--      &lt;!&ndash; /.box &ndash;&gt;-->
+
+<!--      &lt;!&ndash; quick email widget &ndash;&gt;-->
+
+<!--    </section>-->
+<!--    &lt;!&ndash; /.Left col &ndash;&gt;-->
+<!--    &lt;!&ndash; right col (We are only adding the ID to make the widgets sortable)&ndash;&gt;-->
+<!--    &lt;!&ndash; right col &ndash;&gt;-->
+<!--  </div>-->
+<!--  &lt;!&ndash; /.row (main row) &ndash;&gt;-->
+
+<!--</section>-->
+<!-- /.content -->
+{% else %}
+
+<center>
+  <section class="content" style="color: white">
+    <div class="col-sm-12">
+      <h1>Turutur Admin Panel</h1>
+      <br>
+      <br>
+      <br>
+      <br>
+      <p class="lead">
+        Authentication
+      </p>
+      {% if not current_user.is_authenticated %}
+      <p>
+        <a class="btn btn-primary" href="{{ url_for('security.login') }}">Login</a>
+      </p>
+      {% endif %}
+      <br>
+    </div>
+  </section>
+</center>
+
+{% endif %}
+
+{% endblock body %}

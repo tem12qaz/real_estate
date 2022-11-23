@@ -1,0 +1,30 @@
+{% extends 'admin/master.html' %}
+{% block body %}
+{{ super() }}
+
+{% if current_user.is_authenticated %}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h2>Upload .xlsx file</h2>
+  <form action="{{url_for('upload')}}" method="POST" enctype="multipart/form-data">
+    <p><input type="file" name="file"></p>
+    <input id="upload_import_btn" type="submit" value="Загрузить"/>
+<!--    <progress id="progressBar" value="0" max="100" style="width:300px;"></progress>-->
+<!--    <h3 id="status"></h3>-->
+<!--    <p id="loaded_n_total"></p>-->
+  </form>
+
+</section>
+<!-- /.content -->
+{% else %}
+
+<center>
+  <section class="content" style="color: white">
+    <div class="col-sm-12">
+      <h1>TuruTur Admin</h1>
+      <p class="lead">
+        Authentication
+  {% endif %}
+
+  {% endblock body %}
