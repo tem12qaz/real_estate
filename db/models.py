@@ -1,52 +1,50 @@
+import enum
+
 from flask_security import UserMixin, RoleMixin
 from tortoise import fields
 from tortoise.fields import SET_NULL
 from tortoise.models import Model
 
 
-class TourOperator(Model):
+class Developer(Model):
     id = fields.IntField(pk=True)
-    prepayment = fields.IntField(default=20)
-    user = fields.OneToOneField('models.TelegramUser', related_name='operator')
+    name = fields.CharField(128)
+    manager = fields.OneToOneField('models.TelegramUser', related_name='developer_manager')
+    director = fields.OneToOneField('models.TelegramUser', related_name='developer_director')
+    chat_id = fields.CharField(32)
     photo = fields.CharField(128)
-    full_name = fields.CharField(256)
-    about = fields.TextField()
-    region = fields.CharField(64)
-    city = fields.CharField(64)
-    languages = fields.CharField(256)
-    verified = fields.BooleanField(default=False)
-
-    contact_fio = fields.CharField(128)
-    experience = fields.SmallIntField()
-    site = fields.CharField(256)
-
-    moderate = fields.BooleanField(default=False)
-    yookassa = fields.CharField(256, null=True)
-    admin_account = fields.OneToOneField('models.User', related_name='operator', null=True, on_delete="SET NULL")
-
-    # ukassa_data
+    message = fields.TextField()
+    rating = fields.FloatField(default=5.)
 
 
 class TelegramUser(Model):
     id = fields.IntField(pk=True)
     telegram_id = fields.BigIntField(unique=True, index=True)
     username = fields.CharField(128, unique=True, null=True)
-    full_name = fields.CharField(256, null=True)
-    phone = fields.BigIntField(null=True)
-    city = fields.CharField(128, null=True)
-    birthday = fields.DateField(null=True)
-    lang = fields.CharField(4, default='ru')
-    referer = fields.ForeignKeyField('models.TelegramUser', related_name='referrals',
-                                     index=True, on_delete=SET_NULL, null=True)
-    favorite = fields.ManyToManyField(
-        'models.Tour', related_name='in_favorite', through='favorite_tours', on_delete=SET_NULL
-    )
+    lang = fields.CharField(4, default='en')
 
     def message(self, name: str) -> str:
         return Message._messages[name][self.lang]
 
     def button(self, name: str) -> str:
         return Button._buttons[name][self.lang]
+
+
+class ActionsEnum(enum.Enum):
+    open = 'open'
+    presentation = 'presentation'
+    photo_video = 'photo_video'
+    message = 'message'
+    link = 'link'
+    video_call = 'video call'
+
+
+class Action(Model):
+    id = fields.IntField(pk=True)
+    type = fields.CharEnumField(ActionsEnum)
+    developer = fields.ForeignKeyField('models.Developer', related_name='actions', index=True)
+    user = fields.ForeignKeyField('models.TelegramUser', related_name='actions', index=True)
+    object = fields.ForeignKeyField('models.Object', related_name='actions', index=True)
 
 
 class Message(Model):
@@ -86,46 +84,34 @@ class Button(Model):
 class Photo(Model):
     id = fields.IntField(pk=True)
     path = fields.CharField(128)
-    tour = fields.ForeignKeyField('models.Tour', related_name='photos', index=True)
+    tour = fields.ForeignKeyField('models.Object', related_name='photos', index=True)
 
 
-class Direction(Model):
+class Files(Model):
     id = fields.IntField(pk=True)
-    name = fields.CharField(64)
+    path = fields.CharField(128)
+    tour = fields.ForeignKeyField('models.Object', related_name='files', index=True)
 
 
-class Tour(Model):
+class Object(Model):
     id = fields.IntField(pk=True)
-    owner = fields.ForeignKeyField('models.TourOperator', related_name='tours', index=True)
-    direction = fields.ForeignKeyField('models.Direction', related_name='tours',
-                                       index=True, on_delete=SET_NULL, null=True)
-    name = fields.CharField(256)
-    description = fields.TextField()
-    included = fields.TextField()
-    terms = fields.TextField()
-    active = fields.BooleanField(default=True)
-    moderate = fields.BooleanField(default=False)
-
-
-class Date(Model):
-    id = fields.IntField(pk=True)
-    start = fields.DateField()
-    end = fields.DateField()
-    tour = fields.ForeignKeyField('models.Tour', related_name='dates', index=True)
-    places = fields.SmallIntField()
+    owner = fields.ForeignKeyField('models.Developer', related_name='tours', index=True)
     price = fields.IntField()
-    sale = fields.IntField(default=0)
+    district = fields.CharField(256)
+    date = fields.DateField()
+    roi = fields.IntField()
+    presentation_path = fields.CharField(128)
 
 
 class Order(Model):
     id = fields.IntField(pk=True)
     date = fields.ForeignKeyField('models.Date', related_name='orders', index=True, on_delete=SET_NULL, null=True)
-    tour = fields.ForeignKeyField('models.Tour', related_name='orders', index=True, on_delete=SET_NULL, null=True)
+    tour = fields.ForeignKeyField('models.Object', related_name='orders', index=True, on_delete=SET_NULL, null=True)
     promo = fields.ForeignKeyField('models.PromoCode', related_name='orders', on_delete=SET_NULL, null=True)
     customer = fields.ForeignKeyField('models.TelegramUser', related_name='orders',
-                                  index=True, on_delete=SET_NULL, null=True)
-    seller = fields.ForeignKeyField('models.TourOperator', related_name='orders',
                                       index=True, on_delete=SET_NULL, null=True)
+    seller = fields.ForeignKeyField('models.Developer', related_name='orders',
+                                    index=True, on_delete=SET_NULL, null=True)
     datetime = fields.DatetimeField()
     places = fields.SmallIntField()
     paid = fields.IntField()
@@ -142,22 +128,6 @@ class Config(Model):
     tax = fields.IntField()
 
 
-class PromoCode(Model):
-    id = fields.IntField(pk=True)
-    percent = fields.SmallIntField()
-    text = fields.CharField(32, unique=True)
-    uses = fields.SmallIntField(null=True)
-    uses_for_one = fields.SmallIntField(null=True)
-    end = fields.DateField(null=True)
-
-
-class PromoUses(Model):
-    id = fields.IntField(pk=True)
-    user = fields.ForeignKeyField('models.TelegramUser', related_name='promos', index=True)
-    promo_code = fields.ForeignKeyField('models.PromoCode', related_name='used', index=True)
-    count = fields.SmallIntField(default=1)
-
-
 class ChatMessage(Model):
     id = fields.IntField(pk=True)
     chat = fields.ForeignKeyField('models.Chat', related_name='messages')
@@ -169,7 +139,7 @@ class ChatMessage(Model):
 class Chat(Model):
     id = fields.IntField(pk=True)
     customer = fields.ForeignKeyField('models.TelegramUser', related_name='chats', index=True)
-    seller = fields.ForeignKeyField('models.TourOperator', related_name='chats', index=True)
+    seller = fields.ForeignKeyField('models.Developer', related_name='chats', index=True)
     datetime = fields.DatetimeField()
 
     async def text(self, user: TelegramUser) -> str:
@@ -180,7 +150,6 @@ class Chat(Model):
         else:
             is_customer = True
             companion = operator.full_name
-
 
         messages_ = ''
         messages: list[ChatMessage] = await self.messages
