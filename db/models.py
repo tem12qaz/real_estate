@@ -5,6 +5,8 @@ from tortoise import fields
 from tortoise.fields import SET_NULL
 from tortoise.models import Model
 
+from utils.actions_type import ActionsEnum
+
 
 class Developer(Model):
     id = fields.IntField(pk=True)
@@ -30,15 +32,6 @@ class TelegramUser(Model):
         return Button._buttons[name][self.lang]
 
 
-class ActionsEnum(enum.Enum):
-    open = 'open'
-    presentation = 'presentation'
-    photo_video = 'photo_video'
-    message = 'message'
-    link = 'link'
-    video_call = 'video call'
-
-
 class Action(Model):
     id = fields.IntField(pk=True)
     type = fields.CharEnumField(ActionsEnum)
@@ -51,6 +44,7 @@ class Message(Model):
     id = fields.IntField(pk=True)
     name = fields.CharField(64, unique=True, index=True)
     ru = fields.TextField()
+    en = fields.TextField()
     _messages: dict[str, dict[str, str]] = {}
 
     @classmethod
@@ -68,6 +62,7 @@ class Button(Model):
     id = fields.IntField(pk=True)
     name = fields.CharField(64, unique=True, index=True)
     ru = fields.CharField(128)
+    en = fields.CharField(128)
     _buttons: dict[str, dict[str, str]] = {}
 
     @classmethod
@@ -84,18 +79,18 @@ class Button(Model):
 class Photo(Model):
     id = fields.IntField(pk=True)
     path = fields.CharField(128)
-    tour = fields.ForeignKeyField('models.Object', related_name='photos', index=True)
+    object = fields.ForeignKeyField('models.Object', related_name='photos', index=True)
 
 
-class Files(Model):
+class File(Model):
     id = fields.IntField(pk=True)
     path = fields.CharField(128)
-    tour = fields.ForeignKeyField('models.Object', related_name='files', index=True)
+    object = fields.ForeignKeyField('models.Object', related_name='files', index=True)
 
 
 class Object(Model):
     id = fields.IntField(pk=True)
-    owner = fields.ForeignKeyField('models.Developer', related_name='tours', index=True)
+    owner = fields.ForeignKeyField('models.Developer', related_name='objects', index=True)
     price = fields.IntField()
     district = fields.CharField(256)
     date = fields.DateField()

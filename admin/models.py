@@ -2,6 +2,7 @@ from flask_security import UserMixin, RoleMixin
 from sqlalchemy.orm import relationship, backref
 
 from admin.flask_app_init import db
+from utils.actions_type import ActionsEnum
 
 roles_users = db.Table(
     'roles_users',
@@ -33,7 +34,6 @@ class User(db.Model, UserMixin):
     active = db.Column(db.Boolean())
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
-    operator = relationship("TourOperator", back_populates="admin_account")
 
     def __str__(self):
         return self.email
@@ -44,57 +44,42 @@ class TelegramUser(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     telegram_id = db.Column(db.BigInteger, unique=True, nullable=False)
     username = db.Column(db.String(256), unique=True, nullable=True)
-    full_name = db.Column(db.String(256), unique=True, nullable=True)
-    city = db.Column(db.String(128), unique=True, nullable=True)
-    phone = db.Column(db.BigInteger(), nullable=True)
-    birthday = db.Column(db.Date(), nullable=True)
-    lang = db.Column(db.String(4), nullable=True, default='ru')
-    # referrals = db.relationship('TelegramUser', back_populates='referer')
-    # referer = db.relationship('TelegramUser', back_populates='referrals', remote_side=[id])
-    referer_id = db.Column(db.Integer, db.ForeignKey('telegramuser.id', ondelete='SET NULL'), nullable=True)
-    referrals = relationship("TelegramUser", backref=backref('referer', remote_side=[id]))
-    operator = relationship("TourOperator", back_populates="user", cascade='delete')
+    lang = db.Column(db.String(4), default='en')
+    # referer_id = db.Column(db.Integer, db.ForeignKey('telegramuser.id', ondelete='SET NULL'), nullable=True)
+    # referrals = relationship("TelegramUser", backref=backref('referer', remote_side=[id]))
+    developer_manager = relationship("Developer", back_populates="manager", cascade='delete')
+    developer_director = relationship("Developer", back_populates="director", cascade='delete')
 
     orders = relationship("Order", back_populates="customer")
-    promos = relationship("PromoUses", back_populates="user", cascade='all,delete')
+    # promos = relationship("PromoUses", back_populates="user", cascade='all,delete')
     chats = relationship("Chat", back_populates="customer", cascade='all,delete')
 
-    favorite = db.relationship('Tour', secondary=favorite_tours,
-                               backref=db.backref('in_favorite', lazy='dynamic'), cascade='delete')
+    # favorite = db.relationship('Tour', secondary=favorite_tours,
+    #                            backref=db.backref('in_favorite', lazy='dynamic'), cascade='delete')
 
     def __repr__(self):
         return str(self.telegram_id)
 
 
-class TourOperator(db.Model):
-    __tablename__ = 'touroperator'
+class Developer(db.Model):
+    __tablename__ = 'developer'
     id = db.Column(db.Integer(), primary_key=True)
-    prepayment = db.Column(db.Integer(), default=20, nullable=False)
-    full_name = db.Column(db.String(256), nullable=False)
-    about = db.Column(db.Text(), nullable=False)
-    region = db.Column(db.String(64), nullable=False)
-    city = db.Column(db.String(64), nullable=False)
-    languages = db.Column(db.String(256), nullable=False)
-    verified = db.Column(db.Boolean(), nullable=False)
-    contact_fio = db.Column(db.String(128), nullable=False)
-    experience = db.Column(db.Integer(), nullable=False)
-    site = db.Column(db.String(256), nullable=False)
+    name = db.Column(db.String(256), nullable=False)
+    chat_id = db.Column(db.String(32), nullable=False)
     photo = db.Column(db.String(128), nullable=False)
-    moderate = db.Column(db.Boolean(), nullable=False)
+    message = db.Column(db.Text(), nullable=False)
+    rating = db.Column(db.Float(), nullable=False, default=5.)
 
-    yookassa = db.Column(db.String(256), nullable=True)
+    manager_id = db.Column(db.Integer(), db.ForeignKey("telegramuser.id", ondelete='CASCADE'))
+    manager = relationship("TelegramUser", back_populates="developer_manager", uselist=False)
 
-    user_id = db.Column(db.Integer(), db.ForeignKey("telegramuser.id", ondelete='CASCADE'))
-    user = relationship("TelegramUser", back_populates="operator", uselist=False)
+    director_id = db.Column(db.Integer(), db.ForeignKey("telegramuser.id", ondelete='CASCADE'))
+    director = relationship("TelegramUser", back_populates="developer_director", uselist=False)
+
     tours = relationship("Tour", back_populates="owner", cascade='all,delete')
 
     orders = relationship("Order", back_populates="seller")
     chats = relationship("Chat", back_populates="seller", cascade='all,delete')
-
-    admin_account = relationship("User", back_populates="operator", uselist=False)
-    admin_account_id = db.Column(db.Integer(), db.ForeignKey("user.id", ondelete='SET NULL'), nullable=True)
-
-
 
     def __repr__(self):
         return str(self.full_name)
@@ -104,70 +89,61 @@ class Message(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(64), nullable=False)
     ru = db.Column(db.Text(), nullable=False)
+    en = db.Column(db.Text(), nullable=False)
 
 
 class Button(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(64), nullable=False)
     ru = db.Column(db.String(128), nullable=False)
+    en = db.Column(db.String(128), nullable=False)
 
 
 class Photo(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     path = db.Column(db.String(128), nullable=False)
-    tour_id = db.Column(db.Integer(), db.ForeignKey("tour.id", ondelete='CASCADE'), nullable=False)
-    tour = relationship("Tour", back_populates="photos")
+    object_id = db.Column(db.Integer(), db.ForeignKey("object.id", ondelete='CASCADE'), nullable=False)
+    object = relationship("Object", back_populates="photos")
 
 
-class Direction(db.Model):
+class File(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(64), nullable=False)
-    tours = relationship("Tour", back_populates="direction")
-
-    def __repr__(self):
-        return self.name
+    path = db.Column(db.String(128), nullable=False)
+    object_id = db.Column(db.Integer(), db.ForeignKey("object.id", ondelete='CASCADE'), nullable=False)
+    object = relationship("Object", back_populates="files")
 
 
-class Tour(db.Model):
+class Object(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(256), nullable=False)
-    description = db.Column(db.Text(), nullable=False)
-    included = db.Column(db.Text(), nullable=False)
-    terms = db.Column(db.Text(), nullable=False)
-
-    active = db.Column(db.Boolean(), nullable=False, default=True)
-    moderate = db.Column(db.Boolean(), nullable=False, default=False)
-
-    owner_id = db.Column(db.Integer(), db.ForeignKey("touroperator.id", ondelete='CASCADE'), nullable=False)
-    owner = relationship("TourOperator", back_populates="tours")
-
-    direction_id = db.Column(db.Integer(), db.ForeignKey("direction.id", ondelete='SET NULL'), nullable=False)
-    direction = relationship("Direction", back_populates="tours")
-
-    photos = relationship("Photo", back_populates="tour", cascade='all,delete')
-    dates = relationship("Date", back_populates="tour", cascade='all,delete')
-
-    orders = relationship("Order", back_populates="tour")
-
-    def __repr__(self):
-        return self.name
-
-
-class Date(db.Model):
-    id = db.Column(db.Integer(), primary_key=True)
-    places = db.Column(db.Integer(), nullable=False)
     price = db.Column(db.Integer(), nullable=False)
-    sale = db.Column(db.Integer(), nullable=False, default=0)
-    start = db.Column(db.Date(), nullable=False)
-    end = db.Column(db.Date(), nullable=False)
+    district = db.Column(db.String(256), nullable=False)
+    date = db.Column(db.Date(), nullable=False)
+    roi = db.Column(db.Integer(), nullable=False)
+    presentation_path = db.Column(db.String(128), nullable=False)
 
-    tour_id = db.Column(db.Integer(), db.ForeignKey("tour.id", ondelete='CASCADE'), nullable=False)
-    tour = relationship("Tour", back_populates="dates")
+    owner_id = db.Column(db.Integer(), db.ForeignKey("developer.id", ondelete='CASCADE'), nullable=False)
+    owner = relationship("Developer", back_populates="objects")
 
-    orders = relationship("Order", back_populates="date")
+    photos = relationship("Photo", back_populates="object", cascade='all,delete')
+    files = relationship("File", back_populates="object", cascade='all,delete')
+    orders = relationship("Order", back_populates="object")
 
     def __repr__(self):
-        return f'{self.start} - {self.end}'
+        return self.name
+
+
+class Action(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    type = db.Column(db.Enum(ActionsEnum))
+
+    developer_id = db.Column(db.Integer(), db.ForeignKey("developer.id", ondelete='CASCADE'), nullable=False)
+    developer = relationship("Developer", back_populates="actions")
+
+    user_id = db.Column(db.Integer(), db.ForeignKey("telegramuser.id", ondelete='CASCADE'), nullable=False)
+    user = relationship("TelegramUser", back_populates="actions")
+
+    object_id = db.Column(db.Integer(), db.ForeignKey("object.id", ondelete='CASCADE'), nullable=False)
+    object = relationship("Object", back_populates="actions")
 
 
 class Order(db.Model):
@@ -201,39 +177,9 @@ class Order(db.Model):
 
 class Config(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
-    support_url = db.Column(db.String(64), nullable=False)
-    group = db.Column(db.String(64), nullable=False)
+    support_url = db.Column(db.String(128), nullable=False)
+    group = db.Column(db.String(128), nullable=False)
     tax = db.Column(db.Integer(), nullable=False)
-
-
-class PromoCode(db.Model):
-    __tablename__ = 'promocode'
-
-    id = db.Column(db.Integer(), primary_key=True)
-    percent = db.Column(db.SmallInteger(), nullable=False)
-    text = db.Column(db.String(32), nullable=False)
-    uses = db.Column(db.SmallInteger(), nullable=False)
-    uses_for_one = db.Column(db.SmallInteger(), nullable=False)
-    end = db.Column(db.Date(), nullable=False)
-
-    orders = relationship("Order", back_populates="promo")
-    used = relationship("PromoUses", back_populates="promo_code", cascade='all,delete')
-
-    def __repr__(self):
-        return self.text
-
-
-class PromoUses(db.Model):
-    __tablename__ = 'promouses'
-
-    id = db.Column(db.Integer(), primary_key=True)
-    count = db.Column(db.SmallInteger(), nullable=False, default=1)
-
-    promo_code_id = db.Column(db.Integer(), db.ForeignKey("promocode.id", ondelete='CASCADE'))
-    promo_code = relationship("PromoCode", back_populates="used")
-
-    user_id = db.Column(db.Integer(), db.ForeignKey("telegramuser.id", ondelete='CASCADE'))
-    user = relationship("TelegramUser", back_populates="promos")
 
 
 class Chat(db.Model):
@@ -243,8 +189,8 @@ class Chat(db.Model):
     customer_id = db.Column(db.Integer(), db.ForeignKey("telegramuser.id", ondelete='CASCADE'))
     customer = relationship("TelegramUser", back_populates="chats")
 
-    seller_id = db.Column(db.Integer(), db.ForeignKey("touroperator.id", ondelete='CASCADE'))
-    seller = relationship("TourOperator", back_populates="chats")
+    seller_id = db.Column(db.Integer(), db.ForeignKey("developer.id", ondelete='CASCADE'))
+    seller = relationship("Developer", back_populates="chats")
 
     messages = relationship("ChatMessage", back_populates="chat", cascade='all,delete')
 
