@@ -6,6 +6,8 @@ from aiogram.types import ChatType
 from data.config import FLOOD_RATE
 from db.models import TelegramUser, Object
 from keyboards.default.keyboard import get_main_keyboard
+from keyboards.inline.callbacks import language_callback
+from keyboards.inline.keyboards import select_language_keyboard
 from loader import dp
 
 
@@ -14,22 +16,49 @@ from loader import dp
 async def bot_start(message: types.Message, state: FSMContext):
     user = await TelegramUser.get_or_none(telegram_id=message.from_user.id)
     await state.finish()
+    args = message.get_args()
 
     if user is None:
-        args = message.get_args()
         user = await TelegramUser.create(telegram_id=message.from_user.id,
                                          username=message.from_user.username)
 
-        if 'object_' in args:
-            try:
-                object_estate = await Object.get_or_none(telegram_id=int(args.replace('object_', '')))
-            except ValueError:
-                pass
-            else:
-                await send_tour_card(user, tour, message, None)
-                return
+        await message.answer(
+            user.message('select_language'),
+            reply_markup=select_language_keyboard(user)
+        )
+        return
+
+    if 'object_' in args:
+        try:
+            object_estate = await Object.get_or_none(telegram_id=int(args.replace('object_', '')))
+        except ValueError:
+            pass
+        else:
+            await send_tour_card(user, tour, message, None)
+            return
 
     await message.answer(
         user.message('start_message'),
         reply_markup=get_main_keyboard(user)
     )
+
+
+@dp.callback_query_handler(ChatTypeFilter(ChatType.PRIVATE), language_callback.filter(), state='*')
+@dp.throttled(rate=FLOOD_RATE)
+async def language_handler(callback: types.CallbackQuery, callback_data: dict, state: FSMContext):
+    await callback.answer()
+    user = await TelegramUser.get_or_none(telegram_id=callback.from_user.id)
+    if user is None:
+        return
+
+    lang = callback_data['language']
+
+    user.lang = lang
+    await user.save()
+
+    await callback.message.answer(
+        user.message('start_message'),
+        reply_markup=get_main_keyboard(user)
+    )
+
+    await callback.message.delete()

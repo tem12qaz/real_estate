@@ -10,11 +10,11 @@ roles_users = db.Table(
     db.Column('role_id', db.Integer(), db.ForeignKey('role.id'))
 )
 
-favorite_tours = db.Table(
-    'favorite_tours',
-    db.Column('telegramuser_id', db.Integer(), db.ForeignKey('telegramuser.id')),
-    db.Column('tour_id', db.Integer(), db.ForeignKey('tour.id'))
-)
+# favorite_tours = db.Table(
+#     'favorite_tours',
+#     db.Column('telegramuser_id', db.Integer(), db.ForeignKey('telegramuser.id')),
+#     db.Column('tour_id', db.Integer(), db.ForeignKey('ob.id'))
+# )
 
 
 class Role(db.Model, RoleMixin):
@@ -68,7 +68,7 @@ class Developer(db.Model):
     chat_id = db.Column(db.String(32), nullable=False)
     photo = db.Column(db.String(128), nullable=False)
     message = db.Column(db.Text(), nullable=False)
-    rating = db.Column(db.Float(), nullable=False, default=5.)
+    rating = db.Column(db.Float(), nullable=True, default=5.)
 
     manager_id = db.Column(db.Integer(), db.ForeignKey("telegramuser.id", ondelete='CASCADE'))
     manager = relationship("TelegramUser", back_populates="developer_manager", uselist=False)
@@ -76,7 +76,7 @@ class Developer(db.Model):
     director_id = db.Column(db.Integer(), db.ForeignKey("telegramuser.id", ondelete='CASCADE'))
     director = relationship("TelegramUser", back_populates="developer_director", uselist=False)
 
-    tours = relationship("Tour", back_populates="owner", cascade='all,delete')
+    objects = relationship("Object", back_populates="owner", cascade='all,delete')
 
     orders = relationship("Order", back_populates="seller")
     chats = relationship("Chat", back_populates="seller", cascade='all,delete')
@@ -116,13 +116,17 @@ class File(db.Model):
 class Object(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     price = db.Column(db.Integer(), nullable=False)
-    district = db.Column(db.String(256), nullable=False)
     date = db.Column(db.Date(), nullable=False)
     roi = db.Column(db.Integer(), nullable=False)
     presentation_path = db.Column(db.String(128), nullable=False)
+    active = db.Column(db.Boolean(), nullable=False, default=True)
+    sale = db.Column(db.Boolean(), nullable=False, default=False)
 
     owner_id = db.Column(db.Integer(), db.ForeignKey("developer.id", ondelete='CASCADE'), nullable=False)
     owner = relationship("Developer", back_populates="objects")
+
+    district_id = db.Column(db.Integer(), db.ForeignKey("district.id", ondelete='CASCADE'), nullable=False)
+    district = relationship("District", back_populates="objects")
 
     photos = relationship("Photo", back_populates="object", cascade='all,delete')
     files = relationship("File", back_populates="object", cascade='all,delete')
@@ -177,9 +181,16 @@ class Order(db.Model):
 
 class Config(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
-    support_url = db.Column(db.String(128), nullable=False)
+    support = db.Column(db.String(128), nullable=False)
     group = db.Column(db.String(128), nullable=False)
     tax = db.Column(db.Integer(), nullable=False)
+
+
+class District(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(128), nullable=False)
+
+    objects = relationship("Object", back_populates="district", cascade='all,delete')
 
 
 class Chat(db.Model):

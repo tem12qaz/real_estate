@@ -8,7 +8,6 @@ from db.db import db_init
 from db.models import Message, Button
 from routes.update_messages_and_buttons_handler import update_messages_handler, update_buttons_handler
 from routes.send_message_from_admin_handlers import send_message_from_admin_handler
-from utils.set_bot_commands import set_default_commands
 from utils.supervisor import Supervisor
 
 
@@ -20,7 +19,6 @@ async def on_startup(dp):
     await Button.reload()
     supervisor.start()
     # middlewares.setup(dp)
-    await set_default_commands(dp)
 
 if __name__ == '__main__':
     from loader import dp, logger

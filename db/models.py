@@ -16,7 +16,7 @@ class Developer(Model):
     chat_id = fields.CharField(32)
     photo = fields.CharField(128)
     message = fields.TextField()
-    rating = fields.FloatField(default=5.)
+    rating = fields.FloatField(default=5., null=True)
 
 
 class TelegramUser(Model):
@@ -76,6 +76,11 @@ class Button(Model):
             cls._buttons[button.name] = {'ru': button.ru}
 
 
+class District(Model):
+    id = fields.IntField(pk=True)
+    name = fields.CharField(128)
+
+
 class Photo(Model):
     id = fields.IntField(pk=True)
     path = fields.CharField(128)
@@ -91,11 +96,13 @@ class File(Model):
 class Object(Model):
     id = fields.IntField(pk=True)
     owner = fields.ForeignKeyField('models.Developer', related_name='objects', index=True)
+    district = fields.ForeignKeyField('models.District', related_name='objects', index=True)
     price = fields.IntField()
-    district = fields.CharField(256)
     date = fields.DateField()
     roi = fields.IntField()
     presentation_path = fields.CharField(128)
+    active = fields.BooleanField(default=True)
+    sale = fields.BooleanField(default=False)
 
 
 class Order(Model):
@@ -118,7 +125,7 @@ class Order(Model):
 
 class Config(Model):
     id = fields.IntField(pk=True)
-    support_url = fields.CharField(128)
+    support = fields.CharField(128)
     group = fields.CharField(128)
     tax = fields.IntField()
 

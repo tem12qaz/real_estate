@@ -1,34 +1,32 @@
 import datetime
 
 from tortoise.expressions import Q
-from tortoise.query_utils import Prefetch
 from tortoise.queryset import QuerySet
+from db.models import Object
 
-from db.models import Tour, Date, Direction
+from utils.price_buttons import PriceButtons
 
 
-def filter_tours(sales: bool = False, date_from: tuple[int, int, int] = None,
-                 date_to: tuple[int, int, int] = None, directions_id: list[int] = None, price: int = None) -> QuerySet:
-    dates_args = [Q(dates__places__gt=0), Q(dates__start__gte=datetime.datetime.now().date()), Q(dates__not_isnull=True)]
+def filter_objects(sales: bool = False, date: tuple[int, int, int] = None,
+                   district: str = None, price: str = None) -> QuerySet:
+    args = [
+        Q(active=True)
+    ]
 
     if sales:
-        dates_args.append(Q(dates__sale__gt=0))
-    if date_from:
-        dates_args.append(Q(dates__start__gte=datetime.datetime(*date_from).date()))
-    if date_to:
-        dates_args.append(Q(dates__end__lte=datetime.datetime(*date_to).date()))
+        args.append(Q(sale=True))
+    if date:
+        args.append(Q(date__lte=datetime.datetime(*date).date()))
+    if district:
+        args.append(Q(district=district))
     if price:
-        dates_args.append(Q(dates__price__lte=price))
+        price_low, price_up = PriceButtons.buttons[price]
+        if price_up:
+            args.append(Q(price__lte=price_up))
 
-    if directions_id:
+        if price_low:
+            args.append(Q(price__gte=price_low))
 
-        queryset: QuerySet = Tour.filter(
-            Q(Q(moderate=True), Q(active=True), Q(direction__id__in=directions_id), *dates_args)
-        ).distinct()
-    else:
-
-        queryset: QuerySet = Tour.filter(
-            Q(Q(moderate=True), Q(active=True), *dates_args)
-        ).distinct()
+    queryset: QuerySet = Object.filter(*args).distinct()
 
     return queryset

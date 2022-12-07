@@ -48,7 +48,7 @@ CRYPTO_SALT = '1UAarqi0IoshqEree9rjOsfl5A6YajX1WSjsufud'
 
 FLOOD_RATE = 0.06
 
-TG_URL = 'https://t.me/{bot_username}'
+TG_URL = 'https://t.me/{un}'
 
 REFERRAL_URL = 'https://t.me/{bot_username}?start=reff_{telegram_id}'
 
@@ -61,7 +61,6 @@ NEWLINE = '''
 
 BASE_PATH = '/root/code/tur2/admin/static/'
 
-TOURS_ON_PAGE = 1
 DIRECTIONS_IN_COLUMN = 10
 
 tz = pytz.timezone('Europe/Moscow')
