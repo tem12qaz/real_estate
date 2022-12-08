@@ -4,7 +4,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from data.config import DISTRICTS_IN_COLUMN
 from db.models import TelegramUser, District
 from keyboards.inline.callbacks import empty_callback, district_callback, filter_district_callback, \
-    list_objects_callback, districts_drop_callback, price_drop_callback, select_price_callback
+    list_objects_callback, districts_drop_callback, price_drop_callback, select_price_callback, date_drop_callback
 from utils.price_buttons import PriceButtons
 
 
@@ -108,6 +108,18 @@ def get_price_keyboard(user: TelegramUser) -> InlineKeyboardMarkup:
         ],
         [
             InlineKeyboardButton(text=user.button('drop_filter'), callback_data=price_drop_callback.new(
+                _='_'
+            ))
+        ]
+    ]
+
+    return InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
+
+
+def get_drop_date_keyboard(user: TelegramUser) -> InlineKeyboardMarkup:
+    inline_keyboard = [
+        [
+            InlineKeyboardButton(text=user.button('drop_filter'), callback_data=date_drop_callback.new(
                 _='_'
             ))
         ]

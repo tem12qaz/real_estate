@@ -3,7 +3,8 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from data.config import TG_URL
 from db.models import TelegramUser, Config, Object
 from keyboards.inline.callbacks import language_callback, main_menu_callback, empty_callback, list_objects_callback, \
-    open_object_callback, filter_date_callback, filter_price_callback, filter_district_callback, select_price_callback
+    open_object_callback, filter_date_callback, filter_price_callback, filter_district_callback, select_price_callback, \
+    object_callback, object_photos_callback
 
 
 def select_language_keyboard(user: TelegramUser) -> InlineKeyboardMarkup:
@@ -45,7 +46,7 @@ def get_list_objects_keyboard(user: TelegramUser,
     if estate:
         inline_keyboard = [
             [InlineKeyboardButton(text=user.button('open_object'), callback_data=open_object_callback.new(
-                tour_id=estate.id
+                object_id=estate.id
             ))],
             [
                 InlineKeyboardButton(
@@ -88,5 +89,68 @@ def get_list_objects_keyboard(user: TelegramUser,
                 )
             ]
         ]
+
+    return InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
+
+
+async def object_keyboard(estate: Object, user: TelegramUser, photo_index: int) -> InlineKeyboardMarkup:
+    photos = await estate.photos
+    inline_keyboard = [
+        [
+            InlineKeyboardButton(text=user.button('previous'), callback_data=object_photos_callback.new(
+                photo_index=(photo_index - 1) if photo_index != 0 else (len(photos) - 1),
+                object_id=estate.id,
+            )),
+            InlineKeyboardButton(text=f'{photo_index + 1}/{len(photos)}', callback_data=empty_callback.new(_='_')),
+            InlineKeyboardButton(text=user.button('next'), callback_data=object_photos_callback.new(
+                photo_index=(photo_index + 1) if photo_index != (len(photos) - 1) else 0,
+                object_id=estate.id,
+            )),
+        ],
+        [
+            InlineKeyboardButton(text=user.button('en'), callback_data=object_callback.new(
+                object_id=estate.id, action='presentation'
+            )),
+        ],
+        [
+            InlineKeyboardButton(text=user.button('chat'), callback_data=object_callback.new(
+                object_id=estate.id, action='chat'
+            )),
+        ],
+        [
+            InlineKeyboardButton(text=user.button('call'), callback_data=object_callback.new(
+                object_id=estate.id, action='call'
+            )),
+        ],
+        [
+            InlineKeyboardButton(text=user.button('video'), callback_data=object_callback.new(
+                object_id=estate.id, action='video'
+            )),
+        ],
+        [
+            InlineKeyboardButton(text=user.button('back'), callback_data=object_callback.new(
+                action='back', object_id=estate.id
+            )),
+        ]
+    ]
+    if await estate.files:
+        inline_keyboard.insert(
+            1,
+            [
+                InlineKeyboardButton(text=user.button('files'), callback_data=object_callback.new(
+                    action='files', object_id=estate.id
+                )),
+            ]
+        )
+
+    if estate.presentation_path:
+        inline_keyboard.insert(
+            1,
+            [
+                InlineKeyboardButton(text=user.button('presentation'), callback_data=object_callback.new(
+                    action='presentation', object_id=estate.id
+                )),
+            ]
+        )
 
     return InlineKeyboardMarkup(inline_keyboard=inline_keyboard)

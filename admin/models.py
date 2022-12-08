@@ -118,7 +118,7 @@ class Object(db.Model):
     price = db.Column(db.Integer(), nullable=False)
     date = db.Column(db.Date(), nullable=False)
     roi = db.Column(db.Integer(), nullable=False)
-    presentation_path = db.Column(db.String(128), nullable=False)
+    presentation_path = db.Column(db.String(128), nullable=True)
     active = db.Column(db.Boolean(), nullable=False, default=True)
     sale = db.Column(db.Boolean(), nullable=False, default=False)
 

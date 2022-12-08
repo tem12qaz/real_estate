@@ -8,7 +8,7 @@ from data.config import FLOOD_RATE, DISTRICTS_IN_COLUMN
 from db.models import District
 from handlers.users.send_objects_page import send_objects_page
 from keyboards.inline.callbacks import filter_district_callback, districts_drop_callback, district_callback, \
-    select_price_callback
+    select_price_callback, filter_date_callback, price_drop_callback, date_drop_callback
 from keyboards.inline.filter import get_list_districts_keyboard, get_price_keyboard
 from loader import dp
 from states.states import FilterObjects
@@ -39,11 +39,10 @@ async def list_districts_handler(callback: types.CallbackQuery, callback_data: d
             reply_markup=await get_list_districts_keyboard(user, districts, all_count, page, state)
         )
     else:
-        mess = await callback.message.answer(
+        await callback.message.answer(
             user.message('select_districts'),
             reply_markup=await get_list_districts_keyboard(user, districts, all_count, page, state)
         )
-        await state.update_data(mess_id=mess.message_id)
         await callback.message.delete()
         await FilterObjects.district.set()
 
@@ -109,13 +108,42 @@ async def filter_price_handler(callback: types.CallbackQuery, callback_data: dic
     price = callback_data['price']
 
     if price == '_':
+        await FilterObjects.price.set()
         await callback.message.answer(
             user.message('select_price'),
             reply_markup=get_price_keyboard(user)
         )
     else:
+        await FilterObjects.default.set()
         await state.update_data(price=price)
         await send_objects_page(callback.message, user, state)
+
+
+@dp.callback_query_handler(ChatTypeFilter(ChatType.PRIVATE), price_drop_callback.filter(),
+                           state=FilterObjects.all_states)
+@dp.throttled(rate=FLOOD_RATE)
+async def drop_price_handler(callback: types.CallbackQuery, state: FSMContext):
+    user = await TelegramUser.get_or_none(telegram_id=callback.from_user.id)
+    if user is None:
+        return
+
+    await callback.answer()
+
+    await state.update_data(price=None)
+    await send_objects_page(callback.message, user, state)
+
+
+@dp.callback_query_handler(ChatTypeFilter(ChatType.PRIVATE), filter_date_callback.filter(),
+                           state=FilterObjects.all_states)
+@dp.throttled(rate=FLOOD_RATE)
+async def filter_date_handler(callback: types.CallbackQuery, state: FSMContext):
+    user = await TelegramUser.get_or_none(telegram_id=callback.from_user.id)
+    if user is None:
+        return
+
+    await callback.answer()
+    # await callback.message.answer()
+
 
 
 

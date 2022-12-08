@@ -1,10 +1,15 @@
 import enum
+import io
 
+from aiogram import types
+from aiogram.dispatcher import FSMContext
 from flask_security import UserMixin, RoleMixin
 from tortoise import fields
 from tortoise.fields import SET_NULL
 from tortoise.models import Model
 
+from data.config import NEWLINE, BASE_PATH
+from keyboards.inline.keyboards import object_keyboard
 from utils.actions_type import ActionsEnum
 
 
@@ -17,6 +22,7 @@ class Developer(Model):
     photo = fields.CharField(128)
     message = fields.TextField()
     rating = fields.FloatField(default=5., null=True)
+    successful_orders = fields.IntField(null=True)
 
 
 class TelegramUser(Model):
@@ -100,9 +106,45 @@ class Object(Model):
     price = fields.IntField()
     date = fields.DateField()
     roi = fields.IntField()
-    presentation_path = fields.CharField(128)
+    presentation_path = fields.CharField(128, null=True)
     active = fields.BooleanField(default=True)
     sale = fields.BooleanField(default=False)
+
+    async def preview_text(self, user: TelegramUser):
+        text = user.message('object_preview').format(
+            price=self.price, date=self.date, district=self.district, roi=self.roi, owner=(await self.owner).name
+        )
+        return text
+
+    async def text(self, user: TelegramUser):
+        rating_info = user.message('rating_text').format(
+            rating=(await self.owner).rating
+        )
+        orders_info = user.message('successful_orders_text').format(
+            rating=(await self.owner).rating
+        )
+        additional_text = rating_info + NEWLINE + orders_info
+        text = user.message('object_text').format(
+            price=self.price, date=self.date, district=self.district,
+            roi=self.roi, owner=(await self.owner).name,
+            additional=additional_text
+        )
+        return text
+
+    async def send_message(self, user: TelegramUser, message: types.Message, state: FSMContext):
+        with open(BASE_PATH + (await self.photos)[0].path, 'rb') as f:
+            binary = f.read()
+        text_message = await message.answer(
+            await self.text(user)
+        )
+        await state.update_data(text_message=text_message.message_id)
+
+        await message.answer_photo(
+            io.BytesIO(binary),
+            reply_markup=await object_keyboard(self, user, 0)
+        )
+
+        await message.delete()
 
 
 class Order(Model):

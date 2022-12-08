@@ -12,6 +12,11 @@ district_callback = CallbackData("district", 'district_id', 'page')
 districts_drop_callback = CallbackData("drop_districts", '_')
 select_price_callback = CallbackData("select_price", 'price')
 price_drop_callback = CallbackData("drop_price", '_')
+date_drop_callback = CallbackData("drop_date", '_')
+
+
+object_callback = CallbackData("object", 'object_id', 'action')
+object_photos_callback = CallbackData("object_photos", 'photo_index', 'object_id')
 
 
 

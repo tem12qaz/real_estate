@@ -12,13 +12,16 @@ from keyboards.inline.keyboards import get_list_objects_keyboard
 from states.states import FilterObjects
 
 
-async def send_objects_page(message: types.Message, user: TelegramUser, state: FSMContext, page: int = 0) -> None:
+async def send_objects_page(message: types.Message, user: TelegramUser, state: FSMContext) -> None:
     data = await state.get_data()
 
     date = data.get('date')
     districts_id_list = data.get('districts_id')
     sales = data.get('sales')
     price = data.get('price')
+    page = data.get('page')
+    if not page:
+        page = 0
 
     queryset: QuerySet = filter_objects(sales, date, districts_id_list, price)
     objs = (await queryset.limit((page + 1) + 1))[page:]
@@ -26,7 +29,7 @@ async def send_objects_page(message: types.Message, user: TelegramUser, state: F
     keyboard = get_list_objects_keyboard(user, objs[0], all_count)
 
     if objs[:1]:
-        text = await tours_message_text(user, objs, 0)
+        text = await objs[0].preview_text(user)
 
         with open(BASE_PATH + (await objs[0].photos)[0].path, 'rb') as f:
             binary = f.read()
