@@ -9,6 +9,7 @@ from tortoise.queryset import QuerySet
 from data.config import FLOOD_RATE, BASE_PATH
 from db.filter_tours import filter_objects
 from db.models import TelegramUser, Object
+from handlers.users.send_objects_page import send_objects_page
 from keyboards.default.keyboard import get_main_keyboard
 from keyboards.inline.callbacks import main_menu_callback
 from keyboards.inline.keyboards import get_support_keyboard, get_list_objects_keyboard
@@ -36,24 +37,7 @@ async def main_menu_handler(message: types.Message, state: FSMContext):
             sales = True
 
         await state.update_data(sales=sales, page=0)
-
-        queryset: QuerySet = filter_objects(sales)
-        objs = await queryset.limit(2)
-        all_count = len(await queryset.all())
-        if objs[:1]:
-            text = await tours_message_text(user, objs, 0)
-
-            keyboard = get_list_objects_keyboard(user, objs[0], all_count)
-            with open(BASE_PATH + (await objs[0].photos)[0].path, 'rb') as f:
-                binary = f.read()
-            await message.answer_photo(
-                photo=io.BytesIO(binary), caption=text, reply_markup=keyboard
-            )
-            return
-        else:
-            await state.finish()
-            text = user.message('no_objects')
-            keyboard = None
+        await send_objects_page(message, user, state)
 
     elif message.text == user.button('chats') or message.text == '/chats':
         await state.finish()

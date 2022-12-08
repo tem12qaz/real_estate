@@ -6,6 +6,7 @@ from aiogram.types import ChatType
 from admin.models import TelegramUser
 from data.config import FLOOD_RATE, DISTRICTS_IN_COLUMN
 from db.models import District
+from handlers.users.send_objects_page import send_objects_page
 from keyboards.inline.callbacks import filter_district_callback, districts_drop_callback, district_callback, \
     select_price_callback
 from keyboards.inline.filter import get_list_districts_keyboard, get_price_keyboard
@@ -113,5 +114,8 @@ async def filter_price_handler(callback: types.CallbackQuery, callback_data: dic
             reply_markup=get_price_keyboard(user)
         )
     else:
+        await state.update_data(price=price)
+        await send_objects_page(callback.message, user, state)
+
 
 
