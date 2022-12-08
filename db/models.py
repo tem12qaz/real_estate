@@ -31,6 +31,15 @@ class TelegramUser(Model):
     username = fields.CharField(128, unique=True, null=True)
     lang = fields.CharField(4, default='en')
 
+    experience = fields.BooleanField(null=True)
+    bali_only = fields.BooleanField(null=True)
+    features = fields.BooleanField(null=True)
+    on_bali_now = fields.BooleanField(null=True)
+    budget = fields.IntField(null=True)
+
+    last_message = fields.DatetimeField()
+    state = fields.CharField(16, default='start')
+
     def message(self, name: str) -> str:
         return Message._messages[name][self.lang]
 

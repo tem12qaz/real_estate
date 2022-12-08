@@ -45,6 +45,16 @@ class TelegramUser(db.Model):
     telegram_id = db.Column(db.BigInteger, unique=True, nullable=False)
     username = db.Column(db.String(256), unique=True, nullable=True)
     lang = db.Column(db.String(4), default='en')
+
+    experience = db.Column(db.Boolean(), nullable=True)
+    bali_only = db.Column(db.Boolean(), nullable=True)
+    features = db.Column(db.Boolean(), nullable=True)
+    on_bali_now = db.Column(db.Boolean(), nullable=True)
+    budget = db.Column(db.Integer(), nullable=True)
+
+    last_message = db.Column(db.DateTime(), nullable=False)
+    state = db.Column(db.String(16), nullable=False)
+
     # referer_id = db.Column(db.Integer, db.ForeignKey('telegramuser.id', ondelete='SET NULL'), nullable=True)
     # referrals = relationship("TelegramUser", backref=backref('referer', remote_side=[id]))
     developer_manager = relationship("Developer", back_populates="manager", cascade='delete')

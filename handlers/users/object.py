@@ -3,7 +3,7 @@ import io
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import ChatTypeFilter
-from aiogram.types import ChatType, InputMediaPhoto
+from aiogram.types import ChatType, InputMediaPhoto, InputFile
 from tortoise.exceptions import DoesNotExist
 
 from data.config import FLOOD_RATE, BASE_PATH
@@ -102,27 +102,32 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
         )
 
     elif action == 'files':
-        videos = []
-        photos = []
-        for file in await estate.files:
-            if file.path[-4:].lower() in ['.avi', '.mov', '.mkv', '.mp4', '.wmv']:
-                videos.append(file.path)
-            else:
-                photos.append(file.path)
-
         media = types.MediaGroup()
-        for photo in photos:
-            media.attach_photo(InputFile(io.BytesIO(photo.source)))
+        i = 1
+        for file in await estate.files:
+            if i == 10:
+                await callback.message.answer_media_group(
+                    media=media
+                )
+                media = types.MediaGroup()
 
-        await bot.send_media_group(
-            user.telegram_id,
-            media=media
-        )
+            if file.path[-4:].lower() in ['.avi', '.mov', '.mkv', '.mp4', '.wmv']:
+                with open(BASE_PATH + file.path, 'rb') as f:
+                    media.attach_video(InputFile(io.BytesIO(f.read())))
+            else:
+                with open(BASE_PATH + file.path, 'rb') as f:
+                    media.attach_photo(InputFile(io.BytesIO(f.read())))
+
+            i += 1
+
+    elif action == 'chat':
+        pass
+
+    elif action == 'call':
+        pass
+
+    elif action == 'video':
+        pass
 
 
-
-        await callback.message.answer_document(
-            document=BASE_PATH + estate.presentation_path,
-            reply_markup=delete_message_keyboard(user)
-        )
 
