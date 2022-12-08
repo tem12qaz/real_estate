@@ -3,7 +3,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from data.config import TG_URL
 from db.models import TelegramUser, Config, Object
 from keyboards.inline.callbacks import language_callback, main_menu_callback, empty_callback, list_objects_callback, \
-    open_object_callback, filter_date_callback, filter_price_callback, filter_district_callback
+    open_object_callback, filter_date_callback, filter_price_callback, filter_district_callback, select_price_callback
 
 
 def select_language_keyboard(user: TelegramUser) -> InlineKeyboardMarkup:
@@ -37,10 +37,10 @@ async def get_support_keyboard(user: TelegramUser) -> InlineKeyboardMarkup:
     return keyboard
 
 
-def get_list_tours_keyboard(user: TelegramUser,
-                            estate: Object | None,
-                            all_count: int,
-                            page: int = 0) -> InlineKeyboardMarkup | None:
+def get_list_objects_keyboard(user: TelegramUser,
+                              estate: Object | None,
+                              all_count: int,
+                              page: int = 0) -> InlineKeyboardMarkup | None:
     empty = empty_callback.new(_='_')
     if estate:
         inline_keyboard = [
@@ -59,8 +59,10 @@ def get_list_tours_keyboard(user: TelegramUser,
                 ),
             ],
             [InlineKeyboardButton(text=user.button('filter_date'), callback_data=filter_date_callback.new(_='_'))],
-            [InlineKeyboardButton(text=user.button('filter_price'), callback_data=filter_price_callback.new(_='_'))],
-            [InlineKeyboardButton(text=user.button('filter_district'), callback_data=filter_district_callback.new(_='_'))],
+            [InlineKeyboardButton(text=user.button('filter_price'),
+                                  callback_data=select_price_callback.new(price='_'))],
+            [InlineKeyboardButton(text=user.button('filter_district'),
+                                  callback_data=filter_district_callback.new(page=0))],
             [
                 InlineKeyboardButton(
                     text=user.button('main_menu'),

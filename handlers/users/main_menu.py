@@ -3,7 +3,7 @@ import io
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import ChatTypeFilter
-from aiogram.types import ChatType, InputFile
+from aiogram.types import ChatType, InputFile, InputMediaPhoto
 from tortoise.queryset import QuerySet
 
 from data.config import FLOOD_RATE, BASE_PATH
@@ -11,9 +11,12 @@ from db.filter_tours import filter_objects
 from db.models import TelegramUser, Object
 from keyboards.default.keyboard import get_main_keyboard
 from keyboards.inline.callbacks import main_menu_callback
-from keyboards.inline.keyboards import get_support_keyboard
+from keyboards.inline.keyboards import get_support_keyboard, get_list_objects_keyboard
 from loader import dp
 from states.states import FilterObjects
+
+
+
 
 
 @dp.message_handler(ChatTypeFilter(ChatType.PRIVATE), state='*')
@@ -38,10 +41,10 @@ async def main_menu_handler(message: types.Message, state: FSMContext):
         objs = await queryset.limit(2)
         all_count = len(await queryset.all())
         if objs[:1]:
-            text = await tours_message_text(user, tours, 0)
+            text = await tours_message_text(user, objs, 0)
 
-            keyboard = get_list_tours_keyboard(user, tours[0], all_count)
-            with open(BASE_PATH + (await tours[0].photos)[0].path, 'rb') as f:
+            keyboard = get_list_objects_keyboard(user, objs[0], all_count)
+            with open(BASE_PATH + (await objs[0].photos)[0].path, 'rb') as f:
                 binary = f.read()
             await message.answer_photo(
                 photo=io.BytesIO(binary), caption=text, reply_markup=keyboard
@@ -49,7 +52,7 @@ async def main_menu_handler(message: types.Message, state: FSMContext):
             return
         else:
             await state.finish()
-            text = user.message('no_tours')
+            text = user.message('no_objects')
             keyboard = None
 
     elif message.text == user.button('chats') or message.text == '/chats':

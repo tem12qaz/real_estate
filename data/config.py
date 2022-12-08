@@ -61,7 +61,7 @@ NEWLINE = '''
 
 BASE_PATH = '/root/code/tur2/admin/static/'
 
-DIRECTIONS_IN_COLUMN = 10
+DISTRICTS_IN_COLUMN = 10
 
 tz = pytz.timezone('Europe/Moscow')
 

@@ -8,7 +8,7 @@ from utils.price_buttons import PriceButtons
 
 
 def filter_objects(sales: bool = False, date: tuple[int, int, int] = None,
-                   district: str = None, price: str = None) -> QuerySet:
+                   districts_id: list = None, price: str = None) -> QuerySet:
     args = [
         Q(active=True)
     ]
@@ -17,8 +17,8 @@ def filter_objects(sales: bool = False, date: tuple[int, int, int] = None,
         args.append(Q(sale=True))
     if date:
         args.append(Q(date__lte=datetime.datetime(*date).date()))
-    if district:
-        args.append(Q(district=district))
+    if districts_id:
+        args.append(Q(district__id__in=districts_id))
     if price:
         price_low, price_up = PriceButtons.buttons[price]
         if price_up:
@@ -30,3 +30,6 @@ def filter_objects(sales: bool = False, date: tuple[int, int, int] = None,
     queryset: QuerySet = Object.filter(*args).distinct()
 
     return queryset
+
+
+
