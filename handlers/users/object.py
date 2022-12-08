@@ -9,8 +9,9 @@ from tortoise.exceptions import DoesNotExist
 from data.config import FLOOD_RATE, BASE_PATH
 from db.models import TelegramUser, Object
 from handlers.users.send_objects_page import send_objects_page
-from keyboards.inline.callbacks import open_object_callback, object_photos_callback, object_callback
-from keyboards.inline.keyboards import object_keyboard
+from keyboards.inline.callbacks import open_object_callback, object_photos_callback, object_callback, \
+    delete_message_callback
+from keyboards.inline.keyboards import object_keyboard, delete_message_keyboard
 from loader import dp, bot
 from states.states import FilterObjects
 
@@ -60,6 +61,12 @@ async def list_photos_handler(callback: types.CallbackQuery, callback_data: dict
     )
 
 
+@dp.callback_query_handler(delete_message_callback.filter(), state='*')
+@dp.throttled(rate=FLOOD_RATE)
+async def object_card_handler(callback: types.CallbackQuery):
+    await callback.message.delete()
+
+
 @dp.callback_query_handler(ChatTypeFilter(ChatType.PRIVATE),
                            object_callback.filter(),
                            state=[FilterObjects.default, None])
@@ -88,5 +95,34 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
         await send_objects_page(callback.message, user, state)
         await callback.message.delete()
 
+    elif action == 'presentation':
+        await callback.message.answer_document(
+            document=BASE_PATH + estate.presentation_path,
+            reply_markup=delete_message_keyboard(user)
+        )
 
+    elif action == 'files':
+        videos = []
+        photos = []
+        for file in await estate.files:
+            if file.path[-4:].lower() in ['.avi', '.mov', '.mkv', '.mp4', '.wmv']:
+                videos.append(file.path)
+            else:
+                photos.append(file.path)
+
+        media = types.MediaGroup()
+        for photo in photos:
+            media.attach_photo(InputFile(io.BytesIO(photo.source)))
+
+        await bot.send_media_group(
+            user.telegram_id,
+            media=media
+        )
+
+
+
+        await callback.message.answer_document(
+            document=BASE_PATH + estate.presentation_path,
+            reply_markup=delete_message_keyboard(user)
+        )
 

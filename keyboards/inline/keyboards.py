@@ -4,7 +4,7 @@ from data.config import TG_URL
 from db.models import TelegramUser, Config, Object
 from keyboards.inline.callbacks import language_callback, main_menu_callback, empty_callback, list_objects_callback, \
     open_object_callback, filter_date_callback, filter_price_callback, filter_district_callback, select_price_callback, \
-    object_callback, object_photos_callback
+    object_callback, object_photos_callback, delete_message_callback
 
 
 def select_language_keyboard(user: TelegramUser) -> InlineKeyboardMarkup:
@@ -59,7 +59,7 @@ def get_list_objects_keyboard(user: TelegramUser,
                     callback_data=list_objects_callback.new(page=(page + 1) if page != all_count - 1 else 0)
                 ),
             ],
-            [InlineKeyboardButton(text=user.button('filter_date'), callback_data=filter_date_callback.new(_='_'))],
+            # [InlineKeyboardButton(text=user.button('filter_date'), callback_data=filter_date_callback.new(_='_'))],
             [InlineKeyboardButton(text=user.button('filter_price'),
                                   callback_data=select_price_callback.new(price='_'))],
             [InlineKeyboardButton(text=user.button('filter_district'),
@@ -76,7 +76,7 @@ def get_list_objects_keyboard(user: TelegramUser,
         ]
     else:
         inline_keyboard = [
-            [InlineKeyboardButton(text=user.button('filter_date'), callback_data=filter_date_callback.new(_='_'))],
+            # [InlineKeyboardButton(text=user.button('filter_date'), callback_data=filter_date_callback.new(_='_'))],
             [InlineKeyboardButton(text=user.button('filter_price'), callback_data=filter_price_callback.new(_='_'))],
             [InlineKeyboardButton(text=user.button('filter_district'),
                                   callback_data=filter_district_callback.new(_='_'))],
@@ -154,3 +154,19 @@ async def object_keyboard(estate: Object, user: TelegramUser, photo_index: int) 
         )
 
     return InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
+
+
+def delete_message_keyboard(user: TelegramUser) -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text=user.button('close'),
+                    callback_data=delete_message_callback.new(
+                        _='_'
+                    )
+                )
+            ]
+        ]
+    )
+    return keyboard
