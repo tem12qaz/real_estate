@@ -1,10 +1,10 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from data.config import TG_URL
-from db.models import TelegramUser, Config, Object
+from db.models import TelegramUser, Config, Object, Chat
 from keyboards.inline.callbacks import language_callback, main_menu_callback, empty_callback, list_objects_callback, \
-    open_object_callback, filter_date_callback, filter_price_callback, filter_district_callback, select_price_callback, \
-    object_callback, object_photos_callback, delete_message_callback, form_callback
+    open_object_callback, filter_district_callback, select_price_callback, \
+    object_callback, object_photos_callback, delete_message_callback, form_callback, chat_callback
 
 
 def select_language_keyboard(user: TelegramUser) -> InlineKeyboardMarkup:
@@ -77,7 +77,8 @@ def get_list_objects_keyboard(user: TelegramUser,
     else:
         inline_keyboard = [
             # [InlineKeyboardButton(text=user.button('filter_date'), callback_data=filter_date_callback.new(_='_'))],
-            [InlineKeyboardButton(text=user.button('filter_price'), callback_data=filter_price_callback.new(_='_'))],
+            [InlineKeyboardButton(text=user.button('filter_price'),
+                                  callback_data=select_price_callback.new(price='_'))],
             [InlineKeyboardButton(text=user.button('filter_district'),
                                   callback_data=filter_district_callback.new(_='_'))],
             [
@@ -212,6 +213,20 @@ def bool_form_keyboard(user: TelegramUser) -> InlineKeyboardMarkup:
                         action='back'
                     )
                 )
+            ]
+        ]
+    )
+    return keyboard
+
+
+def get_chat_keyboard(user: TelegramUser, chat: Chat, active: bool = False) -> InlineKeyboardMarkup:
+    text = user.button('open_chat') if not active else user.button('close_chat')
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text=text, callback_data=chat_callback.new(
+                    chat_id=chat.id, new_msg=0
+                ))
             ]
         ]
     )
