@@ -9,8 +9,10 @@ from tortoise import fields
 from tortoise.fields import SET_NULL
 from tortoise.models import Model
 
-from data.config import NEWLINE, BASE_PATH
-from keyboards.inline.keyboards import object_keyboard
+from data.config import NEWLINE, BASE_PATH, tz
+from keyboards.inline.keyboards import object_keyboard, get_chat_keyboard
+from loader import bot
+from states.states import chat_state
 from utils.actions_type import ActionsEnum
 
 
@@ -121,6 +123,7 @@ class Object(Model):
     date = fields.DateField()
     roi = fields.IntField()
     presentation_path = fields.CharField(128, null=True)
+    name = fields.CharField(128)
     active = fields.BooleanField(default=True)
     sale = fields.BooleanField(default=False)
 
@@ -146,7 +149,7 @@ class Object(Model):
         return text
 
     async def send_message(self, user: TelegramUser, message: types.Message, state: FSMContext):
-        if not (await Action.get(user=user, object=self, developer=await self.owner, type=ActionsEnum.open)):
+        if not (await Action.get_or_none(user=user, object=self, developer=await self.owner, type=ActionsEnum.open)):
             await Action.create(
                 user=user, object=self, developer=await self.owner, type=ActionsEnum.open
             )
@@ -164,27 +167,41 @@ class Object(Model):
 
         await message.delete()
 
+    async def send_contact(self, user: TelegramUser, message: types.Message, contact: str, state: FSMContext):
+        if contact == 'chat':
+            seller = await self.owner
+            chat = await Chat.get_or_none(customer=user, seller=seller, object=self)
+            if not chat:
+                chat = await Chat.create(
+                    customer=user, seller=seller, object=self, datetime=datetime.datetime.now(tz)
+                )
+                companion = await chat.manager
+                text_form = user.message('form_chat').format(
+                    experience=companion.button('yes') if user.experience else companion.button('no'),
+                    bali_only=companion.button('yes') if user.bali_only else companion.button('no'),
+                    features=companion.button('yes') if user.features else companion.button('no'),
+                    on_bali_now=companion.button('yes') if user.on_bali_now else companion.button('no'),
+                    budget=user.budget
+                )
+                await ChatMessage.create(
+                    chat=chat, text=text_form, time=datetime.datetime.now(tz), is_customer=True
+                )
+                await ChatMessage.create(
+                    chat=chat, text=seller.message, time=datetime.datetime.now(tz), is_customer=False
+                )
+                await bot.send_message(
+                    seller.chat_id,
+                    text_form,
+                    reply_markup=get_chat_keyboard(user, chat, False)
+                )
 
-    async def send_contact(self, user: TelegramUser, message: types.Message, contact: str):
-        if contact == ''
-
-
-class Order(Model):
-    id = fields.IntField(pk=True)
-    date = fields.ForeignKeyField('models.Date', related_name='orders', index=True, on_delete=SET_NULL, null=True)
-    tour = fields.ForeignKeyField('models.Object', related_name='orders', index=True, on_delete=SET_NULL, null=True)
-    promo = fields.ForeignKeyField('models.PromoCode', related_name='orders', on_delete=SET_NULL, null=True)
-    customer = fields.ForeignKeyField('models.TelegramUser', related_name='orders',
-                                      index=True, on_delete=SET_NULL, null=True)
-    seller = fields.ForeignKeyField('models.Developer', related_name='orders',
-                                    index=True, on_delete=SET_NULL, null=True)
-    datetime = fields.DatetimeField()
-    places = fields.SmallIntField()
-    paid = fields.IntField()
-    remainder = fields.IntField()
-    tax = fields.IntField()
-    state = fields.CharField(8)
-    url = fields.CharField(256, null=True)
+            message = await message.answer(
+                await chat.text(user),
+                reply_markup=get_chat_keyboard(user, chat, True)
+            )
+            await state.update_data(chat_message_id=message.message_id, chat_id=chat.id)
+            await chat_state.set()
+            return
 
 
 class Config(Model):
@@ -206,6 +223,8 @@ class Chat(Model):
     id = fields.IntField(pk=True)
     customer = fields.ForeignKeyField('models.TelegramUser', related_name='chats', index=True)
     seller = fields.ForeignKeyField('models.Developer', related_name='chats', index=True)
+    object = fields.ForeignKeyField('models.Object', related_name='chats', index=True)
+    video_requested = fields.BooleanField(default=False)
     datetime = fields.DatetimeField()
 
     async def text(self, user: TelegramUser) -> str:

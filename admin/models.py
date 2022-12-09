@@ -141,6 +141,7 @@ class Object(db.Model):
     photos = relationship("Photo", back_populates="object", cascade='all,delete')
     files = relationship("File", back_populates="object", cascade='all,delete')
     orders = relationship("Order", back_populates="object")
+    chats = relationship("Chat", back_populates="object")
 
     def __repr__(self):
         return self.name
@@ -158,35 +159,6 @@ class Action(db.Model):
 
     object_id = db.Column(db.Integer(), db.ForeignKey("object.id", ondelete='CASCADE'), nullable=False)
     object = relationship("Object", back_populates="actions")
-
-
-class Order(db.Model):
-    id = db.Column(db.Integer(), primary_key=True)
-    remainder = db.Column(db.Integer(), nullable=False)
-    paid = db.Column(db.Integer(), nullable=False)
-    tax = db.Column(db.Integer(), nullable=False)
-    places = db.Column(db.Integer(), nullable=False)
-    state = db.Column(db.String(8), nullable=False)
-    url = db.Column(db.String(256), nullable=True)
-    datetime = db.Column(db.DateTime(), nullable=False)
-
-    tour_id = db.Column(db.Integer(), db.ForeignKey("tour.id", ondelete='SET NULL'))
-    tour = relationship("Tour", back_populates="orders")
-
-    date_id = db.Column(db.Integer(), db.ForeignKey("date.id", ondelete='SET NULL'))
-    date = relationship("Date", back_populates="orders")
-
-    promo_id = db.Column(db.Integer(), db.ForeignKey("promocode.id", ondelete='SET NULL'))
-    promo = relationship("PromoCode", back_populates="orders")
-
-    customer_id = db.Column(db.Integer(), db.ForeignKey("telegramuser.id", ondelete='SET NULL'))
-    customer = relationship("TelegramUser", back_populates="orders")
-
-    seller_id = db.Column(db.Integer(), db.ForeignKey("touroperator.id", ondelete='SET NULL'))
-    seller = relationship("TourOperator", back_populates="orders")
-
-    def __repr__(self):
-        return f'Order id{self.id}'
 
 
 class Config(db.Model):
@@ -213,7 +185,13 @@ class Chat(db.Model):
     seller_id = db.Column(db.Integer(), db.ForeignKey("developer.id", ondelete='CASCADE'))
     seller = relationship("Developer", back_populates="chats")
 
+    object_id = db.Column(db.Integer(), db.ForeignKey("object.id", ondelete='CASCADE'))
+    object = relationship("Object", back_populates="chats")
+
     messages = relationship("ChatMessage", back_populates="chat", cascade='all,delete')
+
+    video_requested = db.Column(db.Boolean(), default=False)
+    contact_requested = db.Column(db.Boolean(), default=False)
 
 
 class ChatMessage(db.Model):

@@ -105,7 +105,7 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
         await callback.message.delete()
 
     elif action == 'presentation':
-        if not (await Action.get(user=user, object=estate,
+        if not (await Action.get_or_none(user=user, object=estate,
                                  developer=await estate.owner, type=ActionsEnum.presentation)):
             await Action.create(
                 user=user, object=estate, developer=await estate.owner, type=ActionsEnum.presentation
@@ -116,7 +116,7 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
         )
 
     elif action == 'files':
-        if not (await Action.get(user=user, object=estate,
+        if not (await Action.get_or_none(user=user, object=estate,
                                  developer=await estate.owner, type=ActionsEnum.photo_video)):
             await Action.get_or_create(
                 user=user, object=estate, developer=await estate.owner, type=ActionsEnum.photo_video
@@ -140,7 +140,7 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
             i += 1
 
     elif action in ['chat', 'call', 'video']:
-        if not (await Action.get(user=user, object=estate,
+        if not (await Action.get_or_none(user=user, object=estate,
                                  developer=await estate.owner, type=getattr(ActionsEnum, action))):
             await Action.create(
                 user=user, object=estate, developer=await estate.owner, type=getattr(ActionsEnum, action)
@@ -162,7 +162,7 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
             )
             await callback.message.delete()
         else:
-            pass
+
 
 
 

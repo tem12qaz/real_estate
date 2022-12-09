@@ -221,13 +221,13 @@ def bool_form_keyboard(user: TelegramUser) -> InlineKeyboardMarkup:
 
 def get_chat_keyboard(user: TelegramUser, chat: Chat, active: bool = False) -> InlineKeyboardMarkup:
     text = user.button('open_chat') if not active else user.button('close_chat')
-    keyboard = InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(text=text, callback_data=chat_callback.new(
-                    chat_id=chat.id, new_msg=0
-                ))
-            ]
+    inline_keyboard = [
+        [
+            InlineKeyboardButton(text=text, callback_data=chat_callback.new(
+                chat_id=chat.id, new_msg=0
+            ))
         ]
-    )
-    return keyboard
+    ]
+    # if chat.contact_requested:
+
+    return InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
