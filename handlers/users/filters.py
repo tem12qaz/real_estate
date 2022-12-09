@@ -22,6 +22,8 @@ async def list_districts_handler(callback: types.CallbackQuery, callback_data: d
     if user is None:
         return
 
+    await user.update_time()
+
     if (await state.get_data()).get('districts_id') is None:
         await state.update_data(districts_id=[])
 
@@ -55,6 +57,8 @@ async def districts_drop_handler(callback: types.CallbackQuery, callback_data: d
     if user is None:
         return
 
+    await user.update_time()
+
     await state.update_data(directions_id=[])
     page = 0
     districts = await District.all().limit(((page + 1) * DISTRICTS_IN_COLUMN) + 1)
@@ -75,6 +79,8 @@ async def select_district_handler(callback: types.CallbackQuery, callback_data: 
     user = await TelegramUser.get_or_none(telegram_id=callback.from_user.id)
     if user is None:
         return
+
+    await user.update_time()
 
     district_id = int(callback_data.get('district_id'))
     page = int(callback_data.get('page'))
@@ -104,6 +110,8 @@ async def filter_price_handler(callback: types.CallbackQuery, callback_data: dic
     if user is None:
         return
 
+    await user.update_time()
+
     await callback.answer()
     price = callback_data['price']
 
@@ -126,6 +134,8 @@ async def drop_price_handler(callback: types.CallbackQuery, state: FSMContext):
     user = await TelegramUser.get_or_none(telegram_id=callback.from_user.id)
     if user is None:
         return
+
+    await user.update_time()
 
     await callback.answer()
 

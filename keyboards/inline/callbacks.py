@@ -19,5 +19,8 @@ date_drop_callback = CallbackData("drop_date", '_')
 object_callback = CallbackData("object", 'object_id', 'action')
 object_photos_callback = CallbackData("object_photos", 'photo_index', 'object_id')
 
+form_callback = CallbackData("form", 'object_id', 'action', 'contact')
+
+
 
 

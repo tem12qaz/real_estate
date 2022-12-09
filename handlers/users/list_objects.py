@@ -19,6 +19,8 @@ async def list_tours_handler(callback: types.CallbackQuery, callback_data: dict,
     if user is None:
         return
 
+    await user.update_time()
+
     page = callback_data['page']
     page = int(page)
     await state.update_data(page=page)

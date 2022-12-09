@@ -28,13 +28,15 @@ async def bot_start(message: types.Message, state: FSMContext):
         )
         return
 
+    await user.update_time()
+
     if 'object_' in args:
         try:
-            object_estate = await Object.get_or_none(telegram_id=int(args.replace('object_', '')))
+            estate = await Object.get_or_none(telegram_id=int(args.replace('object_', '')))
         except ValueError:
             pass
         else:
-            await send_tour_card(user, tour, message, None)
+            await estate.send_message(user, message, state)
             return
 
     await message.answer(
@@ -50,6 +52,8 @@ async def language_handler(callback: types.CallbackQuery, callback_data: dict, s
     user = await TelegramUser.get_or_none(telegram_id=callback.from_user.id)
     if user is None:
         return
+
+    await user.update_time()
 
     lang = callback_data['language']
 

@@ -6,3 +6,11 @@ class FilterObjects(StatesGroup):
     date = State()
     district = State()
     price = State()
+
+
+class StartForm(StatesGroup):
+    experience = State()
+    bali_only = State()
+    features = State()
+    on_bali_now = State()
+    budget = State()

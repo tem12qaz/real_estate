@@ -50,7 +50,7 @@ class TelegramUser(db.Model):
     bali_only = db.Column(db.Boolean(), nullable=True)
     features = db.Column(db.Boolean(), nullable=True)
     on_bali_now = db.Column(db.Boolean(), nullable=True)
-    budget = db.Column(db.Integer(), nullable=True)
+    budget = db.Column(db.BigInteger(), nullable=True)
 
     last_message = db.Column(db.DateTime(), nullable=False)
     state = db.Column(db.String(16), nullable=False)

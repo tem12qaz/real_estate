@@ -17,15 +17,14 @@ from loader import dp
 from states.states import FilterObjects
 
 
-
-
-
 @dp.message_handler(ChatTypeFilter(ChatType.PRIVATE), state='*')
 @dp.throttled(rate=FLOOD_RATE)
 async def main_menu_handler(message: types.Message, state: FSMContext):
     user = await TelegramUser.get_or_none(telegram_id=message.from_user.id)
     if user is None:
         return
+
+    await user.update_time()
 
     if message.text == user.button('find') or message.text == user.button('sales') or \
             message.text == '/find' or message.text == '/sales':
@@ -64,6 +63,8 @@ async def go_to_main_menu_handler(callback: types.CallbackQuery, state: FSMConte
     user = await TelegramUser.get_or_none(telegram_id=callback.from_user.id)
     if user is None:
         return
+
+    await user.update_time()
 
     await state.finish()
     await callback.answer()

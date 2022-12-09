@@ -4,7 +4,7 @@ from data.config import TG_URL
 from db.models import TelegramUser, Config, Object
 from keyboards.inline.callbacks import language_callback, main_menu_callback, empty_callback, list_objects_callback, \
     open_object_callback, filter_date_callback, filter_price_callback, filter_district_callback, select_price_callback, \
-    object_callback, object_photos_callback, delete_message_callback
+    object_callback, object_photos_callback, delete_message_callback, form_callback
 
 
 def select_language_keyboard(user: TelegramUser) -> InlineKeyboardMarkup:
@@ -164,6 +164,52 @@ def delete_message_keyboard(user: TelegramUser) -> InlineKeyboardMarkup:
                     text=user.button('close'),
                     callback_data=delete_message_callback.new(
                         _='_'
+                    )
+                )
+            ]
+        ]
+    )
+    return keyboard
+
+
+def form_keyboard(user: TelegramUser) -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text=user.button('back'),
+                    callback_data=form_callback.new(
+                        action='back'
+                    )
+                )
+            ]
+        ]
+    )
+    return keyboard
+
+
+def bool_form_keyboard(user: TelegramUser) -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text=user.button('yes'),
+                    callback_data=form_callback.new(
+                        action='yes'
+                    )
+                ),
+                InlineKeyboardButton(
+                    text=user.button('no'),
+                    callback_data=form_callback.new(
+                       action='no'
+                    )
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text=user.button('back'),
+                    callback_data=form_callback.new(
+                        action='back'
                     )
                 )
             ]

@@ -7,13 +7,14 @@ from aiogram.types import ChatType, InputMediaPhoto, InputFile
 from tortoise.exceptions import DoesNotExist
 
 from data.config import FLOOD_RATE, BASE_PATH
-from db.models import TelegramUser, Object
+from db.models import TelegramUser, Object, Action
 from handlers.users.send_objects_page import send_objects_page
 from keyboards.inline.callbacks import open_object_callback, object_photos_callback, object_callback, \
     delete_message_callback
-from keyboards.inline.keyboards import object_keyboard, delete_message_keyboard
+from keyboards.inline.keyboards import object_keyboard, delete_message_keyboard, bool_form_keyboard
 from loader import dp, bot
-from states.states import FilterObjects
+from states.states import FilterObjects, StartForm
+from utils.actions_type import ActionsEnum
 
 
 @dp.callback_query_handler(ChatTypeFilter(ChatType.PRIVATE),
@@ -24,6 +25,9 @@ async def open_object_handler(callback: types.CallbackQuery, callback_data: dict
     user = await TelegramUser.get_or_none(telegram_id=callback.from_user.id)
     if user is None:
         return
+
+    await user.update_time()
+
     obj_id = callback_data.get('object_id')
     try:
         estate = await Object.get(id=int(obj_id))
@@ -43,6 +47,9 @@ async def list_photos_handler(callback: types.CallbackQuery, callback_data: dict
     user = await TelegramUser.get_or_none(telegram_id=callback.from_user.id)
     if user is None:
         return
+
+    await user.update_time()
+
     photo_index = callback_data.get('photo_index')
     object_id = callback_data.get('object_id')
     try:
@@ -76,6 +83,8 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
     if user is None:
         return
 
+    await user.update_time()
+
     object_id = int(callback_data['object_id'])
     action = callback_data['action']
     data = await state.get_data()
@@ -96,12 +105,22 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
         await callback.message.delete()
 
     elif action == 'presentation':
+        if not (await Action.get(user=user, object=estate,
+                                 developer=await estate.owner, type=ActionsEnum.presentation)):
+            await Action.create(
+                user=user, object=estate, developer=await estate.owner, type=ActionsEnum.presentation
+            )
         await callback.message.answer_document(
             document=BASE_PATH + estate.presentation_path,
             reply_markup=delete_message_keyboard(user)
         )
 
     elif action == 'files':
+        if not (await Action.get(user=user, object=estate,
+                                 developer=await estate.owner, type=ActionsEnum.photo_video)):
+            await Action.get_or_create(
+                user=user, object=estate, developer=await estate.owner, type=ActionsEnum.photo_video
+            )
         media = types.MediaGroup()
         i = 1
         for file in await estate.files:
@@ -120,14 +139,36 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
 
             i += 1
 
-    elif action == 'chat':
-        pass
+    elif action in ['chat', 'call', 'video']:
+        if not (await Action.get(user=user, object=estate,
+                                 developer=await estate.owner, type=getattr(ActionsEnum, action))):
+            await Action.create(
+                user=user, object=estate, developer=await estate.owner, type=getattr(ActionsEnum, action)
+            )
 
-    elif action == 'call':
-        pass
+        if user.state == 'start':
+            user.state = 'form'
+            await user.save()
+            await StartForm.first()
+            await state.update_data(contact=action, object_id=estate.id)
+            text_message = data.get('text_message')
+            await bot.delete_message(
+                user.telegram_id,
+                text_message
+            )
+            await callback.message.answer(
+                user.message('experience'),
+                reply_markup=bool_form_keyboard(user)
+            )
+            await callback.message.delete()
+        else:
+            pass
 
-    elif action == 'video':
-        pass
+
+
+
+
+
 
 
 

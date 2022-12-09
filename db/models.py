@@ -1,3 +1,4 @@
+import datetime
 import enum
 import io
 
@@ -35,7 +36,7 @@ class TelegramUser(Model):
     bali_only = fields.BooleanField(null=True)
     features = fields.BooleanField(null=True)
     on_bali_now = fields.BooleanField(null=True)
-    budget = fields.IntField(null=True)
+    budget = fields.BigIntField(null=True)
 
     last_message = fields.DatetimeField()
     state = fields.CharField(16, default='start')
@@ -45,6 +46,10 @@ class TelegramUser(Model):
 
     def button(self, name: str) -> str:
         return Button._buttons[name][self.lang]
+
+    async def update_time(self):
+        self.last_message = datetime.datetime.now()
+        await self.save()
 
 
 class Action(Model):
@@ -141,6 +146,10 @@ class Object(Model):
         return text
 
     async def send_message(self, user: TelegramUser, message: types.Message, state: FSMContext):
+        if not (await Action.get(user=user, object=self, developer=await self.owner, type=ActionsEnum.open)):
+            await Action.create(
+                user=user, object=self, developer=await self.owner, type=ActionsEnum.open
+            )
         with open(BASE_PATH + (await self.photos)[0].path, 'rb') as f:
             binary = f.read()
         text_message = await message.answer(
@@ -154,6 +163,10 @@ class Object(Model):
         )
 
         await message.delete()
+
+
+    async def send_contact(self, user: TelegramUser, message: types.Message, contact: str):
+        if contact == ''
 
 
 class Order(Model):
