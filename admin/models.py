@@ -190,8 +190,8 @@ class Chat(db.Model):
 
     messages = relationship("ChatMessage", back_populates="chat", cascade='all,delete')
 
-    video_requested = db.Column(db.Boolean(), default=False)
-    contact_requested = db.Column(db.Boolean(), default=False)
+    call_rejected = db.Column(db.Boolean(), default=False)
+    # contact_requested = db.Column(db.Boolean(), default=False)
 
 
 class ChatMessage(db.Model):

@@ -224,7 +224,7 @@ class Chat(Model):
     customer = fields.ForeignKeyField('models.TelegramUser', related_name='chats', index=True)
     seller = fields.ForeignKeyField('models.Developer', related_name='chats', index=True)
     object = fields.ForeignKeyField('models.Object', related_name='chats', index=True)
-    video_requested = fields.BooleanField(default=False)
+    call_rejected = fields.BooleanField(default=False)
     datetime = fields.DatetimeField()
 
     async def text(self, user: TelegramUser) -> str:

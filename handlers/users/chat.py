@@ -9,15 +9,37 @@ from tortoise.exceptions import DoesNotExist
 from data.config import FLOOD_RATE, tz
 from db.models import TelegramUser, Chat, ChatMessage
 from filters.filters import MainMenuExcludeFilter
-from keyboards.inline.callbacks import chat_callback
+from keyboards.inline.callbacks import chat_callback, call_callback
 from keyboards.inline.keyboards import get_chat_keyboard
 from loader import dp, bot
 from states.states import chat_state
 
 
+@dp.callback_query_handler(ChatTypeFilter(ChatType.PRIVATE), call_callback.filter(), state='*')
+@dp.throttled(rate=FLOOD_RATE)
+async def call_handler(callback: types.CallbackQuery, callback_data: dict, state: FSMContext):
+    user = await TelegramUser.get_or_none(telegram_id=callback.from_user.id)
+    if user is None:
+        return
+
+    try:
+        companion_id = int(callback_data['companion_id'])
+        companion = await TelegramUser.get(id=companion_id)
+    except (ValueError, DoesNotExist):
+        await callback.answer()
+        return
+
+    action = callback_data['action']
+
+    if action == 'call':
+        await callback.answer(user.message('wait_answer'), show_alert=True)
+        await bot.send_message(companion.)
+
+
+
 @dp.callback_query_handler(ChatTypeFilter(ChatType.PRIVATE), chat_callback.filter(), state='*')
 @dp.throttled(rate=FLOOD_RATE)
-async def button_chat_chandler(callback: types.CallbackQuery, callback_data: dict, state: FSMContext):
+async def button_chat_handler(callback: types.CallbackQuery, callback_data: dict, state: FSMContext):
     await callback.answer()
     user = await TelegramUser.get_or_none(telegram_id=callback.from_user.id)
     if user is None:

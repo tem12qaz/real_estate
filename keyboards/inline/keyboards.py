@@ -4,7 +4,7 @@ from data.config import TG_URL
 from db.models import TelegramUser, Config, Object, Chat
 from keyboards.inline.callbacks import language_callback, main_menu_callback, empty_callback, list_objects_callback, \
     open_object_callback, filter_district_callback, select_price_callback, \
-    object_callback, object_photos_callback, delete_message_callback, form_callback, chat_callback
+    object_callback, object_photos_callback, delete_message_callback, form_callback, chat_callback, call_callback
 
 
 def select_language_keyboard(user: TelegramUser) -> InlineKeyboardMarkup:
@@ -228,6 +228,14 @@ def get_chat_keyboard(user: TelegramUser, chat: Chat, active: bool = False) -> I
             ))
         ]
     ]
-    # if chat.contact_requested:
+    if active and user == await (await chat.seller).manager:
+        inline_keyboard.insert(
+            0,
+            [
+                InlineKeyboardButton(text=text, callback_data=call_callback.new(
+                    companion_id=(await chat.customer).telegram_id, action='call'
+                ))
+            ]
+        )
 
     return InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
