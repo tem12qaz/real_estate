@@ -151,6 +151,8 @@ async def filter_date_handler(callback: types.CallbackQuery, state: FSMContext):
     if user is None:
         return
 
+    await user.update_time()
+
     await callback.answer()
     # await callback.message.answer()
 

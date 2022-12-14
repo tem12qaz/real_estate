@@ -12,7 +12,7 @@ from handlers.users.send_objects_page import send_objects_page
 from keyboards.inline.callbacks import open_object_callback, object_photos_callback, object_callback, \
     delete_message_callback
 from keyboards.inline.keyboards import object_keyboard, delete_message_keyboard, bool_form_keyboard
-from loader import dp, bot
+from loader import dp, bot, supervisor
 from states.states import FilterObjects, StartForm
 from utils.actions_type import ActionsEnum
 
@@ -106,7 +106,7 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
 
     elif action == 'presentation':
         if not (await Action.get_or_none(user=user, object=estate,
-                                 developer=await estate.owner, type=ActionsEnum.presentation)):
+                                         developer=await estate.owner, type=ActionsEnum.presentation)):
             await Action.create(
                 user=user, object=estate, developer=await estate.owner, type=ActionsEnum.presentation
             )
@@ -117,7 +117,7 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
 
     elif action == 'files':
         if not (await Action.get_or_none(user=user, object=estate,
-                                 developer=await estate.owner, type=ActionsEnum.photo_video)):
+                                         developer=await estate.owner, type=ActionsEnum.photo_video)):
             await Action.get_or_create(
                 user=user, object=estate, developer=await estate.owner, type=ActionsEnum.photo_video
             )
@@ -141,7 +141,7 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
 
     elif action in ['chat', 'call', 'video']:
         if not (await Action.get_or_none(user=user, object=estate,
-                                 developer=await estate.owner, type=getattr(ActionsEnum, action))):
+                                         developer=await estate.owner, type=getattr(ActionsEnum, action))):
             await Action.create(
                 user=user, object=estate, developer=await estate.owner, type=getattr(ActionsEnum, action)
             )
@@ -149,6 +149,7 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
         if user.state == 'start':
             user.state = 'form'
             await user.save()
+            supervisor.form_notify(user)
             await StartForm.first()
             await state.update_data(contact=action, object_id=estate.id)
             text_message = data.get('text_message')
@@ -162,13 +163,4 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
             )
             await callback.message.delete()
         else:
-
-
-
-
-
-
-
-
-
-
+            await estate.send_contact(user, callback.message, action, state)

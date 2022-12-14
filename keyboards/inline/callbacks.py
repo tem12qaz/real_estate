@@ -21,7 +21,8 @@ object_photos_callback = CallbackData("object_photos", 'photo_index', 'object_id
 
 form_callback = CallbackData("form", 'object_id', 'action', 'contact')
 chat_callback = CallbackData("chat", 'chat_id', 'new_msg')
-call_callback = CallbackData("chat", 'companion_id', 'action')
+call_callback = CallbackData("chat", 'companion_id', 'chat_id', 'action')
+after_call_callback = CallbackData("after_call", 'chat_id', 'action')
 
 
 

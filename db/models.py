@@ -10,7 +10,7 @@ from tortoise.fields import SET_NULL
 from tortoise.models import Model
 
 from data.config import NEWLINE, BASE_PATH, tz
-from keyboards.inline.keyboards import object_keyboard, get_chat_keyboard
+from keyboards.inline.keyboards import object_keyboard, get_chat_keyboard, call_chat_keyboard
 from loader import bot
 from states.states import chat_state
 from utils.actions_type import ActionsEnum
@@ -168,21 +168,24 @@ class Object(Model):
         await message.delete()
 
     async def send_contact(self, user: TelegramUser, message: types.Message, contact: str, state: FSMContext):
+        seller = await self.owner
+        companion = await seller.manager
+
+        text_form = user.message('form_chat').format(
+            experience=companion.button('yes') if user.experience else companion.button('no'),
+            bali_only=companion.button('yes') if user.bali_only else companion.button('no'),
+            features=companion.button('yes') if user.features else companion.button('no'),
+            on_bali_now=companion.button('yes') if user.on_bali_now else companion.button('no'),
+            budget=user.budget
+        )
+
         if contact == 'chat':
-            seller = await self.owner
             chat = await Chat.get_or_none(customer=user, seller=seller, object=self)
             if not chat:
                 chat = await Chat.create(
                     customer=user, seller=seller, object=self, datetime=datetime.datetime.now(tz)
                 )
-                companion = await chat.manager
-                text_form = user.message('form_chat').format(
-                    experience=companion.button('yes') if user.experience else companion.button('no'),
-                    bali_only=companion.button('yes') if user.bali_only else companion.button('no'),
-                    features=companion.button('yes') if user.features else companion.button('no'),
-                    on_bali_now=companion.button('yes') if user.on_bali_now else companion.button('no'),
-                    budget=user.budget
-                )
+
                 await ChatMessage.create(
                     chat=chat, text=text_form, time=datetime.datetime.now(tz), is_customer=True
                 )
@@ -192,16 +195,40 @@ class Object(Model):
                 await bot.send_message(
                     seller.chat_id,
                     text_form,
-                    reply_markup=get_chat_keyboard(user, chat, False)
+                    reply_markup=await get_chat_keyboard(user, chat, False)
                 )
 
             message = await message.answer(
                 await chat.text(user),
-                reply_markup=get_chat_keyboard(user, chat, True)
+                reply_markup=await get_chat_keyboard(user, chat, True)
             )
             await state.update_data(chat_message_id=message.message_id, chat_id=chat.id)
             await chat_state.set()
-            return
+
+        elif contact == 'call':
+            chat = await Chat.get_or_none(customer=user, seller=seller, object=self)
+            if not chat:
+                chat = await Chat.create(
+                    customer=user, seller=seller, object=self, datetime=datetime.datetime.now(tz)
+                )
+
+            await ChatMessage.create(
+                chat=chat, text=text_form, time=datetime.datetime.now(tz), is_customer=True
+            )
+            await ChatMessage.create(
+                chat=chat, text=seller.message, time=datetime.datetime.now(tz), is_customer=False
+            )
+
+            await message.answer(
+                user.message('request_sent')
+            )
+            await bot.send_message(
+                seller.chat_id,
+                text_form,
+                reply_markup=await call_chat_keyboard(companion, chat)
+            )
+        elif contact == 'video':
+            pass
 
 
 class Config(Model):

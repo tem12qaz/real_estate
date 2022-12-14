@@ -1,82 +1,73 @@
 import asyncio
 from datetime import datetime, timedelta
 
-from tortoise.expressions import Q
-
 from data.config import tz
-from db.models import Order, Date, Chat, PromoCode
+from db.models import Chat, TelegramUser
+from keyboards.inline.keyboards import support_keyboard
+from loader import bot
 
 
 class Supervisor:
     def __init__(self, loop: asyncio.AbstractEventLoop, sleep: int = 3600):
         self.loop = loop
         self.sleep = sleep
-        self.tasks = [self.orders, self.dates, self.chats, self.promos]
 
     @staticmethod
-    async def orders():
-        print('orders_supervisor')
-
-        now = datetime.now(tz)
-        # delete_orders_time = now - timedelta(minutes=15) # YOOKASSA BLOCK WIDGET / RETURN PLACES TO DATE
-        # orders_to_delete = await Order.filter(
-        #     datetime__lt=delete_orders_time, state='created'
-        # )
-        # for order in orders_to_delete:
-        #     await order.delete()
-
-        orders_to_finish = await Order.filter(
-            date__end__lt=now, state='payed'
+    async def send_message(user: TelegramUser):
+        await bot.send_message(
+            user.telegram_id,
+            user.message('support_supervisor'),
+            reply_markup=await support_keyboard(user)
         )
-        for order in orders_to_finish:
-            order.state = 'finish'
-            await order.save()
 
-    @staticmethod
-    async def dates():
-        print('date_supervisor')
+    def after_call(self, chat: Chat):
+        async def notify(chat_: Chat):
+            await asyncio.sleep(7200)
+            await chat_.refresh_from_db()
+            user: TelegramUser = await (await chat_.seller).manager
+            await bot.send_message(
+                user.telegram_id,
+                user.message('after_call_notify').format(user=user.username, chat_id=chat_.id),
 
+            )
+
+    def call_reject(self, chat: Chat):
+        async def notify(chat_: Chat):
+            await asyncio.sleep(600)
+            await chat_.refresh_from_db()
+            if chat_.call_rejected:
+                await self.send_message(await chat_.customer)
+
+        self.loop.create_task(notify(chat))
+
+    async def active_users(self):
         now = datetime.now(tz)
-        dates_to_delete = await Date.filter(
-            end__lt=now
+        notify_time = now - timedelta(days=1)
+        users = await TelegramUser.filter(
+            last_message_lt=notify_time, state='start'
         )
-        for date in dates_to_delete:
-            await date.delete()
+        for user in users:
+            await self.send_message(user)
+            await user.update_time()
 
-    @staticmethod
-    async def chats():
-        print('chat_supervisor')
+    def form_notify(self, user: TelegramUser):
+        async def notify(user_: TelegramUser):
+            await asyncio.sleep(600)
+            await user_.refresh_from_db()
+            if user_.state == 'form':
+                await self.send_message(user_)
 
-        now = datetime.now(tz)
-        delete_chats_time = now - timedelta(days=1)
-        chats_to_delete = await Chat.filter(
-            datetime__lt=delete_chats_time
-        )
-        for chat in chats_to_delete:
-            await chat.delete()
-
-    @staticmethod
-    async def promos():
-        print('promos_supervisor')
-        now = datetime.now(tz)
-        promos_to_delete = await PromoCode.filter(
-            Q(uses=0) | Q(end__lt=now)
-        )
-        for promo in promos_to_delete:
-            await promo.delete()
-
-    def get_task(self):
-        task = self.tasks.pop(0)
-        self.tasks.append(task)
-        return task
+        self.loop.create_task(notify(user))
 
     async def cycle(self):
         while True:
-            task = self.get_task()
-            await task()
+            await self.active_users()
             await asyncio.sleep(self.sleep)
 
     def start(self):
         self.loop.create_task(self.cycle())
+
+
+
 
 

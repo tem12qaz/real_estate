@@ -21,11 +21,8 @@ async def on_startup(dp):
     # middlewares.setup(dp)
 
 if __name__ == '__main__':
-    from loader import dp, logger
+    from loader import dp, logger, loop, supervisor
     import handlers
-
-    loop = asyncio.new_event_loop()
-    supervisor = Supervisor(loop)
 
     aiohttp_app = web.Application(logger=logger, loop=loop)
 

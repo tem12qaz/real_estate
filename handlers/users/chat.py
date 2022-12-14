@@ -10,9 +10,10 @@ from data.config import FLOOD_RATE, tz
 from db.models import TelegramUser, Chat, ChatMessage
 from filters.filters import MainMenuExcludeFilter
 from keyboards.inline.callbacks import chat_callback, call_callback
-from keyboards.inline.keyboards import get_chat_keyboard
-from loader import dp, bot
+from keyboards.inline.keyboards import get_chat_keyboard, call_answer_keyboard, connect_meet
+from loader import dp, bot, supervisor
 from states.states import chat_state
+from utils.google_meet import get_meet_url
 
 
 @dp.callback_query_handler(ChatTypeFilter(ChatType.PRIVATE), call_callback.filter(), state='*')
@@ -22,9 +23,13 @@ async def call_handler(callback: types.CallbackQuery, callback_data: dict, state
     if user is None:
         return
 
+    await user.update_time()
+
     try:
         companion_id = int(callback_data['companion_id'])
+        chat_id = int(callback_data['chat_id'])
         companion = await TelegramUser.get(id=companion_id)
+        chat = await Chat.get(id=chat_id)
     except (ValueError, DoesNotExist):
         await callback.answer()
         return
@@ -33,8 +38,61 @@ async def call_handler(callback: types.CallbackQuery, callback_data: dict, state
 
     if action == 'call':
         await callback.answer(user.message('wait_answer'), show_alert=True)
-        await bot.send_message(companion.)
+        await bot.send_message(
+            companion.telegram_id,
+            companion.message('call_answer'),
+            reply_markup=await call_answer_keyboard(user, chat)
+        )
+    elif action == 'accept':
+        chat.call_rejected = False
+        await chat.save()
+        url = get_meet_url()
+        await callback.message.answer(
+            user.message('connect_meet'),
+            reply_markup=connect_meet(user, url)
+        )
+        await bot.send_message(
+            companion.telegram_id,
+            companion.message('connect_meet'),
+            reply_markup=connect_meet(companion, url)
+        )
 
+    elif action == 'reject':
+        await callback.message.delete()
+        chat.call_rejected = True
+        await chat.save()
+        supervisor.call_reject(chat)
+
+        new_msg = await ChatMessage.create(
+            chat=chat,
+            text=f'<i>{companion.message("call_rejected")}</i>',
+            time=datetime.now(tz),
+            is_customer=False
+        )
+
+        companion_message = (await FSMContext(
+            storage=dp.get_current().storage, chat=companion.telegram_id, user=companion.telegram_id
+        ).get_data()).get('chat_message_id')
+
+        if companion_message:
+            await bot.edit_message_text(
+                await chat.text(companion),
+                chat_id,
+                companion_message,
+                reply_markup=await get_chat_keyboard(user, chat, True)
+
+            )
+        else:
+            await bot.send_message(
+                chat_id,
+                user.message('new_chat_message_form').format(
+                    time=new_msg.time,
+                    name=user.message('customer'),
+                    text=new_msg.text,
+                    id_=chat.id
+                ),
+                reply_markup=await get_chat_keyboard(user, chat, False)
+            )
 
 
 @dp.callback_query_handler(ChatTypeFilter(ChatType.PRIVATE), chat_callback.filter(), state='*')
@@ -44,6 +102,8 @@ async def button_chat_handler(callback: types.CallbackQuery, callback_data: dict
     user = await TelegramUser.get_or_none(telegram_id=callback.from_user.id)
     if user is None:
         return
+
+    await user.update_time()
 
     try:
         chat_id = int(callback_data['chat_id'])
@@ -66,13 +126,13 @@ async def button_chat_handler(callback: types.CallbackQuery, callback_data: dict
     if new_msg:
         msg = await callback.message.answer(
             await chat.text(user),
-            reply_markup=get_chat_keyboard(user, chat, True)
+            reply_markup=await get_chat_keyboard(user, chat, True)
         )
     else:
         msg = callback.message
         await callback.message.edit_text(
             await chat.text(user),
-            reply_markup=get_chat_keyboard(user, chat, True)
+            reply_markup=await get_chat_keyboard(user, chat, True)
         )
     current_state = await state.get_state()
     await state.update_data(prev_state=current_state, chat_message_id=msg.message_id, chat_id=chat.id)
@@ -87,6 +147,9 @@ async def chat_handler(message: types.Message, state: FSMContext):
     user = await TelegramUser.get_or_none(telegram_id=message.from_user.id)
     if user is None:
         return
+
+    await user.update_time()
+
     try:
         chat_id = (await state.get_data())['chat_id']
         message_id = (await state.get_data())['chat_message_id']
@@ -122,7 +185,7 @@ async def chat_handler(message: types.Message, state: FSMContext):
         await chat.text(user),
         user.telegram_id,
         message_id,
-        reply_markup=get_chat_keyboard(user, chat, True)
+        reply_markup=await get_chat_keyboard(user, chat, True)
     )
 
     companion_message = (await FSMContext(
@@ -134,7 +197,7 @@ async def chat_handler(message: types.Message, state: FSMContext):
             await chat.text(companion),
             chat_id,
             companion_message,
-            reply_markup=get_chat_keyboard(user, chat, True)
+            reply_markup=await get_chat_keyboard(user, chat, True)
 
         )
     else:
@@ -146,7 +209,5 @@ async def chat_handler(message: types.Message, state: FSMContext):
                 text=new_msg.text,
                 id_=chat.id
             ),
-            reply_markup=get_chat_keyboard(user, chat, False)
+            reply_markup=await get_chat_keyboard(user, chat, False)
         )
-
-

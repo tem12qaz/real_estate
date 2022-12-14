@@ -4,7 +4,8 @@ from data.config import TG_URL
 from db.models import TelegramUser, Config, Object, Chat
 from keyboards.inline.callbacks import language_callback, main_menu_callback, empty_callback, list_objects_callback, \
     open_object_callback, filter_district_callback, select_price_callback, \
-    object_callback, object_photos_callback, delete_message_callback, form_callback, chat_callback, call_callback
+    object_callback, object_photos_callback, delete_message_callback, form_callback, chat_callback, call_callback, \
+    after_call_callback
 
 
 def select_language_keyboard(user: TelegramUser) -> InlineKeyboardMarkup:
@@ -219,7 +220,7 @@ def bool_form_keyboard(user: TelegramUser) -> InlineKeyboardMarkup:
     return keyboard
 
 
-def get_chat_keyboard(user: TelegramUser, chat: Chat, active: bool = False) -> InlineKeyboardMarkup:
+async def get_chat_keyboard(user: TelegramUser, chat: Chat, active: bool = False) -> InlineKeyboardMarkup:
     text = user.button('open_chat') if not active else user.button('close_chat')
     inline_keyboard = [
         [
@@ -232,10 +233,102 @@ def get_chat_keyboard(user: TelegramUser, chat: Chat, active: bool = False) -> I
         inline_keyboard.insert(
             0,
             [
-                InlineKeyboardButton(text=text, callback_data=call_callback.new(
-                    companion_id=(await chat.customer).telegram_id, action='call'
+                InlineKeyboardButton(text=user.button('call_now'), callback_data=call_callback.new(
+                    companion_id=(await chat.customer).telegram_id, chat_id=chat.id, action='call'
                 ))
             ]
         )
 
     return InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
+
+
+async def call_answer_keyboard(user: TelegramUser, chat: Chat) -> InlineKeyboardMarkup:
+    companion = await (await chat.seller).manager
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text=user.button('accept_call'), callback_data=call_callback.new(
+                    companion_id=companion.telegram_id, chat_id=chat.id, action='accept'
+                ))
+            ],
+            [
+                InlineKeyboardButton(text=user.button('reject_call'), callback_data=call_callback.new(
+                    companion_id=companion.telegram_id,chat_id=chat.id, action='reject'
+                ))
+            ]
+        ]
+    )
+    return keyboard
+
+
+async def support_keyboard(user: TelegramUser) -> InlineKeyboardMarkup:
+    config = await Config.get(id=1)
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text=user.button('en'), url=TG_URL.format(un=config.support)),
+            ]
+        ]
+    )
+    return keyboard
+
+
+def connect_meet(user: TelegramUser, url: str) -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text=user.button('connect_meet'), url=url),
+            ]
+        ]
+    )
+    return keyboard
+
+
+async def call_chat_keyboard(user: TelegramUser, chat: Chat) -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text=user.button('call_now'), callback_data=call_callback.new(
+                    companion_id=(await chat.customer).telegram_id, chat_id=chat.id, action='call'
+                ))
+            ],
+            [
+                InlineKeyboardButton(text=user.button('open_chat'), callback_data=chat_callback.new(
+                    chat_id=chat.id, new_msg=0
+                ))
+            ]
+        ]
+    )
+    return keyboard
+
+
+def after_call_keyboard(user: TelegramUser, chat: Chat) -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text=user.button('yes'),
+                    callback_data=after_call_callback.new(
+                        action='yes', chat_id=chat.id
+                    )
+                ),
+                InlineKeyboardButton(
+                    text=user.button('no'),
+                    callback_data=after_call_callback.new(
+                       action='no', chat_id=chat.id
+                    )
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text=user.button('no'),
+                    callback_data=after_call_callback.new(
+                        action='no', chat_id=chat.id
+                    )
+                )
+            ]
+        ]
+    )
+    return keyboard
+
+
