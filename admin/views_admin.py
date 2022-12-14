@@ -222,12 +222,12 @@ class ObjectAdmin(MyModelView):
     can_export = True
     # export_types = ['xlsx']
 
-    column_editable_list = ['name', 'description', 'included', 'terms']
-    column_searchable_list = column_editable_list
+    # column_editable_list = ['name', 'description', 'included', 'terms']
+    # column_searchable_list = column_editable_list
     # column_exclude_list = ['password']
     # form_excluded_columns = column_exclude_list
     # column_details_exclude_list = column_exclude_list
-    column_filters = column_editable_list
+    # column_filters = column_editable_list
 
     # @expose('/export/<export_type>/')
     # def export(self, export_type):
