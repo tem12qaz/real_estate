@@ -108,10 +108,9 @@ class TelegramUserView(MyModelView):
 class DeveloperAdminView(MyModelView):
     can_export = True
 
-    column_editable_list = ['name', 'manager', 'chat_id', 'photo', 'message', 'rating',
-                            'successful_orders']
-    column_searchable_list = column_editable_list
-    column_filters = column_editable_list
+    # column_editable_list = ['name', 'manager', 'chat_id', 'photo', 'message', 'rating', 'successful_orders']
+    # column_searchable_list = column_editable_list
+    # column_filters = column_editable_list
 
     def _list_thumbnail(view, context, model, name):
         if not model.photo:
