@@ -63,6 +63,8 @@ class TelegramUser(db.Model):
     # orders = relationship("Order", back_populates="customer")
     # promos = relationship("PromoUses", back_populates="user", cascade='all,delete')
     chats = relationship("Chat", back_populates="customer", cascade='all,delete')
+    actions = relationship("Action", back_populates="user", cascade='all,delete')
+
 
     # favorite = db.relationship('Tour', secondary=favorite_tours,
     #                            backref=db.backref('in_favorite', lazy='dynamic'), cascade='delete')
@@ -87,6 +89,7 @@ class Developer(db.Model):
 
 
     objects = relationship("Object", back_populates="owner", cascade='all,delete')
+    actions = relationship("Action", back_populates="developer", cascade='all,delete')
 
     # orders = relationship("Order", back_populates="seller")
     chats = relationship("Chat", back_populates="seller", cascade='all,delete')
@@ -142,6 +145,7 @@ class Object(db.Model):
     files = relationship("File", back_populates="object", cascade='all,delete')
     # orders = relationship("Order", back_populates="object")
     chats = relationship("Chat", back_populates="object")
+    actions = relationship("Action", back_populates="object", cascade='all,delete')
 
     def __repr__(self):
         return self.name
