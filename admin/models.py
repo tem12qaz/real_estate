@@ -170,7 +170,6 @@ class Config(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     support = db.Column(db.String(128), nullable=False)
     group = db.Column(db.String(128), nullable=False)
-    tax = db.Column(db.Integer(), nullable=False)
 
 
 class District(db.Model):

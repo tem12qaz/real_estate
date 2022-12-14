@@ -240,7 +240,6 @@ class Config(Model):
     id = fields.IntField(pk=True)
     support = fields.CharField(128)
     group = fields.CharField(128)
-    tax = fields.IntField()
 
 
 class ChatMessage(Model):
