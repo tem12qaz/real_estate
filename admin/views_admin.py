@@ -21,9 +21,8 @@ from wtforms import PasswordField, ValidationError
 
 from admin.config import UPDATE_BUTTON_URL, UPDATE_MESSAGE_URL, SEND_MESSAGE_URL, XLSX_PATH
 from admin.flask_app_init import db
-from admin.models import TourOperator, Photo, Tour, Date, Order
+from admin.models import Photo
 # from loader import logger
-from utils.exports import TourExport
 
 
 def name_gen(obj, file_data):
@@ -308,26 +307,26 @@ class ObjectAdmin(MyModelView):
     ]
 
 
-class CustomInlineModelFormList(InlineModelFormList):
-    def display_row_controls(self, field):
-        if field.form._obj:
-            _type = type(field.form._obj)
-            if _type == Date:
-                if field.form._obj.tour.dates == [field.form._obj]:
-                    return False
-                orders = db.session.query(Order).filter(Order.date == field.form._obj).all()
-                if orders:
-                    return False
+# class CustomInlineModelFormList(InlineModelFormList):
+#     def display_row_controls(self, field):
+#         if field.form._obj:
+#             _type = type(field.form._obj)
+#             if _type == Date:
+#                 if field.form._obj.tour.dates == [field.form._obj]:
+#                     return False
+#                 orders = db.session.query(Order).filter(Order.date == field.form._obj).all()
+#                 if orders:
+#                     return False
+#
+#             elif _type == Photo:
+#                 if field.form._obj.tour.photos == [field.form._obj]:
+#                     return False
+#
+#         return True
 
-            elif _type == Photo:
-                if field.form._obj.tour.photos == [field.form._obj]:
-                    return False
 
-        return True
-
-
-class MyInlineModelConverter(InlineModelConverter):
-    inline_field_list_type = CustomInlineModelFormList
+# class MyInlineModelConverter(InlineModelConverter):
+#     inline_field_list_type = CustomInlineModelFormList
 
 
 class OrderViewAdmin(MyModelView):
