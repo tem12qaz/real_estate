@@ -76,7 +76,7 @@ admin.add_view(DeveloperAdminView(Developer, db.session, menu_icon_type='fa', me
 
 admin.add_view(DistrictView(District, db.session, menu_icon_type='fa', menu_icon_value='fa-map-o', name="District"))
 admin.add_view(ObjectAdmin(Object, db.session, menu_icon_type='fa', menu_icon_value='fa-building', name="Object"))
-admin.add_view(ActionsAdmin(Action, db.session, menu_icon_type='fa', menu_icon_value='fa-building', name="Object"))
+admin.add_view(ActionsAdmin(Action, db.session, menu_icon_type='fa', menu_icon_value='fa-flash', name="Action"))
 
 admin.add_view(MessageView(Message, db.session, menu_icon_type='fa', menu_icon_value='fa-comment', name="Message"))
 admin.add_view(ButtonView(Button, db.session, menu_icon_type='fa', menu_icon_value='fa-comments', name="Button"))
