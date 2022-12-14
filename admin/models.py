@@ -86,7 +86,7 @@ class Developer(db.Model):
     manager_id = db.Column(db.Integer(), db.ForeignKey("telegramuser.id", ondelete='CASCADE'))
     # director_id = db.Column(db.Integer(), db.ForeignKey("telegramuser.id", ondelete='CASCADE'))
     # director = relationship("TelegramUser", back_populates="developer_director", uselist=False, foreign_keys=[director_id])
-    manager = relationship("TelegramUser", back_populates="developer_manager", uselist=False, foreign_keys=[manager_id])
+    manager = relationship("TelegramUser", back_populates="developer_manager", uselist=False)
 
     objects = relationship("Object", back_populates="owner", cascade='all,delete')
     actions = relationship("Action", back_populates="developer", cascade='all,delete')
