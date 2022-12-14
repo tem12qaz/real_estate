@@ -17,7 +17,7 @@ UPDATE_BUTTON_URL = HOST + '/H1vWYrEvefiqmspvUrvfsEaNsXFAMYFN'
 SEND_MESSAGE_URL = HOST + '/UZuq7Ftdmcov6HnSdvT33iX5MFaKepI3'
 MODERATE_TOUR_URL = HOST + '/admin/tour/moderate'
 
-XLSX_PATH = '/root/code/tur2/admin/xlsx/'
+XLSX_PATH = '/root/code/real_estate/admin/xlsx/'
 
 
 SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{PG_USER}:{PG_PASSWORD}@{PG_HOST}/{PG_DATABASE}'

@@ -59,7 +59,7 @@ NEWLINE = '''
 #     pathlib.Path(__file__).parent.resolve().parent.resolve().joinpath('admin').joinpath('static')
 # ) + '/'
 
-BASE_PATH = '/root/code/estate/admin/static/'
+BASE_PATH = '/root/code/real_estate/admin/static/'
 
 DISTRICTS_IN_COLUMN = 10
 
