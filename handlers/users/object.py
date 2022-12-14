@@ -12,9 +12,10 @@ from handlers.users.send_objects_page import send_objects_page
 from keyboards.inline.callbacks import open_object_callback, object_photos_callback, object_callback, \
     delete_message_callback
 from keyboards.inline.keyboards import object_keyboard, delete_message_keyboard, bool_form_keyboard
-from loader import dp, bot, supervisor
+from loader import dp, bot
 from states.states import FilterObjects, StartForm
 from utils.actions_type import ActionsEnum
+from utils.supervisor import supervisor
 
 
 @dp.callback_query_handler(ChatTypeFilter(ChatType.PRIVATE),

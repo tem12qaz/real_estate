@@ -7,6 +7,9 @@ from data.config import UPDATE_MESSAGE_PATH, UPDATE_BUTTON_PATH, BOT_TOKEN, HOST
 from db.db import db_init
 from db.models import Message, Button
 from routes.update_messages_and_buttons_handler import update_messages_handler, update_buttons_handler
+from utils.supervisor import supervisor
+
+
 # from routes.send_message_from_admin_handlers import send_message_from_admin_handler
 
 
@@ -20,7 +23,7 @@ async def on_startup(dp):
     # middlewares.setup(dp)
 
 if __name__ == '__main__':
-    from loader import dp, logger, loop, supervisor
+    from loader import dp, logger, loop
     import handlers
 
     aiohttp_app = web.Application(logger=logger, loop=loop)

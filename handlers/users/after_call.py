@@ -8,8 +8,9 @@ from data.config import FLOOD_RATE
 from db.models import TelegramUser, Chat
 from keyboards.inline.after_call import after_call_success_keyboard, after_call_all_info_keyboard
 from keyboards.inline.callbacks import call_callback, after_call_callback
-from loader import dp, supervisor, bot
+from loader import dp, bot
 from states.states import AfterCall
+from utils.supervisor import supervisor
 
 
 @dp.callback_query_handler(ChatTypeFilter(ChatType.PRIVATE), after_call_callback.filter(), state=AfterCall.all_states)
