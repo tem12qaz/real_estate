@@ -10,7 +10,7 @@ from tortoise.fields import SET_NULL
 from tortoise.models import Model
 
 from data.config import NEWLINE, BASE_PATH, tz
-from keyboards.inline.keyboards import object_keyboard, get_chat_keyboard, call_chat_keyboard
+# from keyboards.inline.keyboards import object_keyboard, get_chat_keyboard, call_chat_keyboard
 from loader import bot
 from states.states import chat_state
 from utils.actions_type import ActionsEnum
