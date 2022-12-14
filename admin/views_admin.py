@@ -340,7 +340,7 @@ class OrderViewAdmin(MyModelView):
 
 
 class ActionsAdmin(MyModelView):
-    column_editable_list = ['type', 'developer', 'user', 'object']
+    column_editable_list = ['type',]
     column_searchable_list = column_editable_list
     # column_exclude_list = ['password']
     # form_excluded_columns = column_exclude_list
