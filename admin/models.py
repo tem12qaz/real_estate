@@ -140,7 +140,7 @@ class Object(db.Model):
 
     photos = relationship("Photo", back_populates="object", cascade='all,delete')
     files = relationship("File", back_populates="object", cascade='all,delete')
-    orders = relationship("Order", back_populates="object")
+    # orders = relationship("Order", back_populates="object")
     chats = relationship("Chat", back_populates="object")
 
     def __repr__(self):
