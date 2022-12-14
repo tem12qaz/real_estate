@@ -60,7 +60,7 @@ class TelegramUser(db.Model):
     developer_manager = relationship("Developer", back_populates="manager", cascade='delete')
     # developer_director = relationship("Developer", back_populates="director", cascade='delete')
 
-    orders = relationship("Order", back_populates="customer")
+    # orders = relationship("Order", back_populates="customer")
     # promos = relationship("PromoUses", back_populates="user", cascade='all,delete')
     chats = relationship("Chat", back_populates="customer", cascade='all,delete')
 
