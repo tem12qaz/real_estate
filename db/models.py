@@ -65,8 +65,8 @@ class Action(Model):
 class Message(Model):
     id = fields.IntField(pk=True)
     name = fields.CharField(64, unique=True, index=True)
-    ru = fields.TextField()
-    en = fields.TextField()
+    ru = fields.TextField(null=True)
+    en = fields.TextField(null=True)
     _messages: dict[str, dict[str, str]] = {}
 
     @classmethod
@@ -83,8 +83,8 @@ class Message(Model):
 class Button(Model):
     id = fields.IntField(pk=True)
     name = fields.CharField(64, unique=True, index=True)
-    ru = fields.CharField(128)
-    en = fields.CharField(128)
+    ru = fields.CharField(128, null=True)
+    en = fields.CharField(128,null=True)
     _buttons: dict[str, dict[str, str]] = {}
 
     @classmethod
