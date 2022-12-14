@@ -302,33 +302,4 @@ async def call_chat_keyboard(user: TelegramUser, chat: Chat) -> InlineKeyboardMa
     return keyboard
 
 
-def after_call_keyboard(user: TelegramUser, chat: Chat) -> InlineKeyboardMarkup:
-    keyboard = InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(
-                    text=user.button('yes'),
-                    callback_data=after_call_callback.new(
-                        action='yes', chat_id=chat.id
-                    )
-                ),
-                InlineKeyboardButton(
-                    text=user.button('scheduled_a_call'),
-                    callback_data=after_call_callback.new(
-                       action='scheduled_a_call', chat_id=chat.id
-                    )
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    text=user.button('customer_declined'),
-                    callback_data=after_call_callback.new(
-                        action='customer_declined', chat_id=chat.id
-                    )
-                )
-            ]
-        ]
-    )
-    return keyboard
-
 
