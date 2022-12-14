@@ -302,4 +302,27 @@ async def call_chat_keyboard(user: TelegramUser, chat: Chat) -> InlineKeyboardMa
     return keyboard
 
 
+async def chats_keyboard(user: TelegramUser) -> InlineKeyboardMarkup:
+    inline_keyboard = []
+    for chat in await user.chats:
+        seller = await chat.seller
+        estate = await chat.object
+        inline_keyboard.append(
+            [
+                InlineKeyboardButton(text=seller.name + ' ' + estate.name, callback_data=chat_callback.new(
+                    chat_id=chat.id, new_msg=0
+                ))
+            ]
+        )
+    inline_keyboard.append(
+        [
+            InlineKeyboardButton(text=user.button('main_menu'), callback_data=main_menu_callback.new(
+                _='_'
+            )),
+        ]
+    )
+
+    return InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
+
+
 
