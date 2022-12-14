@@ -11,9 +11,10 @@ from db.models import TelegramUser, Chat, ChatMessage
 from filters.filters import MainMenuExcludeFilter
 from keyboards.inline.callbacks import chat_callback, call_callback
 from keyboards.inline.keyboards import get_chat_keyboard, call_answer_keyboard, connect_meet
-from loader import dp, bot, supervisor
+from loader import dp, bot
 from states.states import chat_state
 from utils.google_meet import get_meet_url
+from utils.supervisor import supervisor
 
 
 @dp.callback_query_handler(ChatTypeFilter(ChatType.PRIVATE), call_callback.filter(), state='*')

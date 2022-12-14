@@ -58,11 +58,13 @@ class TelegramUser(db.Model):
     # referer_id = db.Column(db.Integer, db.ForeignKey('telegramuser.id', ondelete='SET NULL'), nullable=True)
     # referrals = relationship("TelegramUser", backref=backref('referer', remote_side=[id]))
     developer_manager = relationship("Developer", back_populates="manager", cascade='delete')
-    developer_director = relationship("Developer", back_populates="director", cascade='delete')
+    # developer_director = relationship("Developer", back_populates="director", cascade='delete')
 
-    orders = relationship("Order", back_populates="customer")
+    # orders = relationship("Order", back_populates="customer")
     # promos = relationship("PromoUses", back_populates="user", cascade='all,delete')
     chats = relationship("Chat", back_populates="customer", cascade='all,delete')
+    actions = relationship("Action", back_populates="user", cascade='all,delete')
+
 
     # favorite = db.relationship('Tour', secondary=favorite_tours,
     #                            backref=db.backref('in_favorite', lazy='dynamic'), cascade='delete')
@@ -79,16 +81,17 @@ class Developer(db.Model):
     photo = db.Column(db.String(128), nullable=False)
     message = db.Column(db.Text(), nullable=False)
     rating = db.Column(db.Float(), nullable=True, default=5.)
+    successful_orders = db.Column(db.Integer(), nullable=True)
 
     manager_id = db.Column(db.Integer(), db.ForeignKey("telegramuser.id", ondelete='CASCADE'))
+    # director_id = db.Column(db.Integer(), db.ForeignKey("telegramuser.id", ondelete='CASCADE'))
+    # director = relationship("TelegramUser", back_populates="developer_director", uselist=False, foreign_keys=[director_id])
     manager = relationship("TelegramUser", back_populates="developer_manager", uselist=False)
 
-    director_id = db.Column(db.Integer(), db.ForeignKey("telegramuser.id", ondelete='CASCADE'))
-    director = relationship("TelegramUser", back_populates="developer_director", uselist=False)
-
     objects = relationship("Object", back_populates="owner", cascade='all,delete')
+    actions = relationship("Action", back_populates="developer", cascade='all,delete')
 
-    orders = relationship("Order", back_populates="seller")
+    # orders = relationship("Order", back_populates="seller")
     chats = relationship("Chat", back_populates="seller", cascade='all,delete')
 
     def __repr__(self):
@@ -126,6 +129,7 @@ class File(db.Model):
 class Object(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     price = db.Column(db.Integer(), nullable=False)
+    name = db.Column(db.String(128), nullable=False)
     date = db.Column(db.Date(), nullable=False)
     roi = db.Column(db.Integer(), nullable=False)
     presentation_path = db.Column(db.String(128), nullable=True)
@@ -140,8 +144,9 @@ class Object(db.Model):
 
     photos = relationship("Photo", back_populates="object", cascade='all,delete')
     files = relationship("File", back_populates="object", cascade='all,delete')
-    orders = relationship("Order", back_populates="object")
+    # orders = relationship("Order", back_populates="object")
     chats = relationship("Chat", back_populates="object")
+    actions = relationship("Action", back_populates="object", cascade='all,delete')
 
     def __repr__(self):
         return self.name
@@ -165,7 +170,6 @@ class Config(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     support = db.Column(db.String(128), nullable=False)
     group = db.Column(db.String(128), nullable=False)
-    tax = db.Column(db.Integer(), nullable=False)
 
 
 class District(db.Model):

@@ -10,7 +10,6 @@ from tortoise.fields import SET_NULL
 from tortoise.models import Model
 
 from data.config import NEWLINE, BASE_PATH, tz
-from keyboards.inline.keyboards import object_keyboard, get_chat_keyboard, call_chat_keyboard
 from loader import bot
 from states.states import chat_state
 from utils.actions_type import ActionsEnum
@@ -20,7 +19,7 @@ class Developer(Model):
     id = fields.IntField(pk=True)
     name = fields.CharField(128)
     manager = fields.OneToOneField('models.TelegramUser', related_name='developer_manager')
-    director = fields.OneToOneField('models.TelegramUser', related_name='developer_director')
+    # director = fields.OneToOneField('models.TelegramUser', related_name='developer_director')
     chat_id = fields.CharField(32)
     photo = fields.CharField(128)
     message = fields.TextField()
@@ -149,6 +148,8 @@ class Object(Model):
         return text
 
     async def send_message(self, user: TelegramUser, message: types.Message, state: FSMContext):
+        from keyboards.inline.keyboards import object_keyboard
+
         if not (await Action.get_or_none(user=user, object=self, developer=await self.owner, type=ActionsEnum.open)):
             await Action.create(
                 user=user, object=self, developer=await self.owner, type=ActionsEnum.open
@@ -180,6 +181,8 @@ class Object(Model):
         )
 
         if contact == 'chat':
+            from keyboards.inline.keyboards import get_chat_keyboard
+
             chat = await Chat.get_or_none(customer=user, seller=seller, object=self)
             if not chat:
                 chat = await Chat.create(
@@ -206,6 +209,8 @@ class Object(Model):
             await chat_state.set()
 
         elif contact == 'call':
+            from keyboards.inline.keyboards import call_chat_keyboard
+
             chat = await Chat.get_or_none(customer=user, seller=seller, object=self)
             if not chat:
                 chat = await Chat.create(
@@ -235,7 +240,6 @@ class Config(Model):
     id = fields.IntField(pk=True)
     support = fields.CharField(128)
     group = fields.CharField(128)
-    tax = fields.IntField()
 
 
 class ChatMessage(Model):

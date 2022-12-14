@@ -3,9 +3,9 @@ import pathlib
 import pytz
 
 IP = 'localhost'
-PG_PASSWORD = 'hvg32hiu_6f5vgi_tf7'
-PG_USER = 'gift'
-PG_DATABASE = 'gift'
+PG_PASSWORD = 'H816gxC4bS9RzpIRShRI'
+PG_USER = 'myuser'
+PG_DATABASE = 'estate'
 database_uri = f'postgres://{PG_USER}:{PG_PASSWORD}@{IP}/{PG_DATABASE}'
 
 aiogram_redis = {
@@ -17,7 +17,7 @@ redis = {
     'encoding': 'utf8'
 }
 
-BOT_TOKEN = ''
+BOT_TOKEN = '1661395033:AAEja4nN_rFQ00cInDy38sAqGhBIZLyU3lg'
 SECRET_PATTERN = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_='
 
 HOST = ''
@@ -59,7 +59,7 @@ NEWLINE = '''
 #     pathlib.Path(__file__).parent.resolve().parent.resolve().joinpath('admin').joinpath('static')
 # ) + '/'
 
-BASE_PATH = '/root/code/tur2/admin/static/'
+BASE_PATH = '/root/code/real_estate/admin/static/'
 
 DISTRICTS_IN_COLUMN = 10
 

@@ -11,6 +11,7 @@ def create_admin_account():
     email = 'test@test.ru'#random
     password = 'test'#random
     user_datastore.create_user(email=email, password=password, first_name='test', active=True)
+    user_datastore.create_role(name = 'superuser', description='superuser')
     db.session.commit()
     user = User.query.filter(User.email == email).first()
     role = Role.query.filter(Role.name == 'superuser').first()

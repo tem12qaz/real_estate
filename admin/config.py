@@ -3,9 +3,9 @@ SECRET_KEY = 'ygtfc867f97gbhnbjk'
 
 
 PG_HOST = 'localhost'
-PG_PASSWORD = '7pY1dPSiD0jfNPTOco5H'
+PG_PASSWORD = 'H816gxC4bS9RzpIRShRI'
 PG_USER = 'myuser'
-PG_DATABASE = 'db'
+PG_DATABASE = 'estate'
 
 
 HOST = 'https://turutur.ru'
@@ -17,7 +17,7 @@ UPDATE_BUTTON_URL = HOST + '/H1vWYrEvefiqmspvUrvfsEaNsXFAMYFN'
 SEND_MESSAGE_URL = HOST + '/UZuq7Ftdmcov6HnSdvT33iX5MFaKepI3'
 MODERATE_TOUR_URL = HOST + '/admin/tour/moderate'
 
-XLSX_PATH = '/root/code/tur2/admin/xlsx/'
+XLSX_PATH = '/root/code/real_estate/admin/xlsx/'
 
 
 SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{PG_USER}:{PG_PASSWORD}@{PG_HOST}/{PG_DATABASE}'
