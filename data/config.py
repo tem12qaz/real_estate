@@ -17,7 +17,7 @@ redis = {
     'encoding': 'utf8'
 }
 
-BOT_TOKEN = ''
+BOT_TOKEN = '1661395033:AAEja4nN_rFQ00cInDy38sAqGhBIZLyU3lg'
 SECRET_PATTERN = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_='
 
 HOST = ''
