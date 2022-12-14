@@ -3,9 +3,9 @@ import pathlib
 import pytz
 
 IP = 'localhost'
-PG_PASSWORD = 'hvg32hiu_6f5vgi_tf7'
-PG_USER = 'gift'
-PG_DATABASE = 'gift'
+PG_PASSWORD = '7pY1dPSiD0jfNPTOco5H'
+PG_USER = 'myuser'
+PG_DATABASE = 'estate'
 database_uri = f'postgres://{PG_USER}:{PG_PASSWORD}@{IP}/{PG_DATABASE}'
 
 aiogram_redis = {
@@ -59,7 +59,7 @@ NEWLINE = '''
 #     pathlib.Path(__file__).parent.resolve().parent.resolve().joinpath('admin').joinpath('static')
 # ) + '/'
 
-BASE_PATH = '/root/code/tur2/admin/static/'
+BASE_PATH = '/root/code/estate/admin/static/'
 
 DISTRICTS_IN_COLUMN = 10
 

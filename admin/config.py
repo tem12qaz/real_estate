@@ -5,7 +5,7 @@ SECRET_KEY = 'ygtfc867f97gbhnbjk'
 PG_HOST = 'localhost'
 PG_PASSWORD = '7pY1dPSiD0jfNPTOco5H'
 PG_USER = 'myuser'
-PG_DATABASE = 'db'
+PG_DATABASE = 'estate'
 
 
 HOST = 'https://turutur.ru'
