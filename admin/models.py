@@ -81,8 +81,8 @@ class Developer(db.Model):
     rating = db.Column(db.Float(), nullable=True, default=5.)
 
     manager_id = db.Column(db.Integer(), db.ForeignKey("telegramuser.id", ondelete='CASCADE'))
-    director_id = db.Column(db.Integer(), db.ForeignKey("telegramuser.id", ondelete='CASCADE'))
-    director = relationship("TelegramUser", back_populates="developer_director", uselist=False, foreign_keys=[director_id])
+    # director_id = db.Column(db.Integer(), db.ForeignKey("telegramuser.id", ondelete='CASCADE'))
+    # director = relationship("TelegramUser", back_populates="developer_director", uselist=False, foreign_keys=[director_id])
     manager = relationship("TelegramUser", back_populates="developer_manager", uselist=False, foreign_keys=[manager_id])
 
 
