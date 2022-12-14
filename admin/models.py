@@ -58,7 +58,7 @@ class TelegramUser(db.Model):
     # referer_id = db.Column(db.Integer, db.ForeignKey('telegramuser.id', ondelete='SET NULL'), nullable=True)
     # referrals = relationship("TelegramUser", backref=backref('referer', remote_side=[id]))
     developer_manager = relationship("Developer", back_populates="manager", cascade='delete')
-    developer_director = relationship("Developer", back_populates="director", cascade='delete')
+    # developer_director = relationship("Developer", back_populates="director", cascade='delete')
 
     orders = relationship("Order", back_populates="customer")
     # promos = relationship("PromoUses", back_populates="user", cascade='all,delete')
