@@ -47,6 +47,8 @@ class Supervisor:
             last_message_lt=notify_time, state='start'
         )
         for user in users:
+            if await user.developer_manager:
+                continue
             await self.send_message(user)
             await user.update_time()
 

@@ -313,17 +313,17 @@ def after_call_keyboard(user: TelegramUser, chat: Chat) -> InlineKeyboardMarkup:
                     )
                 ),
                 InlineKeyboardButton(
-                    text=user.button('no'),
+                    text=user.button('scheduled_a_call'),
                     callback_data=after_call_callback.new(
-                       action='no', chat_id=chat.id
+                       action='scheduled_a_call', chat_id=chat.id
                     )
                 )
             ],
             [
                 InlineKeyboardButton(
-                    text=user.button('no'),
+                    text=user.button('customer_declined'),
                     callback_data=after_call_callback.new(
-                        action='no', chat_id=chat.id
+                        action='customer_declined', chat_id=chat.id
                     )
                 )
             ]
