@@ -20,9 +20,9 @@ class Supervisor:
             reply_markup=await support_keyboard(user)
         )
 
-    def after_call(self, chat: Chat):
+    def after_call(self, chat: Chat, delay: int = 7200):
         async def notify(chat_: Chat):
-            await asyncio.sleep(7200)
+            await asyncio.sleep(delay)
             await chat_.refresh_from_db()
             user: TelegramUser = await (await chat_.seller).manager
             await bot.send_message(
@@ -30,6 +30,8 @@ class Supervisor:
                 user.message('after_call_notify').format(user=user.username, chat_id=chat_.id),
 
             )
+        self.loop.create_task(notify(chat))
+
 
     def call_reject(self, chat: Chat):
         async def notify(chat_: Chat):

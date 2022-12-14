@@ -16,4 +16,13 @@ class StartForm(StatesGroup):
     budget = State()
 
 
+class StartForm(StatesGroup):
+    experience = State()
+    bali_only = State()
+    features = State()
+    on_bali_now = State()
+    budget = State()
+
+
+
 chat_state = State('chat_state')
