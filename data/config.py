@@ -3,7 +3,7 @@ import pathlib
 import pytz
 
 IP = 'localhost'
-PG_PASSWORD = '7pY1dPSiD0jfNPTOco5H'
+PG_PASSWORD = 'H816gxC4bS9RzpIRShRI'
 PG_USER = 'myuser'
 PG_DATABASE = 'estate'
 database_uri = f'postgres://{PG_USER}:{PG_PASSWORD}@{IP}/{PG_DATABASE}'

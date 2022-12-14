@@ -3,7 +3,7 @@ SECRET_KEY = 'ygtfc867f97gbhnbjk'
 
 
 PG_HOST = 'localhost'
-PG_PASSWORD = '7pY1dPSiD0jfNPTOco5H'
+PG_PASSWORD = 'H816gxC4bS9RzpIRShRI'
 PG_USER = 'myuser'
 PG_DATABASE = 'estate'
 
