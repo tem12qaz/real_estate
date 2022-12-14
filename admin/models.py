@@ -88,7 +88,7 @@ class Developer(db.Model):
 
     objects = relationship("Object", back_populates="owner", cascade='all,delete')
 
-    orders = relationship("Order", back_populates="seller")
+    # orders = relationship("Order", back_populates="seller")
     chats = relationship("Chat", back_populates="seller", cascade='all,delete')
 
     def __repr__(self):
