@@ -11,9 +11,9 @@ from flask_migrate import Migrate
 from flask_security import Security, SQLAlchemyUserDatastore
 
 from admin.flask_app_init import db, app
-from admin.models import User, Role, TelegramUser, Config, Button, Message, Developer, District, Object
+from admin.models import User, Role, TelegramUser, Config, Button, Message, Developer, District, Object, Action
 from admin.views_admin import TelegramUserView, DeveloperAdminView, MessageView, ButtonView, ConfigView, DistrictView, \
-    ObjectAdmin
+    ObjectAdmin, ActionsAdmin
 from data.config import BASE_PATH
 
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
@@ -76,6 +76,7 @@ admin.add_view(DeveloperAdminView(Developer, db.session, menu_icon_type='fa', me
 
 admin.add_view(DistrictView(District, db.session, menu_icon_type='fa', menu_icon_value='fa-map-o', name="District"))
 admin.add_view(ObjectAdmin(Object, db.session, menu_icon_type='fa', menu_icon_value='fa-building', name="Object"))
+admin.add_view(ActionsAdmin(Action, db.session, menu_icon_type='fa', menu_icon_value='fa-building', name="Object"))
 
 admin.add_view(MessageView(Message, db.session, menu_icon_type='fa', menu_icon_value='fa-comment', name="Message"))
 admin.add_view(ButtonView(Button, db.session, menu_icon_type='fa', menu_icon_value='fa-comments', name="Button"))

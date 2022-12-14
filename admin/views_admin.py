@@ -21,7 +21,9 @@ from wtforms import PasswordField, ValidationError
 
 from admin.config import UPDATE_BUTTON_URL, UPDATE_MESSAGE_URL, SEND_MESSAGE_URL, XLSX_PATH
 from admin.flask_app_init import db
-from admin.models import Photo
+from admin.models import Photo, File
+
+
 # from loader import logger
 
 
@@ -289,8 +291,8 @@ class ObjectAdmin(MyModelView):
                 'path': _list_thumbnail
             }
         )),
-        (Photo, dict(
-            _list_thumbnail=_list_thumbnail,
+        (File, dict(
+            # _list_thumbnail=_list_thumbnail,
 
             form_extra_fields={
                 'path': CustomFileField(
@@ -330,6 +332,15 @@ class ObjectAdmin(MyModelView):
 
 class OrderViewAdmin(MyModelView):
     column_editable_list = ['paid', 'tax', 'remainder', 'places', 'state', 'datetime']
+    column_searchable_list = column_editable_list
+    # column_exclude_list = ['password']
+    # form_excluded_columns = column_exclude_list
+    # column_details_exclude_list = column_exclude_list
+    column_filters = column_editable_list
+
+
+class ActionsAdmin(MyModelView):
+    column_editable_list = ['type', 'developer', 'user', 'object']
     column_searchable_list = column_editable_list
     # column_exclude_list = ['password']
     # form_excluded_columns = column_exclude_list
