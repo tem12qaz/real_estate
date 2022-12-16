@@ -13,6 +13,7 @@ from data.config import NEWLINE, BASE_PATH, tz
 from loader import bot
 from states.states import chat_state
 from utils.actions_type import ActionsEnum
+from utils.date_formatter import date_formatter
 
 
 class Developer(Model):
@@ -128,7 +129,9 @@ class Object(Model):
 
     async def preview_text(self, user: TelegramUser):
         text = user.message('object_preview').format(
-            price=self.price, date=self.date, district=self.district, roi=self.roi, owner=(await self.owner).name
+            name=self.name,
+            price=self.price, date=date_formatter(self.date),
+            district=(await self.district).name, roi=self.roi, owner=(await self.owner).name
         )
         return text
 
@@ -137,13 +140,14 @@ class Object(Model):
             rating=(await self.owner).rating
         )
         orders_info = user.message('successful_orders_text').format(
-            rating=(await self.owner).rating
+            orders=(await self.owner).orders
         )
         additional_text = rating_info + NEWLINE + orders_info
         text = user.message('object_text').format(
-            price=self.price, date=self.date, district=self.district,
+
+            price=self.price, date=self.date, district=(await self.district).name,
             roi=self.roi, owner=(await self.owner).name,
-            additional=additional_text
+            additional=additional_text, name=self.name
         )
         return text
 
