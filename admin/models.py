@@ -102,14 +102,14 @@ class Message(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(64), nullable=False)
     ru = db.Column(db.Text(), nullable=False)
-    en = db.Column(db.Text(), nullable=False)
+    en = db.Column(db.Text(), nullable=True)
 
 
 class Button(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(64), nullable=False)
     ru = db.Column(db.String(128), nullable=False)
-    en = db.Column(db.String(128), nullable=False)
+    en = db.Column(db.String(128), nullable=True)
 
 
 class Photo(db.Model):

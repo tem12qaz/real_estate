@@ -131,7 +131,7 @@ async def after_call_handler(callback: types.CallbackQuery, callback_data: dict,
         user = await chat.customer
         await bot.send_message(
             user.telegram_id,
-            user.message('after_call_form').format(chat_id=chat_id),
+            user.message('after_call_form'),
             reply_markup=after_call_success_keyboard(user, chat)
         )
 
