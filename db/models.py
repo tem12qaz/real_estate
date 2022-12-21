@@ -40,7 +40,7 @@ class TelegramUser(Model):
     on_bali_now = fields.BooleanField(null=True)
     budget = fields.BigIntField(null=True)
 
-    last_message = fields.DatetimeField()
+    last_message = fields.DatetimeField(default=datetime.datetime.now())
     state = fields.CharField(16, default='start')
 
     def message(self, name: str) -> str:
