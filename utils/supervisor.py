@@ -54,7 +54,7 @@ class Supervisor:
         now = datetime.now(tz)
         notify_time = now - timedelta(days=1)
         users = await TelegramUser.filter(
-            last_message_lt=notify_time, state='start'
+            last_message__lt=notify_time, state='start'
         )
         for user in users:
             if await user.developer_manager:
