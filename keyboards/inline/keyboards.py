@@ -30,6 +30,9 @@ async def get_support_keyboard(user: TelegramUser) -> InlineKeyboardMarkup:
             [
                 InlineKeyboardButton(text=user.button('contact'),
                                      url=TG_URL.format(un=(await Config.get(id=1)).support)),
+
+            ],
+            [
                 InlineKeyboardButton(text=user.button('main_menu'), callback_data=main_menu_callback.new(
                     _='_'
                 )),
