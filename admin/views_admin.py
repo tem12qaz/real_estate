@@ -162,7 +162,6 @@ class MessageView(MyModelView):
     column_filters = column_editable_list
 
     def after_model_change(self, form, instance, is_created):
-        print('send_req')
         requests.get(UPDATE_MESSAGE_URL)
 
 
