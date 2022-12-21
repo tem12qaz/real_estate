@@ -78,6 +78,7 @@ class Message(Model):
         messages = await cls.all()
         for message in messages:
             cls._messages[message.name] = {'ru': message.ru}
+            cls._messages[message.name] = {'en': message.en}
 
 
 class Button(Model):
@@ -96,6 +97,7 @@ class Button(Model):
         buttons = await cls.all()
         for button in buttons:
             cls._buttons[button.name] = {'ru': button.ru}
+            cls._buttons[button.name] = {'en': button.en}
 
 
 class District(Model):
