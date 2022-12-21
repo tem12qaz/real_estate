@@ -177,6 +177,9 @@ class District(db.Model):
 
     objects = relationship("Object", back_populates="district", cascade='all,delete')
 
+    def __repr__(self):
+        return self.name
+
 
 class Chat(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
