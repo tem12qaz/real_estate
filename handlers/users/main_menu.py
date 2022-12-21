@@ -37,6 +37,7 @@ async def main_menu_handler(message: types.Message, state: FSMContext):
 
         await state.update_data(sales=sales, page=0)
         await send_objects_page(message, user, state)
+        return
 
     elif message.text == user.button('chats') or message.text == '/chats':
         await state.finish()
