@@ -77,8 +77,7 @@ class Message(Model):
     async def reload(cls):
         messages = await cls.all()
         for message in messages:
-            cls._messages[message.name] = {'ru': message.ru}
-            cls._messages[message.name] = {'en': message.en}
+            cls._messages[message.name] = {'ru': message.ru, 'en': message.en}
 
 
 class Button(Model):
@@ -96,8 +95,7 @@ class Button(Model):
     async def reload(cls):
         buttons = await cls.all()
         for button in buttons:
-            cls._buttons[button.name] = {'ru': button.ru}
-            cls._buttons[button.name] = {'en': button.en}
+            cls._buttons[button.name] = {'ru': button.ru, 'en': button.en}
 
 
 class District(Model):
