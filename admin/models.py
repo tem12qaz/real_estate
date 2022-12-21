@@ -95,7 +95,7 @@ class Developer(db.Model):
     chats = relationship("Chat", back_populates="seller", cascade='all,delete')
 
     def __repr__(self):
-        return str(self.full_name)
+        return str(self.name)
 
 
 class Message(db.Model):
