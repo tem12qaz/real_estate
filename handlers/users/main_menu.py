@@ -41,7 +41,7 @@ async def main_menu_handler(message: types.Message, state: FSMContext):
     elif message.text == user.button('chats') or message.text == '/chats':
         await state.finish()
 
-        text = user.message('settings')
+        text = user.message('chats')
         keyboard = await chats_keyboard(user)
 
     elif message.text == user.button('support') or message.text == '/support':

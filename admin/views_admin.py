@@ -349,7 +349,7 @@ class ActionsAdmin(MyModelView):
 
 
 class ConfigView(MyModelView):
-    column_editable_list = ['support', 'group']
+    column_editable_list = ['support',]
     column_searchable_list = column_editable_list
     # column_exclude_list = ['password']
     # form_excluded_columns = column_exclude_list

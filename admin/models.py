@@ -169,7 +169,6 @@ class Action(db.Model):
 class Config(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     support = db.Column(db.String(128), nullable=False)
-    group = db.Column(db.String(128), nullable=False)
 
 
 class District(db.Model):

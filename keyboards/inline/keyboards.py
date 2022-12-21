@@ -149,7 +149,7 @@ async def object_keyboard(estate: Object, user: TelegramUser, photo_index: int) 
         inline_keyboard.insert(
             1,
             [
-                InlineKeyboardButton(text=user.button('presentation'), callback_data=object_callback.new(
+                InlineKeyboardButton(text=user.button('get_presentation'), callback_data=object_callback.new(
                     action='presentation', object_id=estate.id
                 )),
             ]
@@ -266,7 +266,7 @@ async def support_keyboard(user: TelegramUser) -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text=user.button('en'), url=TG_URL.format(un=config.support)),
+                InlineKeyboardButton(text=user.button('contact'), url=TG_URL.format(un=config.support)),
             ]
         ]
     )
