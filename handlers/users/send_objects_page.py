@@ -25,6 +25,10 @@ async def send_objects_page(message: types.Message, user: TelegramUser, state: F
 
     queryset: QuerySet = filter_objects(sales, date, districts_id_list, price)
     objs = (await queryset.limit((page + 1) + 1))[page:]
+    if not objs:
+        await message.answer(
+            user.message('no_objects')
+        )
     all_count = len(await queryset.all())
     keyboard = get_list_objects_keyboard(user, objs[0], all_count)
 
