@@ -103,6 +103,7 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
             text_message
         )
         if await send_objects_page(callback.message, user, state, callback):
+            return
             await callback.message.delete()
 
     elif action == 'presentation':
