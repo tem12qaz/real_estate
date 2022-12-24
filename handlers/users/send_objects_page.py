@@ -33,6 +33,9 @@ async def send_objects_page(message: types.Message, user: TelegramUser,
             await message.answer(
                 user.message('no_objects')
             )
+        return
+    elif callback:
+        await callback.answer()
     all_count = len(await queryset.all())
     keyboard = get_list_objects_keyboard(user, objs[0], all_count, page)
 

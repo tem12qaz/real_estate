@@ -107,10 +107,11 @@ async def filter_price_handler(callback: types.CallbackQuery, callback_data: dic
 
     await user.update_time()
 
-    await callback.answer()
     price = callback_data['price']
 
     if price == '_':
+        await callback.answer()
+
         await FilterObjects.price.set()
         await callback.message.answer(
             user.message('select_price'),
@@ -133,8 +134,6 @@ async def drop_price_handler(callback: types.CallbackQuery, state: FSMContext):
         return
 
     await user.update_time()
-
-    await callback.answer()
 
     await state.update_data(price=None)
     await send_objects_page(callback.message, user, state, callback)
