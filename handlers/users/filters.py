@@ -3,9 +3,8 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import ChatTypeFilter
 from aiogram.types import ChatType
 
-from admin.models import TelegramUser
 from data.config import FLOOD_RATE, DISTRICTS_IN_COLUMN
-from db.models import District
+from db.models import District, TelegramUser
 from handlers.users.send_objects_page import send_objects_page
 from keyboards.inline.callbacks import filter_district_callback, districts_drop_callback, district_callback, \
     select_price_callback, filter_date_callback, price_drop_callback, date_drop_callback
