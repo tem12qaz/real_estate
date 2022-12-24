@@ -136,13 +136,15 @@ class Object(Model):
         return text
 
     async def text(self, user: TelegramUser):
+        rating = (await self.owner).rating
         rating_info = user.message('rating_text').format(
-            rating=(await self.owner).rating
+            rating=rating
         )
+        orders = (await self.owner).successful_orders
         orders_info = user.message('successful_orders_text').format(
-            orders=(await self.owner).successful_orders
+            orders=orders
         )
-        additional_text = rating_info + NEWLINE + orders_info
+        additional_text = (rating_info if rating else '') + NEWLINE + (orders_info if orders else '')
         text = user.message('object_text').format(
 
             price=self.price, date=self.date, district=(await self.district).name,
