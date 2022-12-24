@@ -15,7 +15,7 @@ async def get_list_districts_keyboard(user: TelegramUser,
                                       state: FSMContext = None) -> InlineKeyboardMarkup:
     inline_keyboard = []
     if state:
-        districts_id = (await state.get_data()).get('districts_id')
+        districts_id = (await state.get_data()).get('district_id')
         if not districts_id:
             districts_id = []
     else:
