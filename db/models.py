@@ -140,7 +140,7 @@ class Object(Model):
             rating=(await self.owner).rating
         )
         orders_info = user.message('successful_orders_text').format(
-            orders=(await self.owner).orders
+            orders=(await self.owner).successful_orders
         )
         additional_text = rating_info + NEWLINE + orders_info
         text = user.message('object_text').format(
