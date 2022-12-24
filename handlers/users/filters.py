@@ -23,8 +23,8 @@ async def list_districts_handler(callback: types.CallbackQuery, callback_data: d
 
     await user.update_time()
 
-    if (await state.get_data()).get('districts_id') is None:
-        await state.update_data(districts_id=[])
+    if (await state.get_data()).get('district_id') is None:
+        await state.update_data(district_id=[])
 
     await callback.answer()
 
