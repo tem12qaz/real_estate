@@ -17,7 +17,7 @@ async def send_objects_page(message: types.Message, user: TelegramUser,
     data = await state.get_data()
 
     date = data.get('date')
-    districts_id_list = data.get('districts_id')
+    districts_id_list = data.get('district_id')
     sales = data.get('sales')
     price = data.get('price')
     page = data.get('page')

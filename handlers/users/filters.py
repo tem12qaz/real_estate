@@ -54,7 +54,7 @@ async def districts_drop_handler(callback: types.CallbackQuery, callback_data: d
 
     await user.update_time()
 
-    await state.update_data(directions_id=[])
+    await state.update_data(district_id=[])
     page = 0
     districts = await District.all().limit(((page + 1) * DISTRICTS_IN_COLUMN) + 1)
     districts = districts[page * DISTRICTS_IN_COLUMN:]
