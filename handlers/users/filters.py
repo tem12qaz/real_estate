@@ -38,7 +38,7 @@ async def list_districts_handler(callback: types.CallbackQuery, callback_data: d
         await callback.message.delete()
         await FilterObjects.district.set()
 
-    await callback.message.answer(
+    await callback.message.edit_text(
         user.message('select_districts'),
         reply_markup=await get_list_districts_keyboard(user, districts, all_count, page, state)
     )
