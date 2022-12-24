@@ -117,12 +117,13 @@ async def filter_price_handler(callback: types.CallbackQuery, callback_data: dic
             user.message('select_price'),
             reply_markup=get_price_keyboard(user)
         )
+        await callback.message.delete()
+
     else:
         await FilterObjects.default.set()
         await state.update_data(price=price)
-        await send_objects_page(callback.message, user, state, callback)
-
-    await callback.message.delete()
+        if await send_objects_page(callback.message, user, state, callback):
+            await callback.message.delete()
 
 
 @dp.callback_query_handler(ChatTypeFilter(ChatType.PRIVATE), price_drop_callback.filter(),

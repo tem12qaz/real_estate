@@ -13,7 +13,7 @@ from states.states import FilterObjects
 
 
 async def send_objects_page(message: types.Message, user: TelegramUser,
-                            state: FSMContext, callback: types.CallbackQuery = None) -> None:
+                            state: FSMContext, callback: types.CallbackQuery = None) -> bool:
     data = await state.get_data()
 
     date = data.get('date')
@@ -33,7 +33,7 @@ async def send_objects_page(message: types.Message, user: TelegramUser,
             await message.answer(
                 user.message('no_objects')
             )
-        return
+        return False
     elif callback:
         await callback.answer()
     all_count = len(await queryset.all())
@@ -63,4 +63,5 @@ async def send_objects_page(message: types.Message, user: TelegramUser,
             await message.delete()
 
     await FilterObjects.default.set()
+    return True
 
