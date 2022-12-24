@@ -100,10 +100,10 @@ def get_price_keyboard(user: TelegramUser) -> InlineKeyboardMarkup:
          ],
         [
             InlineKeyboardButton(text=user.button(buttons[2]), callback_data=select_price_callback.new(
-                price=buttons[2][0]
+                price=buttons[2]
             )),
             InlineKeyboardButton(text=user.button(buttons[3]), callback_data=select_price_callback.new(
-                price=buttons[3][0]
+                price=buttons[3]
             ))
         ],
         [
