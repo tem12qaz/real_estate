@@ -119,7 +119,9 @@ async def filter_price_handler(callback: types.CallbackQuery, callback_data: dic
     else:
         await FilterObjects.default.set()
         await state.update_data(price=price)
-        await send_objects_page(callback.message, user, state)
+        await send_objects_page(callback.message, user, state, callback)
+
+    await callback.message.delete()
 
 
 @dp.callback_query_handler(ChatTypeFilter(ChatType.PRIVATE), price_drop_callback.filter(),
@@ -135,7 +137,7 @@ async def drop_price_handler(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer()
 
     await state.update_data(price=None)
-    await send_objects_page(callback.message, user, state)
+    await send_objects_page(callback.message, user, state, callback)
 
 
 @dp.callback_query_handler(ChatTypeFilter(ChatType.PRIVATE), filter_date_callback.filter(),

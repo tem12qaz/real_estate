@@ -12,7 +12,8 @@ from keyboards.inline.keyboards import get_list_objects_keyboard
 from states.states import FilterObjects
 
 
-async def send_objects_page(message: types.Message, user: TelegramUser, state: FSMContext) -> None:
+async def send_objects_page(message: types.Message, user: TelegramUser,
+                            state: FSMContext, callback: types.CallbackQuery = None) -> None:
     data = await state.get_data()
 
     date = data.get('date')
@@ -26,9 +27,12 @@ async def send_objects_page(message: types.Message, user: TelegramUser, state: F
     queryset: QuerySet = filter_objects(sales, date, districts_id_list, price)
     objs = (await queryset.limit((page + 1) + 1))[page:]
     if not objs:
-        await message.answer(
-            user.message('no_objects')
-        )
+        if callback:
+            await callback.answer(user.message('no_objects'), show_alert=True)
+        else:
+            await message.answer(
+                user.message('no_objects')
+            )
     all_count = len(await queryset.all())
     keyboard = get_list_objects_keyboard(user, objs[0], all_count, page)
 
