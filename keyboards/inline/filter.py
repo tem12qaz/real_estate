@@ -91,19 +91,19 @@ def get_price_keyboard(user: TelegramUser) -> InlineKeyboardMarkup:
     buttons = tuple(PriceButtons.buttons.keys())
     inline_keyboard = [
         [
-            InlineKeyboardButton(text=user.button(buttons[0][0]), callback_data=select_price_callback.new(
+            InlineKeyboardButton(text=user.button(buttons[0]), callback_data=select_price_callback.new(
                 price=buttons[0]
             )),
-            InlineKeyboardButton(text=user.button(buttons[1][0]), callback_data=select_price_callback.new(
+            InlineKeyboardButton(text=user.button(buttons[1]), callback_data=select_price_callback.new(
                 price=buttons[1]
             ))
          ],
         [
-            InlineKeyboardButton(text=user.button(buttons[2][0]), callback_data=select_price_callback.new(
-                price=buttons[2]
+            InlineKeyboardButton(text=user.button(buttons[2]), callback_data=select_price_callback.new(
+                price=buttons[2][0]
             )),
-            InlineKeyboardButton(text=user.button(buttons[3][0]), callback_data=select_price_callback.new(
-                price=buttons[3]
+            InlineKeyboardButton(text=user.button(buttons[3]), callback_data=select_price_callback.new(
+                price=buttons[3][0]
             ))
         ],
         [
