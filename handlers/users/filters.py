@@ -35,18 +35,14 @@ async def list_districts_handler(callback: types.CallbackQuery, callback_data: d
     districts = districts[page * DISTRICTS_IN_COLUMN:]
     all_count = await District.all().count()
 
-    if await state.get_state() == FilterObjects.district.state:
-        await callback.message.edit_text(
-            user.message('select_districts'),
-            reply_markup=await get_list_districts_keyboard(user, districts, all_count, page, state)
-        )
-    else:
-        await callback.message.answer(
-            user.message('select_districts'),
-            reply_markup=await get_list_districts_keyboard(user, districts, all_count, page, state)
-        )
+    if await state.get_state() != FilterObjects.district.state:
         await callback.message.delete()
         await FilterObjects.district.set()
+
+    await callback.message.answer(
+        user.message('select_districts'),
+        reply_markup=await get_list_districts_keyboard(user, districts, all_count, page, state)
+    )
 
 
 @dp.callback_query_handler(ChatTypeFilter(ChatType.PRIVATE), districts_drop_callback.filter(),

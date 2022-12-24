@@ -7,7 +7,7 @@ from aiogram.types import ChatType, InputFile, InputMediaPhoto
 from tortoise.queryset import QuerySet
 
 from data.config import FLOOD_RATE, BASE_PATH
-from db.filter_tours import filter_objects
+from db.filter_objects import filter_objects
 from db.models import TelegramUser, Object
 from handlers.users.send_objects_page import send_objects_page
 from keyboards.default.keyboard import get_main_keyboard

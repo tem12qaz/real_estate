@@ -6,7 +6,7 @@ from aiogram.types import InputMediaPhoto
 from tortoise.queryset import QuerySet
 
 from data.config import BASE_PATH
-from db.filter_tours import filter_objects
+from db.filter_objects import filter_objects
 from db.models import TelegramUser
 from keyboards.inline.keyboards import get_list_objects_keyboard
 from states.states import FilterObjects
@@ -30,7 +30,7 @@ async def send_objects_page(message: types.Message, user: TelegramUser, state: F
             user.message('no_objects')
         )
     all_count = len(await queryset.all())
-    keyboard = get_list_objects_keyboard(user, objs[0], all_count)
+    keyboard = get_list_objects_keyboard(user, objs[0], all_count, page)
 
     if objs[:1]:
         text = await objs[0].preview_text(user)

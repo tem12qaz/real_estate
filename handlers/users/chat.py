@@ -41,7 +41,7 @@ async def call_handler(callback: types.CallbackQuery, callback_data: dict, state
         await callback.answer(user.message('wait_answer'), show_alert=True)
         await bot.send_message(
             companion.telegram_id,
-            companion.message('call_answer'),
+            companion.message('call_answer').format(object=(await chat.object).name),
             reply_markup=await call_answer_keyboard(user, chat)
         )
     elif action == 'accept':
