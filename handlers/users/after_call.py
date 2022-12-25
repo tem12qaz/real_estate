@@ -122,7 +122,7 @@ async def after_call_text_handler(message: types.Message, state: FSMContext):
     await state.update_data(text=f'"{message.text}"')
     await message.answer(
         user.message('after_call_type'),
-        reply_markup=after_call_all_info_keyboard(user, chat)
+        reply_markup=after_call_type_keyboard(user, chat)
     )
     await AfterCall.type.set()
 
