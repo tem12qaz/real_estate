@@ -276,6 +276,13 @@ class ObjectAdmin(MyModelView):
     #     elif len(model.dates) > 10:
     #         raise ValidationError('До 10 дат у тура')
 
+    form_extra_fields = {
+        'presentation_path': CustomFileField(
+            'presentation_path',
+            base_path=pathlib.Path(__file__).parent.resolve().joinpath('static'), namegen=name_gen
+        )
+    }
+
     inline_models = [
         (Photo, dict(
             _list_thumbnail=_list_thumbnail,
@@ -290,6 +297,19 @@ class ObjectAdmin(MyModelView):
             column_formatters={
                 'path': _list_thumbnail
             }
+        )),
+        (File, dict(
+            # _list_thumbnail=_list_thumbnail,
+
+            form_extra_fields={
+                'path': CustomFileField(
+                    'path',
+                    base_path=pathlib.Path(__file__).parent.resolve().joinpath('static'), namegen=name_gen
+                )
+            },
+            # column_formatters={
+            #     'path': _list_thumbnail
+            # }
         )),
         (File, dict(
             # _list_thumbnail=_list_thumbnail,
