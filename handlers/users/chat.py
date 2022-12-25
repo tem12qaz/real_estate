@@ -161,8 +161,9 @@ async def chat_handler(message: types.Message, state: FSMContext):
         return
 
     if await chat.customer == user:
-        chat_id = (await chat.seller).chat_id
-        companion = await (await chat.seller).manager
+        seller = await chat.seller
+        chat_id = seller.chat_id
+        companion = await seller.manager
         companion_name = user.message('customer')
         is_customer = True
     elif await (await chat.seller).manager == user and str(message.chat.id) == (await chat.seller).chat_id:
@@ -193,7 +194,7 @@ async def chat_handler(message: types.Message, state: FSMContext):
     )
 
     companion_message = (await FSMContext(
-        storage=dp.get_current().storage, chat=companion.telegram_id, user=companion.telegram_id
+        storage=dp.get_current().storage, chat=chat_id, user=companion.telegram_id
     ).get_data()).get('chat_message_id')
 
     if companion_message:
