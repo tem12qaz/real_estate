@@ -39,6 +39,7 @@ async def form_handler(callback: types.CallbackQuery, callback_data: dict, state
     if action == 'back':
         if current_state == StartForm.experience.state:
             await estate.send_message(user, callback.message, state)
+            await FilterObjects.default.set()
             # await callback.message.delete()
             return
 
