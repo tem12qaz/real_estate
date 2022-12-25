@@ -142,7 +142,7 @@ async def button_chat_handler(callback: types.CallbackQuery, callback_data: dict
     return
 
 
-@dp.message_handler(ChatTypeFilter([ChatType.GROUP, ChatType.SUPERGROUP]),
+@dp.message_handler(ChatTypeFilter([ChatType.GROUP, ChatType.SUPERGROUP, ]),
                     MainMenuExcludeFilter(), state=chat_state)
 @dp.throttled(rate=FLOOD_RATE)
 async def chat_handler(message: types.Message, state: FSMContext):
@@ -165,7 +165,7 @@ async def chat_handler(message: types.Message, state: FSMContext):
         companion = await (await chat.seller).manager
         companion_name = (await chat.seller).name
         is_customer = True
-    elif await (await chat.seller).manager == user:
+    elif await (await chat.seller).manager == user and message.chat.id == (await chat.seller).chat_id:
         companion: TelegramUser = await chat.customer
         chat_id = companion.telegram_id
         companion_name = user.message('customer')
