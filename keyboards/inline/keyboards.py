@@ -334,7 +334,7 @@ async def group_chats_keyboard(developer: Developer) -> InlineKeyboardMarkup:
         estate = await chat.object
         inline_keyboard.append(
             [
-                InlineKeyboardButton(text=chat.id + ' ' + estate.name, callback_data=chat_callback.new(
+                InlineKeyboardButton(text=str(chat.id) + ' ' + estate.name, callback_data=chat_callback.new(
                     chat_id=chat.id, new_msg=0
                 ))
             ]
