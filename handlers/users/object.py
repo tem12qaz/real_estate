@@ -97,6 +97,7 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
         return
 
     if action == 'back':
+        await callback.answer()
         text_message = data.get('text_message')
         await bot.delete_message(
             user.telegram_id,
@@ -105,6 +106,8 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
         await send_objects_page(callback.message, user, state, callback)
 
     elif action == 'presentation':
+        await callback.answer()
+
         if not (await Action.get_or_none(user=user, object=estate,
                                          developer=await estate.owner, type=ActionsEnum.presentation)):
             await Action.create(
@@ -116,6 +119,8 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
         )
 
     elif action == 'files':
+        await callback.answer()
+
         if not (await Action.get_or_none(user=user, object=estate,
                                          developer=await estate.owner, type=ActionsEnum.photo_video)):
             await Action.get_or_create(
@@ -140,6 +145,8 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
             i += 1
 
     elif action in ['chat', 'call', 'video']:
+        await callback.answer()
+
         if not (await Action.get_or_none(user=user, object=estate,
                                          developer=await estate.owner, type=getattr(ActionsEnum, action))):
             await Action.create(
