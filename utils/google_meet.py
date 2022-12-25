@@ -2,8 +2,28 @@ import base64
 import requests
 
 
-def get_meet_url_bytes():
-    cookies = {
+cookies = {
+    '__Secure-ENID': '7.SE=YgS7e-NF9dlcFEoziWdqqiRWl8bZv8_1Tk-igBXJAUV-eqEHFZiwXQ7FzUgyPiG2_XpC7xIqOK2F3VwfhNtebNv02UjUl0GGp-u9MeIL5qGrJZ2jwbRnum7G2f2TkrF_xLtgUbAJ0lIlSVO2iis5_U3zG-gBKR_7wK0Y8cyjAew0qUMMAO_pKZmccnQJItoJOMzagOF984UgH95eg2l_neaNmZUUc340dJJdqp2EfwEUx9Haz8y7NkIHuK7zKCb74kObK-TDUnuPKw',
+    'SEARCH_SAMESITE': 'CgQIhZcB',
+    'AEC': 'AakniGOPPQlQupnz_0yBF-4q6pP5oxbwRILKD1-uwwoGoy-BouRyyoAlzQY',
+    'SID': 'SAi5zd1xY1InIR1svNMdEMZzcRhmIdIAg4cNa14x0W_TlJNsSj9YbnXb0W1yG5G0SwKp_Q.',
+    '__Secure-1PSID': 'SAi5zd1xY1InIR1svNMdEMZzcRhmIdIAg4cNa14x0W_TlJNs0BQ_zCStnupGn3VlwNcMfw.',
+    '__Secure-3PSID': 'SAi5zd1xY1InIR1svNMdEMZzcRhmIdIAg4cNa14x0W_TlJNs6oDydNPd7kPtYIZqasNuCA.',
+    'HSID': 'AbauGCDy4ClkQATQQ',
+    'SSID': 'Ajb08JprLhBQ1aa5m',
+    'APISID': 'MMrGQRt5JXSPerDM/AiJeZBH0AEGrutEvU',
+    'SAPISID': 'ZrULBJFkLGxsurF_/AIf3d1TAkXidpb3FR',
+    '__Secure-1PAPISID': 'ZrULBJFkLGxsurF_/AIf3d1TAkXidpb3FR',
+    '__Secure-3PAPISID': 'ZrULBJFkLGxsurF_/AIf3d1TAkXidpb3FR',
+    '1P_JAR': '2022-12-25-22',
+    'NID': '511=D6OCuX4PPQL_XUQ1-BnZE2hiTqy6337z1VRT3umVG7ZK8II6pQ9QxnJ2AMw09rNcCUSAMzwvJ2N-s_PoRJvwG-YI90ro7iFRz_YYGllXMBFg1-JcHF0nT4rG6m67UpquPiIKLHVqtrUC6gFqj9fLut1iPLlOBUVLrkBEFDNWsbrh3WCo15Xl7QvQFCVbV5vs-it9puiN_iiJMsAwvDvLaLtXL2Km3fNbSIjtuHT-NfRxcXiTvde-LvDwzu3BE4HEL2ytkqsXjm1hb-v1jI26F-fi9shB0oMkhTPaluEXOMYEOKbTwbNaEqdCWQeINl2fg8Vzc_TZJc3yHrgUrQ',
+    'SIDCC': 'AIKkIs32tVjFBP0RsRDPfwkSCZOe98gUrFiROrHrjhnY6HSScSPNVNicHWUCriTzBvq0lCzMwPyB',
+    '__Secure-1PSIDCC': 'AIKkIs0OeB4qT37sf79eCpw9kwU6MyIv5s-0UQufa7jeQP4EP02K4EZZUO916uJ534HqyIfvEdlT',
+    '__Secure-3PSIDCC': 'AIKkIs0O3qppNNr6dKwwgdwdq_hGxwk_9dcYe4AI6tNkzQ5C6_ZObLz3BJNCB0i3ChIUULT1mUDG',
+}
+
+
+cookies_meet = {
         'HSID': 'AQzYtmnMqnI5QS6IN',
         'SSID': 'AV1G1umsj65ondiH2',
         'APISID': '3h3n8hypB_TGaveY/Ap6O0tmSk12w2QvbB',
@@ -27,7 +47,7 @@ def get_meet_url_bytes():
         '__Secure-3PSIDCC': 'AIKkIs0X2lq_eeJQ-5rEa8cH9zParTktP7gRlZMVnfFtB8o86x7rRM23ZDUYQOfpWOWTv230qyTY',
     }
 
-    headers = {
+headers = {
         'authority': 'meet.google.com',
         'accept': '*/*',
         'accept-language': 'ru-RU,ru;q=0.9,en;q=0.8,es;q=0.7',
@@ -61,9 +81,10 @@ def get_meet_url_bytes():
         'x-goog-meeting-startsource': '218',
     }
 
+def get_meet_url_bytes():
     response = requests.post(
         'https://meet.google.com/$rpc/google.rtc.meetings.v1.MeetingSpaceService/CreateMeetingSpace',
-        cookies=cookies,
+        cookies=cookies_meet,
         headers=headers,
     )
     return response.content
@@ -79,3 +100,23 @@ def decode_meet_url(base64_url: bytes) -> str:
 
 def get_meet_url() -> str:
     return decode_meet_url(get_meet_url_bytes())
+
+
+def init_chrome():
+    options = webdriver.ChromeOptions()
+
+    options.add_argument("--disable-blink-features")
+    options.add_argument("--headless")
+
+    options.add_argument("--disable-blink-features=AutomationControlled")
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    options.add_experimental_option('useAutomationExtension', False)
+    options.add_argument("start-maximized")
+    prefs = {"profile.managed_default_content_settings.images": 2}
+    options.add_experimental_option("prefs", prefs)
+
+    driver = webdriver.Chrome(
+        options=options
+    )
+
+    return driver

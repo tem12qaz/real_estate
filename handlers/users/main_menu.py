@@ -8,12 +8,12 @@ from tortoise.queryset import QuerySet
 
 from data.config import FLOOD_RATE, BASE_PATH
 from db.filter_objects import filter_objects
-from db.models import TelegramUser, Object
+from db.models import TelegramUser, Object, Developer
 from handlers.users.send_objects_page import send_objects_page
 from keyboards.default.keyboard import get_main_keyboard
 from keyboards.inline.callbacks import main_menu_callback
 from keyboards.inline.keyboards import get_support_keyboard, get_list_objects_keyboard, chats_keyboard, \
-    select_language_keyboard
+    select_language_keyboard, group_chats_keyboard
 from loader import dp
 from states.states import FilterObjects
 
@@ -79,3 +79,20 @@ async def go_to_main_menu_handler(callback: types.CallbackQuery, state: FSMConte
         reply_markup=get_main_keyboard(user)
     )
     await callback.message.delete()
+
+
+@dp.message_handler(ChatTypeFilter([ChatType.GROUP, ChatType.SUPERGROUP]), state='*')
+@dp.throttled(rate=FLOOD_RATE)
+async def group_chat_handler(message: types.Message, state: FSMContext):
+    user = await TelegramUser.get_or_none(telegram_id=message.from_user.id)
+    if user is None:
+        return
+
+    if message.text == '/chats':
+        developer = await Developer.get_or_none(chat_id=str(message.chat.id))
+
+        if developer:
+            await message.answer(
+                text=user.message('group_chats'),
+                reply_markup=await group_chats_keyboard(developer)
+            )

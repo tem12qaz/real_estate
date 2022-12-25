@@ -1,7 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from data.config import TG_URL
-from db.models import TelegramUser, Config, Object, Chat
+from db.models import TelegramUser, Config, Object, Chat, Developer
 from keyboards.inline.callbacks import language_callback, main_menu_callback, empty_callback, list_objects_callback, \
     open_object_callback, filter_district_callback, select_price_callback, \
     object_callback, object_photos_callback, delete_message_callback, form_callback, chat_callback, call_callback, \
@@ -324,6 +324,21 @@ async def chats_keyboard(user: TelegramUser) -> InlineKeyboardMarkup:
             )),
         ]
     )
+
+    return InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
+
+
+async def group_chats_keyboard(developer: Developer) -> InlineKeyboardMarkup:
+    inline_keyboard = []
+    for chat in await developer.chats:
+        estate = await chat.object
+        inline_keyboard.append(
+            [
+                InlineKeyboardButton(text=chat.id + ' ' + estate.name, callback_data=chat_callback.new(
+                    chat_id=chat.id, new_msg=0
+                ))
+            ]
+        )
 
     return InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
 
