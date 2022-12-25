@@ -174,7 +174,8 @@ class Object(Model):
 
         await message.delete()
 
-    async def send_contact(self, user: TelegramUser, message: types.Message, contact: str, state: FSMContext):
+    async def send_contact(self, user: TelegramUser, message: types.Message,
+                           contact: str, state: FSMContext, callback: types.CallbackQuery = None):
         from keyboards.inline.keyboards import get_chat_keyboard
 
         seller = await self.owner
@@ -240,9 +241,14 @@ class Object(Model):
                 chat=chat, text=companion.message('call_request'), time=datetime.datetime.now(tz), is_customer=True
             )
 
-            await message.answer(
-                user.message('request_sent')
-            )
+            if callback:
+                await callback.answer(
+                    user.message('request_sent'), show_alert=True
+                )
+            else:
+                await message.answer(
+                    user.message('request_sent')
+                )
             await bot.send_message(
                 seller.chat_id,
                 user.message('new_chat_message_form').format(
@@ -256,6 +262,9 @@ class Object(Model):
             )
         elif contact == 'video':
             pass
+
+        if callback:
+            await callback.answer()
 
 
 class Config(Model):

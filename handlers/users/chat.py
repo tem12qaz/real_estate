@@ -35,6 +35,13 @@ async def call_handler(callback: types.CallbackQuery, callback_data: dict, state
         await callback.answer()
         return
 
+    if user == await chat.customer:
+        chat_id = (await chat.seller).chat_id
+        is_customer = True
+    else:
+        chat_id = (await chat.customer).telegram_id
+        is_customer = False
+
     action = callback_data['action']
 
     if action == 'call':
@@ -48,12 +55,12 @@ async def call_handler(callback: types.CallbackQuery, callback_data: dict, state
         chat.call_rejected = False
         await chat.save()
         url = get_meet_url()
-        await callback.message.answer(
+        await callback.message.edit_text(
             user.message('connect_meet'),
             reply_markup=connect_meet(user, url)
         )
         await bot.send_message(
-            companion.telegram_id,
+            chat_id,
             companion.message('connect_meet'),
             reply_markup=connect_meet(companion, url)
         )
@@ -68,11 +75,11 @@ async def call_handler(callback: types.CallbackQuery, callback_data: dict, state
             chat=chat,
             text=f'<i>{companion.message("call_rejected")}</i>',
             time=datetime.now(tz),
-            is_customer=False
+            is_customer=is_customer
         )
 
         companion_message = (await FSMContext(
-            storage=dp.get_current().storage, chat=companion.telegram_id, user=companion.telegram_id
+            storage=dp.get_current().storage, chat=chat_id, user=companion.telegram_id
         ).get_data()).get('chat_message_id')
 
         if companion_message:

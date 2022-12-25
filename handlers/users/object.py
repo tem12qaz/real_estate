@@ -150,7 +150,6 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
                 )
 
     elif action in ['chat', 'call', 'video']:
-        await callback.answer()
 
         if not (await Action.get_or_none(user=user, object=estate,
                                          developer=await estate.owner, type=getattr(ActionsEnum, action))):
@@ -161,6 +160,7 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
         await state.update_data(prev_state=(await state.get_state()))
 
         if user.state != 'finish':
+            await callback.answer()
             user.state = 'form'
             await user.save()
             supervisor.form_notify(user)
@@ -177,4 +177,4 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
             )
             await callback.message.delete()
         else:
-            await estate.send_contact(user, callback.message, action, state)
+            await estate.send_contact(user, callback.message, action, state, callback)
