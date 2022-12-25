@@ -28,7 +28,7 @@ class Supervisor:
             reply_markup=await support_keyboard(user)
         )
 
-    def after_call(self, chat: Chat, delay: int = 7200):
+    def after_call(self, chat: Chat, delay: int = 20):
         async def notify(chat_: Chat):
             await asyncio.sleep(delay)
             await chat_.refresh_from_db()
