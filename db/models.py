@@ -286,7 +286,8 @@ class Chat(Model):
             messages_ = user.message('no_messages')
         text = user.message('chat_form').format(
             id_=self.id,
-            messages=messages_
+            messages=messages_,
+            estate=(await self.object).name
         )
         return text
 

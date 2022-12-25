@@ -90,7 +90,8 @@ async def call_handler(callback: types.CallbackQuery, callback_data: dict, state
                     time=new_msg.time,
                     name=user.message('customer'),
                     text=new_msg.text,
-                    id_=chat.id
+                    id_=chat.id,
+                    estate=(await chat.object).name
                 ),
                 reply_markup=await get_chat_keyboard(user, chat, False)
             )
@@ -208,7 +209,8 @@ async def chat_handler(message: types.Message, state: FSMContext):
                 time=new_msg.time,
                 name=companion_name,
                 text=new_msg.text,
-                id_=chat.id
+                id_=chat.id,
+                estate=(await chat.object).name
             ),
             reply_markup=await get_chat_keyboard(user, chat, False)
         )
