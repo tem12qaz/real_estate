@@ -1,7 +1,7 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import ChatTypeFilter
-from aiogram.types import ChatType,
+from aiogram.types import ChatType
 from tortoise.exceptions import DoesNotExist
 
 from data.config import FLOOD_RATE
