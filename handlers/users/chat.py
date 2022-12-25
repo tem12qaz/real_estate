@@ -17,7 +17,7 @@ from utils.google_meet import get_meet_url
 from utils.supervisor import supervisor
 
 
-@dp.callback_query_handler(ChatTypeFilter(ChatType.PRIVATE), call_callback.filter(), state='*')
+@dp.callback_query_handler(ChatTypeFilter([ChatType.PRIVATE, ChatType.GROUP, ChatType.SUPERGROUP]), call_callback.filter(), state='*')
 @dp.throttled(rate=FLOOD_RATE)
 async def call_handler(callback: types.CallbackQuery, callback_data: dict, state: FSMContext):
     user = await TelegramUser.get_or_none(telegram_id=callback.from_user.id)
@@ -97,7 +97,7 @@ async def call_handler(callback: types.CallbackQuery, callback_data: dict, state
             )
 
 
-@dp.callback_query_handler(ChatTypeFilter(ChatType.PRIVATE), chat_callback.filter(), state='*')
+@dp.callback_query_handler(ChatTypeFilter([ChatType.PRIVATE, ChatType.GROUP, ChatType.SUPERGROUP]), chat_callback.filter(), state='*')
 @dp.throttled(rate=FLOOD_RATE)
 async def button_chat_handler(callback: types.CallbackQuery, callback_data: dict, state: FSMContext):
     await callback.answer()
