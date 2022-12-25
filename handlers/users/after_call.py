@@ -92,6 +92,7 @@ async def after_call_handler(callback: types.CallbackQuery, callback_data: dict,
             seller.chat_id,
             manager.message('successful_contact').format(
                 all=manager.message(data['all']),
+                all_info_text=manager.message('after_call_text') if data['text'] else '',
                 additional=data['text'],
                 type=manager.message(action),
                 un=user.username,
@@ -101,7 +102,7 @@ async def after_call_handler(callback: types.CallbackQuery, callback_data: dict,
         )
         await callback.message.edit_text(
             user.message('after_call_finish'),
-            reply_markup=None
+            reply_markup=delete_message_keyboard()
         )
 
 
