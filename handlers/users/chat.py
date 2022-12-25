@@ -29,7 +29,7 @@ async def call_handler(callback: types.CallbackQuery, callback_data: dict, state
     try:
         companion_id = int(callback_data['companion_id'])
         chat_id = int(callback_data['chat_id'])
-        companion = await TelegramUser.get(id=companion_id)
+        companion = await TelegramUser.get(telegram_id=companion_id)
         chat = await Chat.get(id=chat_id)
     except (ValueError, DoesNotExist):
         await callback.answer()
