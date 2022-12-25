@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 from data.config import tz
 from db.models import Chat, TelegramUser
+from keyboards.inline.after_call import after_call_keyboard
 from keyboards.inline.keyboards import support_keyboard
 from loader import bot, loop
 
@@ -35,7 +36,9 @@ class Supervisor:
             user: TelegramUser = await (await chat_.seller).manager
             await bot.send_message(
                 user.telegram_id,
-                user.message('after_call_notify').format(user=user.username, chat_id=chat_.id),
+                user.message('after_call_notify').format(user=user.username, chat_id=chat.id,
+                                                         estate=(await chat.object).name),
+                reply_markup=after_call_keyboard(user, chat)
 
             )
         self.loop.create_task(notify(chat))
