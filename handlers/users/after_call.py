@@ -33,6 +33,18 @@ async def after_call_handler(callback: types.CallbackQuery, callback_data: dict,
 
     current_state = await state.get_state()
     if current_state is None:
+        if user == await (await chat.seller).manager:
+            if action == 'scheduled_a_call':
+                supervisor.after_call(chat, 86400)
+
+            elif action in ('customer_declined', 'success'):
+                user = await chat.customer
+                await bot.send_message(
+                    user.telegram_id,
+                    user.message('after_call_form'),
+                    reply_markup=after_call_success_keyboard(user, chat)
+                )
+            return
         if action == 'yes':
             await state.update_data(success=True)
             await callback.message.edit_text(
@@ -125,15 +137,6 @@ async def after_call_handler(callback: types.CallbackQuery, callback_data: dict,
     except (ValueError, DoesNotExist):
         return
 
-    if action == 'scheduled_a_call':
-        supervisor.after_call(chat, 86400)
 
-    elif action in ('customer_declined', 'success'):
-        user = await chat.customer
-        await bot.send_message(
-            user.telegram_id,
-            user.message('after_call_form'),
-            reply_markup=after_call_success_keyboard(user, chat)
-        )
 
     await callback.message.delete()
