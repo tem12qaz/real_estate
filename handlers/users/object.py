@@ -158,7 +158,7 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
                 user=user, object=estate, developer=await estate.owner, type=getattr(ActionsEnum, action)
             )
 
-        if user.state == 'start':
+        if user.state != 'finish':
             user.state = 'form'
             await user.save()
             supervisor.form_notify(user)
