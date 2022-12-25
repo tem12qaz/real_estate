@@ -126,7 +126,7 @@ async def after_call_handler(callback: types.CallbackQuery, callback_data: dict,
         return
 
     if action == 'scheduled_a_call':
-        await supervisor.after_call(chat, 86400)
+        supervisor.after_call(chat, 86400)
 
     elif action in ('customer_declined', 'success'):
         user = await chat.customer
