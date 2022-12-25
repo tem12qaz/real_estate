@@ -102,9 +102,7 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
             user.telegram_id,
             text_message
         )
-        if await send_objects_page(callback.message, user, state, callback):
-            return
-            await callback.message.delete()
+        await send_objects_page(callback.message, user, state, callback):
 
     elif action == 'presentation':
         if not (await Action.get_or_none(user=user, object=estate,

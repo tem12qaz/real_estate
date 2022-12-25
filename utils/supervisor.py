@@ -12,7 +12,7 @@ class Supervisor:
     #     self.loop = loop
     #     self.sleep = sleep
 
-    def __new__(cls, loop: asyncio.AbstractEventLoop, sleep: int = 3600):
+    def __new__(cls, loop: asyncio.AbstractEventLoop, sleep: int = 36):
         if not hasattr(cls, 'instance'):
             cls.instance = super(Supervisor, cls).__new__(cls)
             cls.instance.loop = loop
