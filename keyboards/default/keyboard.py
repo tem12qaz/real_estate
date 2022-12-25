@@ -9,6 +9,7 @@ def get_main_keyboard(user: TelegramUser) -> ReplyKeyboardMarkup:
     sales = KeyboardButton(user.button('sales'))
     profile = KeyboardButton(user.button('chats'))
     support = KeyboardButton(user.button('support'))
+    support = KeyboardButton(user.button('language'))
 
     main_keyboard.add(find, sales, profile, support)
 

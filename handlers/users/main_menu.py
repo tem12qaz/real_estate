@@ -12,7 +12,8 @@ from db.models import TelegramUser, Object
 from handlers.users.send_objects_page import send_objects_page
 from keyboards.default.keyboard import get_main_keyboard
 from keyboards.inline.callbacks import main_menu_callback
-from keyboards.inline.keyboards import get_support_keyboard, get_list_objects_keyboard, chats_keyboard
+from keyboards.inline.keyboards import get_support_keyboard, get_list_objects_keyboard, chats_keyboard, \
+    select_language_keyboard
 from loader import dp
 from states.states import FilterObjects
 
@@ -48,6 +49,10 @@ async def main_menu_handler(message: types.Message, state: FSMContext):
     elif message.text == user.button('support') or message.text == '/support':
         keyboard = await get_support_keyboard(user)
         text = user.message('support')
+
+    elif message.text == user.button('language') or message.text == '/language':
+        keyboard = select_language_keyboard(user)
+        text = user.message('select_language')
 
     else:
         return
