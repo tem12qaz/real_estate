@@ -11,7 +11,8 @@ class MainMenuExcludeFilter(Filter):
             "sales",
             "chats",
             "support",
-            "language"
+            "language",
+            "start"
         ]
         self.buttons = [
             "find",
