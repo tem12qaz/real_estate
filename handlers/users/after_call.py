@@ -42,6 +42,8 @@ async def after_call_handler(callback: types.CallbackQuery, callback_data: dict,
                 user.message('after_call_form').format(chat_id=chat.id, estate=(await chat.object).name),
                 reply_markup=after_call_success_keyboard(user, chat)
             )
+        await callback.message.delete()
+        return
 
     current_state = await state.get_state()
     if current_state not in map(lambda x: x.state, AfterCall.all_states):
