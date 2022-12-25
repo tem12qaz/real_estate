@@ -165,7 +165,7 @@ async def chat_handler(message: types.Message, state: FSMContext):
         companion = await (await chat.seller).manager
         companion_name = user.message('customer')
         is_customer = True
-    elif await (await chat.seller).manager == user and message.chat.id == (await chat.seller).chat_id:
+    elif await (await chat.seller).manager == user and str(message.chat.id) == (await chat.seller).chat_id:
         companion: TelegramUser = await chat.customer
         chat_id = companion.telegram_id
         companion_name = (await chat.seller).name
