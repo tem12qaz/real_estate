@@ -7,6 +7,7 @@ from tortoise.exceptions import DoesNotExist
 from data.config import FLOOD_RATE
 from db.models import TelegramUser, Object
 from keyboards.inline.callbacks import open_object_callback, form_callback
+from keyboards.inline.filter import get_price_keyboard
 from keyboards.inline.keyboards import bool_form_keyboard
 from loader import dp
 from states.states import FilterObjects, StartForm
@@ -53,10 +54,11 @@ async def form_handler(callback: types.CallbackQuery, callback_data: dict, state
             }
         )
         await StartForm.next()
+    keyboard = bool_form_keyboard(user) if current_state != StartForm.on_bali_now.state else get_price_keyboard(user)
 
     await callback.message.edit_text(
         user.message((await state.get_state()).split(':')[1]),
-        reply_markup=bool_form_keyboard(user)
+        reply_markup=keyboard
     )
 
 
