@@ -195,7 +195,7 @@ class Object(Model):
                     customer=user, seller=seller, object=self, datetime=datetime.datetime.now(tz)
                 )
 
-                await ChatMessage.create(
+                mess = await ChatMessage.create(
                     chat=chat, text=text_form, time=datetime.datetime.now(tz), is_customer=True
                 )
                 await ChatMessage.create(
@@ -203,7 +203,13 @@ class Object(Model):
                 )
                 await bot.send_message(
                     seller.chat_id,
-                    text_form,
+                    user.message('new_chat_message_form').format(
+                        time=mess.time,
+                        name=user.message('customer'),
+                        text=text_form,
+                        id_=chat.id,
+                        estate=(await chat.object).name
+                    ),
                     reply_markup=await get_chat_keyboard(user, chat, False)
                 )
 
