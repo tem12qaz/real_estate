@@ -14,7 +14,7 @@ from states.states import AfterCall
 from utils.supervisor import supervisor
 
 
-@dp.callback_query_handler(ChatTypeFilter(ChatType.PRIVATE), after_call_callback.filter(), state=AfterCall.all_states)
+@dp.callback_query_handler(ChatTypeFilter(ChatType.PRIVATE), after_call_callback.filter(), state='*')
 @dp.throttled(rate=FLOOD_RATE)
 async def after_call_handler(callback: types.CallbackQuery, callback_data: dict, state: FSMContext):
     user = await TelegramUser.get_or_none(telegram_id=callback.from_user.id)
@@ -32,7 +32,7 @@ async def after_call_handler(callback: types.CallbackQuery, callback_data: dict,
         return
 
     current_state = await state.get_state()
-    if current_state == AfterCall.success.state:
+    if current_state is None:
         if action == 'yes':
             await state.update_data(success=True)
             await callback.message.edit_text(
