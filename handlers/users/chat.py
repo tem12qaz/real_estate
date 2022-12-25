@@ -187,7 +187,7 @@ async def chat_handler(message: types.Message, state: FSMContext):
 
     await bot.edit_message_text(
         await chat.text(user),
-        user.telegram_id,
+        message.chat.id,
         message_id,
         reply_markup=await get_chat_keyboard(user, chat, True)
     )
