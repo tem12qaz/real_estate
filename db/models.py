@@ -266,7 +266,7 @@ class Chat(Model):
 
     async def text(self, user: TelegramUser) -> str:
         operator = await self.seller
-        if user == await operator.user:
+        if user == await operator.manager:
             companion = user.message('customer')
             is_customer = False
         else:
