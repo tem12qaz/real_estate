@@ -142,7 +142,7 @@ async def button_chat_handler(callback: types.CallbackQuery, callback_data: dict
     return
 
 
-@dp.message_handler(ChatTypeFilter([ChatType.GROUP, ChatType.SUPERGROUP, ]),
+@dp.message_handler(ChatTypeFilter([ChatType.GROUP, ChatType.SUPERGROUP, ChatType.PRIVATE]),
                     MainMenuExcludeFilter(), state=chat_state)
 @dp.throttled(rate=FLOOD_RATE)
 async def chat_handler(message: types.Message, state: FSMContext):
