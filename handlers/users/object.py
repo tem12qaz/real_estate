@@ -128,7 +128,8 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
             )
         media = types.MediaGroup()
         i = 1
-        for file in await estate.files:
+        files = await estate.files
+        for file in files:
             if i == 10:
                 await callback.message.answer_media_group(
                     media=media
@@ -143,6 +144,10 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
                     media.attach_photo(InputFile(io.BytesIO(f.read())))
 
             i += 1
+            if file == files[-1]:
+                await callback.message.answer_media_group(
+                    media=media
+                )
 
     elif action in ['chat', 'call', 'video']:
         await callback.answer()
