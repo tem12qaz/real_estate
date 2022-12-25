@@ -111,7 +111,7 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
                 user=user, object=estate, developer=await estate.owner, type=ActionsEnum.presentation
             )
         await callback.message.answer_document(
-            document=BASE_PATH + estate.presentation_path,
+            document=InputFile(BASE_PATH + estate.presentation_path),
             reply_markup=delete_message_keyboard(user)
         )
 
