@@ -277,7 +277,7 @@ class Chat(Model):
             is_customer = False
         else:
             is_customer = True
-            companion = operator.full_name
+            companion = operator.name
 
         messages_ = ''
         messages: list[ChatMessage] = await self.messages
