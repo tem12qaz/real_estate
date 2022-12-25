@@ -149,6 +149,7 @@ async def chat_handler(message: types.Message, state: FSMContext):
     user = await TelegramUser.get_or_none(telegram_id=message.from_user.id)
     if user is None:
         return
+    print('chat')
 
     await user.update_time()
 
