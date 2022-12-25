@@ -64,6 +64,11 @@ async def call_handler(callback: types.CallbackQuery, callback_data: dict, state
         await chat.save()
         supervisor.call_reject(chat)
 
+        if user == await chat.customer:
+            chat_id = (await chat.seller).chat_id
+        else:
+            chat_id = (await chat.customer).telegram_id
+
         new_msg = await ChatMessage.create(
             chat=chat,
             text=f'<i>{companion.message("call_rejected")}</i>',
