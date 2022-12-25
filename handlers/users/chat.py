@@ -52,6 +52,7 @@ async def call_handler(callback: types.CallbackQuery, callback_data: dict, state
             reply_markup=await call_answer_keyboard(user, chat)
         )
     elif action == 'accept':
+        await supervisor.after_call(chat, 86400)
         chat.call_rejected = False
         await chat.save()
         url = get_meet_url()

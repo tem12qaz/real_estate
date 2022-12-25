@@ -40,7 +40,6 @@ class Supervisor:
             )
         self.loop.create_task(notify(chat))
 
-
     def call_reject(self, chat: Chat):
         async def notify(chat_: Chat):
             await asyncio.sleep(600)
