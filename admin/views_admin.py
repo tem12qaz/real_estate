@@ -10,7 +10,7 @@ from flask_admin import expose, BaseView
 from flask_admin.contrib import sqla
 from flask_admin.contrib.sqla.fields import InlineModelFormList
 from flask_admin.contrib.sqla.form import InlineModelConverter
-from flask_admin.form import ImageUploadField, ImageUploadInput, FileUploadInput
+from flask_admin.form import ImageUploadField, ImageUploadInput, FileUploadInput, FileUploadField
 from flask_admin.helpers import get_form_data, get_redirect_target
 from flask_babelex import gettext
 from flask_login import current_user
@@ -51,7 +51,7 @@ class CustomImageField(ImageUploadField):
     widget = CustomImageFieldWidget()
 
 
-class CustomFileField(ImageUploadField):
+class CustomFileField(FileUploadField):
     widget = FileUploadInput()
 
 
