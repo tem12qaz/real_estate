@@ -93,4 +93,6 @@ async def budget_handler(message: types.Message, state: FSMContext):
     user.budget = budget
     user.state = 'finish'
     await user.save()
+    await estate.send_contact(user, message, contact, state)
+
 
