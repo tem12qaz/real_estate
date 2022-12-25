@@ -29,7 +29,7 @@ async def call_handler(callback: types.CallbackQuery, callback_data: dict, state
     try:
         companion_id = int(callback_data['companion_id'])
         chat_id = int(callback_data['chat_id'])
-        companion = await TelegramUser.get(id=companion_id)
+        companion = await TelegramUser.get(telegram_id=companion_id)
         chat = await Chat.get(id=chat_id)
     except (ValueError, DoesNotExist):
         await callback.answer()
@@ -166,11 +166,12 @@ async def chat_handler(message: types.Message, state: FSMContext):
         return
 
     if await chat.customer == user:
-        chat_id = (await chat.seller).chat_id
-        companion = await (await chat.seller).manager
+        seller = await chat.seller
+        chat_id = seller.chat_id
+        companion = await seller.manager
         companion_name = user.message('customer')
         is_customer = True
-    elif await (await chat.seller).manager == user and message.chat.id == (await chat.seller).chat_id:
+    elif await (await chat.seller).manager == user and str(message.chat.id) == (await chat.seller).chat_id:
         companion: TelegramUser = await chat.customer
         chat_id = companion.telegram_id
         companion_name = (await chat.seller).name
@@ -192,13 +193,13 @@ async def chat_handler(message: types.Message, state: FSMContext):
 
     await bot.edit_message_text(
         await chat.text(user),
-        user.telegram_id,
+        message.chat.id,
         message_id,
         reply_markup=await get_chat_keyboard(user, chat, True)
     )
 
     companion_message = (await FSMContext(
-        storage=dp.get_current().storage, chat=companion.telegram_id, user=companion.telegram_id
+        storage=dp.get_current().storage, chat=chat_id, user=companion.telegram_id
     ).get_data()).get('chat_message_id')
 
     if companion_message:
@@ -206,7 +207,7 @@ async def chat_handler(message: types.Message, state: FSMContext):
             await chat.text(companion),
             chat_id,
             companion_message,
-            reply_markup=await get_chat_keyboard(user, chat, True)
+            reply_markup=await get_chat_keyboard(companion, chat, True)
 
         )
     else:
@@ -219,5 +220,5 @@ async def chat_handler(message: types.Message, state: FSMContext):
                 id_=chat.id,
                 estate=(await chat.object).name
             ),
-            reply_markup=await get_chat_keyboard(user, chat, False)
+            reply_markup=await get_chat_keyboard(companion, chat, False)
         )
