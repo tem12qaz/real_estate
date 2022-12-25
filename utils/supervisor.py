@@ -12,7 +12,7 @@ class Supervisor:
     #     self.loop = loop
     #     self.sleep = sleep
 
-    def __new__(cls, loop: asyncio.AbstractEventLoop, sleep: int = 1):
+    def __new__(cls, loop: asyncio.AbstractEventLoop, sleep: int = 3600):
         if not hasattr(cls, 'instance'):
             cls.instance = super(Supervisor, cls).__new__(cls)
             cls.instance.loop = loop
@@ -51,7 +51,7 @@ class Supervisor:
 
     async def active_users(self):
         now = datetime.now(tz)
-        notify_time = now - timedelta(minutes=1)
+        notify_time = now - timedelta(days=1)
         users = await TelegramUser.filter(
             last_message__lt=notify_time, state='start'
         )
