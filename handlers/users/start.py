@@ -9,6 +9,7 @@ from keyboards.default.keyboard import get_main_keyboard
 from keyboards.inline.callbacks import language_callback
 from keyboards.inline.keyboards import select_language_keyboard
 from loader import dp
+from utils.set_bot_commands import set_commands
 
 
 @dp.message_handler(ChatTypeFilter(ChatType.PRIVATE), CommandStart(), state='*')
@@ -59,6 +60,7 @@ async def language_handler(callback: types.CallbackQuery, callback_data: dict, s
 
     user.lang = lang
     await user.save()
+    await set_commands(user)
 
     await callback.message.answer(
         user.message('start_message'),

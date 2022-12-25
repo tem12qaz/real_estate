@@ -7,7 +7,8 @@ from tortoise.exceptions import DoesNotExist
 from data.config import FLOOD_RATE
 from db.models import TelegramUser, Object
 from keyboards.inline.callbacks import open_object_callback, form_callback
-from keyboards.inline.keyboards import bool_form_keyboard
+from keyboards.inline.filter import get_price_keyboard
+from keyboards.inline.keyboards import bool_form_keyboard, form_keyboard
 from loader import dp
 from states.states import FilterObjects, StartForm
 
@@ -39,7 +40,8 @@ async def form_handler(callback: types.CallbackQuery, callback_data: dict, state
     if action == 'back':
         if current_state == StartForm.experience.state:
             await estate.send_message(user, callback.message, state)
-            await callback.message.delete()
+            await FilterObjects.default.set()
+            # await callback.message.delete()
             return
 
         else:
@@ -53,9 +55,12 @@ async def form_handler(callback: types.CallbackQuery, callback_data: dict, state
         )
         await StartForm.next()
 
+    keyboard = bool_form_keyboard(user) if current_state != StartForm.on_bali_now.state else form_keyboard(user)
+
+
     await callback.message.edit_text(
         user.message((await state.get_state()).split(':')[1]),
-        reply_markup=bool_form_keyboard(user)
+        reply_markup=keyboard
     )
 
 
@@ -88,4 +93,6 @@ async def budget_handler(message: types.Message, state: FSMContext):
     user.budget = budget
     user.state = 'finish'
     await user.save()
+    await estate.send_contact(user, message, contact, state)
+
 

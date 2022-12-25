@@ -56,6 +56,7 @@ class Supervisor:
         users = await TelegramUser.filter(
             last_message__lt=notify_time, state='start'
         )
+        # print(users)
         for user in users:
             if await user.developer_manager:
                 continue

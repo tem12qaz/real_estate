@@ -112,11 +112,11 @@ async def object_keyboard(estate: Object, user: TelegramUser, photo_index: int) 
                 object_id=estate.id,
             )),
         ],
-        [
-            InlineKeyboardButton(text=user.button('en'), callback_data=object_callback.new(
-                object_id=estate.id, action='presentation'
-            )),
-        ],
+        # [
+        #     InlineKeyboardButton(text=user.button('en'), callback_data=object_callback.new(
+        #         object_id=estate.id, action='presentation'
+        #     )),
+        # ],
         [
             InlineKeyboardButton(text=user.button('chat'), callback_data=object_callback.new(
                 object_id=estate.id, action='chat'

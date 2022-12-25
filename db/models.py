@@ -136,13 +136,15 @@ class Object(Model):
         return text
 
     async def text(self, user: TelegramUser):
+        rating = (await self.owner).rating
         rating_info = user.message('rating_text').format(
-            rating=(await self.owner).rating
+            rating=rating
         )
+        orders = (await self.owner).successful_orders
         orders_info = user.message('successful_orders_text').format(
-            orders=(await self.owner).orders
+            orders=orders
         )
-        additional_text = rating_info + NEWLINE + orders_info
+        additional_text = (rating_info if rating else '') + NEWLINE + (orders_info if orders else '')
         text = user.message('object_text').format(
 
             price=self.price, date=self.date, district=(await self.district).name,
@@ -193,7 +195,7 @@ class Object(Model):
                     customer=user, seller=seller, object=self, datetime=datetime.datetime.now(tz)
                 )
 
-                await ChatMessage.create(
+                mess = await ChatMessage.create(
                     chat=chat, text=text_form, time=datetime.datetime.now(tz), is_customer=True
                 )
                 await ChatMessage.create(
@@ -201,7 +203,13 @@ class Object(Model):
                 )
                 await bot.send_message(
                     seller.chat_id,
-                    text_form,
+                    user.message('new_chat_message_form').format(
+                        time=mess.time,
+                        name=user.message('customer'),
+                        text=text_form,
+                        id_=chat.id,
+                        estate=(await chat.object).name
+                    ),
                     reply_markup=await get_chat_keyboard(user, chat, False)
                 )
 
@@ -264,12 +272,12 @@ class Chat(Model):
 
     async def text(self, user: TelegramUser) -> str:
         operator = await self.seller
-        if user == await operator.user:
+        if user == await operator.manager:
             companion = user.message('customer')
             is_customer = False
         else:
             is_customer = True
-            companion = operator.full_name
+            companion = operator.name
 
         messages_ = ''
         messages: list[ChatMessage] = await self.messages
@@ -284,7 +292,8 @@ class Chat(Model):
             messages_ = user.message('no_messages')
         text = user.message('chat_form').format(
             id_=self.id,
-            messages=messages_
+            messages=messages_,
+            estate=(await self.object).name
         )
         return text
 

@@ -97,26 +97,30 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
         return
 
     if action == 'back':
+        await callback.answer()
         text_message = data.get('text_message')
         await bot.delete_message(
             user.telegram_id,
             text_message
         )
-        await send_objects_page(callback.message, user, state)
-        await callback.message.delete()
+        await send_objects_page(callback.message, user, state, callback)
 
     elif action == 'presentation':
+        await callback.answer()
+
         if not (await Action.get_or_none(user=user, object=estate,
                                          developer=await estate.owner, type=ActionsEnum.presentation)):
             await Action.create(
                 user=user, object=estate, developer=await estate.owner, type=ActionsEnum.presentation
             )
         await callback.message.answer_document(
-            document=BASE_PATH + estate.presentation_path,
+            document=InputFile(BASE_PATH + estate.presentation_path),
             reply_markup=delete_message_keyboard(user)
         )
 
     elif action == 'files':
+        await callback.answer()
+
         if not (await Action.get_or_none(user=user, object=estate,
                                          developer=await estate.owner, type=ActionsEnum.photo_video)):
             await Action.get_or_create(
@@ -124,7 +128,8 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
             )
         media = types.MediaGroup()
         i = 1
-        for file in await estate.files:
+        files = await estate.files
+        for file in files:
             if i == 10:
                 await callback.message.answer_media_group(
                     media=media
@@ -139,15 +144,23 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
                     media.attach_photo(InputFile(io.BytesIO(f.read())))
 
             i += 1
+            if file == files[-1]:
+                await callback.message.answer_media_group(
+                    media=media
+                )
 
     elif action in ['chat', 'call', 'video']:
+        await callback.answer()
+
         if not (await Action.get_or_none(user=user, object=estate,
                                          developer=await estate.owner, type=getattr(ActionsEnum, action))):
             await Action.create(
                 user=user, object=estate, developer=await estate.owner, type=getattr(ActionsEnum, action)
             )
 
-        if user.state == 'start':
+        await state.update_data(prev_state=(await state.get_state()))
+
+        if user.state != 'finish':
             user.state = 'form'
             await user.save()
             supervisor.form_notify(user)

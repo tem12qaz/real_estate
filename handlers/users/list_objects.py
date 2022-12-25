@@ -25,5 +25,5 @@ async def list_tours_handler(callback: types.CallbackQuery, callback_data: dict,
     page = int(page)
     await state.update_data(page=page)
 
-    await send_objects_page(callback.message, user, state)
+    await send_objects_page(callback.message, user, state, callback)
 

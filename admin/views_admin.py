@@ -10,7 +10,7 @@ from flask_admin import expose, BaseView
 from flask_admin.contrib import sqla
 from flask_admin.contrib.sqla.fields import InlineModelFormList
 from flask_admin.contrib.sqla.form import InlineModelConverter
-from flask_admin.form import ImageUploadField, ImageUploadInput, FileUploadInput
+from flask_admin.form import ImageUploadField, ImageUploadInput, FileUploadInput, FileUploadField
 from flask_admin.helpers import get_form_data, get_redirect_target
 from flask_babelex import gettext
 from flask_login import current_user
@@ -51,7 +51,7 @@ class CustomImageField(ImageUploadField):
     widget = CustomImageFieldWidget()
 
 
-class CustomFileField(ImageUploadField):
+class CustomFileField(FileUploadField):
     widget = FileUploadInput()
 
 
@@ -276,6 +276,13 @@ class ObjectAdmin(MyModelView):
     #     elif len(model.dates) > 10:
     #         raise ValidationError('До 10 дат у тура')
 
+    form_extra_fields = {
+        'presentation_path': CustomFileField(
+            'presentation_path',
+            base_path=pathlib.Path(__file__).parent.resolve().joinpath('static'), namegen=name_gen
+        )
+    }
+
     inline_models = [
         (Photo, dict(
             _list_thumbnail=_list_thumbnail,
@@ -290,6 +297,19 @@ class ObjectAdmin(MyModelView):
             column_formatters={
                 'path': _list_thumbnail
             }
+        )),
+        (File, dict(
+            # _list_thumbnail=_list_thumbnail,
+
+            form_extra_fields={
+                'path': CustomFileField(
+                    'path',
+                    base_path=pathlib.Path(__file__).parent.resolve().joinpath('static'), namegen=name_gen
+                )
+            },
+            # column_formatters={
+            #     'path': _list_thumbnail
+            # }
         )),
         (File, dict(
             # _list_thumbnail=_list_thumbnail,

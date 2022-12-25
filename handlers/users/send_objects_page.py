@@ -6,17 +6,18 @@ from aiogram.types import InputMediaPhoto
 from tortoise.queryset import QuerySet
 
 from data.config import BASE_PATH
-from db.filter_tours import filter_objects
+from db.filter_objects import filter_objects
 from db.models import TelegramUser
 from keyboards.inline.keyboards import get_list_objects_keyboard
 from states.states import FilterObjects
 
 
-async def send_objects_page(message: types.Message, user: TelegramUser, state: FSMContext) -> None:
+async def send_objects_page(message: types.Message, user: TelegramUser,
+                            state: FSMContext, callback: types.CallbackQuery = None) -> bool:
     data = await state.get_data()
 
     date = data.get('date')
-    districts_id_list = data.get('districts_id')
+    districts_id_list = data.get('district_id')
     sales = data.get('sales')
     price = data.get('price')
     page = data.get('page')
@@ -26,11 +27,17 @@ async def send_objects_page(message: types.Message, user: TelegramUser, state: F
     queryset: QuerySet = filter_objects(sales, date, districts_id_list, price)
     objs = (await queryset.limit((page + 1) + 1))[page:]
     if not objs:
-        await message.answer(
-            user.message('no_objects')
-        )
+        if callback:
+            await callback.answer(user.message('no_objects'), show_alert=True)
+        else:
+            await message.answer(
+                user.message('no_objects')
+            )
+        return False
+    elif callback:
+        await callback.answer()
     all_count = len(await queryset.all())
-    keyboard = get_list_objects_keyboard(user, objs[0], all_count)
+    keyboard = get_list_objects_keyboard(user, objs[0], all_count, page)
 
     if objs[:1]:
         text = await objs[0].preview_text(user)
@@ -56,4 +63,5 @@ async def send_objects_page(message: types.Message, user: TelegramUser, state: F
             await message.delete()
 
     await FilterObjects.default.set()
+    return True
 

@@ -3,9 +3,8 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import ChatTypeFilter
 from aiogram.types import ChatType
 
-from admin.models import TelegramUser
 from data.config import FLOOD_RATE, DISTRICTS_IN_COLUMN
-from db.models import District
+from db.models import District, TelegramUser
 from handlers.users.send_objects_page import send_objects_page
 from keyboards.inline.callbacks import filter_district_callback, districts_drop_callback, district_callback, \
     select_price_callback, filter_date_callback, price_drop_callback, date_drop_callback
@@ -24,8 +23,8 @@ async def list_districts_handler(callback: types.CallbackQuery, callback_data: d
 
     await user.update_time()
 
-    if (await state.get_data()).get('districts_id') is None:
-        await state.update_data(districts_id=[])
+    if (await state.get_data()).get('district_id') is None:
+        await state.update_data(district_id=[])
 
     await callback.answer()
 
@@ -35,18 +34,14 @@ async def list_districts_handler(callback: types.CallbackQuery, callback_data: d
     districts = districts[page * DISTRICTS_IN_COLUMN:]
     all_count = await District.all().count()
 
-    if await state.get_state() == FilterObjects.district.state:
-        await callback.message.edit_text(
-            user.message('select_districts'),
-            reply_markup=await get_list_districts_keyboard(user, districts, all_count, page, state)
-        )
-    else:
-        await callback.message.answer(
-            user.message('select_districts'),
-            reply_markup=await get_list_districts_keyboard(user, districts, all_count, page, state)
-        )
+    if await state.get_state() != FilterObjects.district.state:
         await callback.message.delete()
         await FilterObjects.district.set()
+
+    await callback.message.edit_text(
+        user.message('select_districts'),
+        reply_markup=await get_list_districts_keyboard(user, districts, all_count, page, state)
+    )
 
 
 @dp.callback_query_handler(ChatTypeFilter(ChatType.PRIVATE), districts_drop_callback.filter(),
@@ -59,7 +54,7 @@ async def districts_drop_handler(callback: types.CallbackQuery, callback_data: d
 
     await user.update_time()
 
-    await state.update_data(directions_id=[])
+    await state.update_data(district_id=[])
     page = 0
     districts = await District.all().limit(((page + 1) * DISTRICTS_IN_COLUMN) + 1)
     districts = districts[page * DISTRICTS_IN_COLUMN:]
@@ -112,19 +107,23 @@ async def filter_price_handler(callback: types.CallbackQuery, callback_data: dic
 
     await user.update_time()
 
-    await callback.answer()
     price = callback_data['price']
 
     if price == '_':
+        await callback.answer()
+
         await FilterObjects.price.set()
         await callback.message.answer(
             user.message('select_price'),
             reply_markup=get_price_keyboard(user)
         )
+        await callback.message.delete()
+
     else:
-        await FilterObjects.default.set()
         await state.update_data(price=price)
-        await send_objects_page(callback.message, user, state)
+        if await send_objects_page(callback.message, user, state, callback):
+            await callback.message.delete()
+            await FilterObjects.default.set()
 
 
 @dp.callback_query_handler(ChatTypeFilter(ChatType.PRIVATE), price_drop_callback.filter(),
@@ -137,10 +136,9 @@ async def drop_price_handler(callback: types.CallbackQuery, state: FSMContext):
 
     await user.update_time()
 
-    await callback.answer()
-
     await state.update_data(price=None)
-    await send_objects_page(callback.message, user, state)
+    await send_objects_page(callback.message, user, state, callback)
+    await FilterObjects.default.set()
 
 
 @dp.callback_query_handler(ChatTypeFilter(ChatType.PRIVATE), filter_date_callback.filter(),

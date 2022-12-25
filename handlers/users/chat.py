@@ -41,7 +41,7 @@ async def call_handler(callback: types.CallbackQuery, callback_data: dict, state
         await callback.answer(user.message('wait_answer'), show_alert=True)
         await bot.send_message(
             companion.telegram_id,
-            companion.message('call_answer'),
+            companion.message('call_answer').format(object=(await chat.object).name),
             reply_markup=await call_answer_keyboard(user, chat)
         )
     elif action == 'accept':
@@ -90,7 +90,8 @@ async def call_handler(callback: types.CallbackQuery, callback_data: dict, state
                     time=new_msg.time,
                     name=user.message('customer'),
                     text=new_msg.text,
-                    id_=chat.id
+                    id_=chat.id,
+                    estate=(await chat.object).name
                 ),
                 reply_markup=await get_chat_keyboard(user, chat, False)
             )
@@ -141,13 +142,14 @@ async def button_chat_handler(callback: types.CallbackQuery, callback_data: dict
     return
 
 
-@dp.message_handler(ChatTypeFilter([ChatType.GROUP, ChatType.SUPERGROUP]),
+@dp.message_handler(ChatTypeFilter([ChatType.GROUP, ChatType.SUPERGROUP, ChatType.PRIVATE]),
                     MainMenuExcludeFilter(), state=chat_state)
 @dp.throttled(rate=FLOOD_RATE)
 async def chat_handler(message: types.Message, state: FSMContext):
     user = await TelegramUser.get_or_none(telegram_id=message.from_user.id)
     if user is None:
         return
+    print('chat')
 
     await user.update_time()
 
@@ -159,11 +161,11 @@ async def chat_handler(message: types.Message, state: FSMContext):
         return
 
     if await chat.customer == user:
-        chat_id = await (await chat.seller).chat_id
+        chat_id = (await chat.seller).chat_id
         companion = await (await chat.seller).manager
         companion_name = user.message('customer')
         is_customer = True
-    elif await (await chat.seller).manager == user:
+    elif await (await chat.seller).manager == user and message.chat.id == (await chat.seller).chat_id:
         companion: TelegramUser = await chat.customer
         chat_id = companion.telegram_id
         companion_name = (await chat.seller).name
@@ -209,7 +211,8 @@ async def chat_handler(message: types.Message, state: FSMContext):
                 time=new_msg.time,
                 name=companion_name,
                 text=new_msg.text,
-                id_=chat.id
+                id_=chat.id,
+                estate=(await chat.object).name
             ),
             reply_markup=await get_chat_keyboard(user, chat, False)
         )

@@ -9,25 +9,17 @@ class MainMenuExcludeFilter(Filter):
         self.exclude = [
             "find",
             "sales",
-            "about",
-            "favorite",
-            "settings",
-            "operator",
-            "referral",
+            "chats",
             "support",
-            "orders",
+            "language",
             "start"
         ]
         self.buttons = [
-            'find_tours',
-            'sales',
-            'about_us',
-            'favorite',
-            'settings',
-            'for_operator',
-            'referral',
-            'support',
-            'orders',
+            "find",
+            "sales",
+            "chats",
+            "support",
+            "language"
         ]
 
     async def check(self, message: types.Message) -> bool:

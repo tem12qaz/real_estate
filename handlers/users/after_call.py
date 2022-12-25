@@ -6,7 +6,8 @@ from tortoise.exceptions import DoesNotExist
 
 from data.config import FLOOD_RATE
 from db.models import TelegramUser, Chat
-from keyboards.inline.after_call import after_call_success_keyboard, after_call_all_info_keyboard
+from keyboards.inline.after_call import after_call_success_keyboard, after_call_all_info_keyboard, \
+    after_call_type_keyboard
 from keyboards.inline.callbacks import call_callback, after_call_callback
 from loader import dp, bot
 from states.states import AfterCall
@@ -55,7 +56,7 @@ async def after_call_handler(callback: types.CallbackQuery, callback_data: dict,
             await state.update_data(all='yes', text='')
             await callback.message.edit_text(
                 user.message('after_call_type'),
-                reply_markup=after_call_all_info_keyboard(user, chat)
+                reply_markup=after_call_type_keyboard(user, chat)
             )
             await AfterCall.type.set()
 
@@ -75,7 +76,7 @@ async def after_call_handler(callback: types.CallbackQuery, callback_data: dict,
             seller.chat_id,
             manager.message('successful_contact').format(
                 all=manager.message(data['all']),
-                additional=manager.message(data['text']),
+                additional=data['text'],
                 type=manager.message(action),
             )
         )
