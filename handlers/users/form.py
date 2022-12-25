@@ -54,7 +54,9 @@ async def form_handler(callback: types.CallbackQuery, callback_data: dict, state
             }
         )
         await StartForm.next()
-    keyboard = bool_form_keyboard(user) if current_state != StartForm.on_bali_now.state else get_price_keyboard(user)
+
+    keyboard = bool_form_keyboard(user) if current_state != StartForm.on_bali_now.state else None
+
 
     await callback.message.edit_text(
         user.message((await state.get_state()).split(':')[1]),
