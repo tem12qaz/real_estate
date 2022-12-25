@@ -174,7 +174,8 @@ class Object(Model):
 
         await message.delete()
 
-    async def send_contact(self, user: TelegramUser, message: types.Message, contact: str, state: FSMContext):
+    async def send_contact(self, user: TelegramUser, message: types.Message,
+                           contact: str, state: FSMContext, callback: types.CallbackQuery = None):
         seller = await self.owner
         companion = await seller.manager
 
@@ -236,9 +237,14 @@ class Object(Model):
                 chat=chat, text=seller.message, time=datetime.datetime.now(tz), is_customer=False
             )
 
-            await message.answer(
-                user.message('request_sent')
-            )
+            if callback:
+                await callback.answer(
+                    user.message('request_sent'), show_alert=True
+                )
+            else:
+                await message.answer(
+                    user.message('request_sent')
+                )
             await bot.send_message(
                 seller.chat_id,
                 text_form,
@@ -246,6 +252,9 @@ class Object(Model):
             )
         elif contact == 'video':
             pass
+
+        if callback:
+            await callback.answer()
 
 
 class Config(Model):

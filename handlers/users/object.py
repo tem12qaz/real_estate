@@ -177,4 +177,4 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
             )
             await callback.message.delete()
         else:
-            await estate.send_contact(user, callback.message, action, state)
+            await estate.send_contact(user, callback.message, action, state, callback)
