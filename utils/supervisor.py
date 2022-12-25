@@ -42,7 +42,7 @@ class Supervisor:
 
     def call_reject(self, chat: Chat):
         async def notify(chat_: Chat):
-            await asyncio.sleep(600)
+            await asyncio.sleep(10)
             await chat_.refresh_from_db()
             if chat_.call_rejected:
                 await self.send_message(await chat_.customer)

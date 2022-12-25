@@ -176,10 +176,12 @@ class Object(Model):
 
     async def send_contact(self, user: TelegramUser, message: types.Message,
                            contact: str, state: FSMContext, callback: types.CallbackQuery = None):
+        from keyboards.inline.keyboards import get_chat_keyboard
+
         seller = await self.owner
         companion = await seller.manager
 
-        text_form = user.message('form_chat').format(
+        text_form = companion.message('form_chat').format(
             experience=companion.button('yes') if user.experience else companion.button('no'),
             bali_only=companion.button('yes') if user.bali_only else companion.button('no'),
             features=companion.button('yes') if user.features else companion.button('no'),
@@ -188,7 +190,6 @@ class Object(Model):
         )
 
         if contact == 'chat':
-            from keyboards.inline.keyboards import get_chat_keyboard
 
             chat = await Chat.get_or_none(customer=user, seller=seller, object=self)
             if not chat:
@@ -230,11 +231,14 @@ class Object(Model):
                     customer=user, seller=seller, object=self, datetime=datetime.datetime.now(tz)
                 )
 
-            await ChatMessage.create(
-                chat=chat, text=text_form, time=datetime.datetime.now(tz), is_customer=True
-            )
-            await ChatMessage.create(
-                chat=chat, text=seller.message, time=datetime.datetime.now(tz), is_customer=False
+                await ChatMessage.create(
+                    chat=chat, text=text_form, time=datetime.datetime.now(tz), is_customer=True
+                )
+                await ChatMessage.create(
+                    chat=chat, text=seller.message, time=datetime.datetime.now(tz), is_customer=False
+                )
+            mess = await ChatMessage.create(
+                chat=chat, text=companion.message('call_request'), time=datetime.datetime.now(tz), is_customer=True
             )
 
             if callback:
@@ -247,8 +251,14 @@ class Object(Model):
                 )
             await bot.send_message(
                 seller.chat_id,
-                text_form,
-                reply_markup=await call_chat_keyboard(companion, chat)
+                user.message('new_chat_message_form').format(
+                    time=mess.time,
+                    name=user.message('customer'),
+                    text=text_form + NEWLINE + companion.message('call_request'),
+                    id_=chat.id,
+                    estate=(await chat.object).name
+                ),
+                reply_markup=await get_chat_keyboard(user, chat, False)
             )
         elif contact == 'video':
             pass
