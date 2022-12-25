@@ -9,6 +9,7 @@ from db.models import TelegramUser, Chat
 from keyboards.inline.after_call import after_call_success_keyboard, after_call_all_info_keyboard, \
     after_call_type_keyboard
 from keyboards.inline.callbacks import call_callback, after_call_callback
+from keyboards.inline.keyboards import delete_message_keyboard
 from loader import dp, bot
 from states.states import AfterCall
 from utils.supervisor import supervisor
@@ -57,13 +58,14 @@ async def after_call_handler(callback: types.CallbackQuery, callback_data: dict,
         elif action == 'no':
             await callback.message.edit_text(
                 user.message('after_call_finish'),
-                reply_markup=None
+                reply_markup=delete_message_keyboard(user)
             )
             seller = await chat.seller
             manager = await seller.manager
             await bot.send_message(
                 seller.chat_id,
-                manager.message('unsuccessful_contact').format(un=user.username)
+                manager.message('unsuccessful_contact').format(un=user.username, chat_id=chat.id,
+                                                               estate=(await chat.object).name)
             )
     elif current_state == AfterCall.all.state:
         if action == 'yes':
@@ -92,6 +94,9 @@ async def after_call_handler(callback: types.CallbackQuery, callback_data: dict,
                 all=manager.message(data['all']),
                 additional=data['text'],
                 type=manager.message(action),
+                un=user.username,
+                chat_id=chat.id,
+                estate=(await chat.object).name
             )
         )
         await callback.message.edit_text(
