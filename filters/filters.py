@@ -28,7 +28,7 @@ class MainMenuExcludeFilter(Filter):
             if message.text[1:] not in self.exclude:
                 return True
         else:
-            user = await TelegramUser.get_or_none(telegram_id=int(message.chat.id))
+            user = await TelegramUser.get_or_none(telegram_id=int(message.from_user.id))
             messages = [user.button(name) for name in self.buttons]
             # print(messages)
             if user and message.text not in messages:
