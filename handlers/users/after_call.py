@@ -54,7 +54,8 @@ async def after_call_handler(callback: types.CallbackQuery, callback_data: dict,
                 user.message('after_call_all_info'),
                 reply_markup=after_call_all_info_keyboard(user, chat)
             )
-            await AfterCall.all.set()
+            prev_state = await state.get_state()
+            await AfterCall.all.set(prev_state=prev_state)
         elif action == 'no':
             await callback.message.edit_text(
                 user.message('after_call_finish'),
@@ -102,8 +103,9 @@ async def after_call_handler(callback: types.CallbackQuery, callback_data: dict,
         )
         await callback.message.edit_text(
             user.message('after_call_finish'),
-            reply_markup=delete_message_keyboard()
+            reply_markup=delete_message_keyboard(user)
         )
+        await state.set_state(data['prev_state'])
 
 
 @dp.message_handler(ChatTypeFilter(ChatType.PRIVATE), state=AfterCall.additional)
