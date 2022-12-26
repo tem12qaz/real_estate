@@ -70,7 +70,7 @@ class TelegramUser(db.Model):
     #                            backref=db.backref('in_favorite', lazy='dynamic'), cascade='delete')
 
     def __repr__(self):
-        return str(self.telegram_id) + (self.username) if self.username else ''
+        return str(self.telegram_id) + (self.username if self.username else '')
 
 
 class Developer(db.Model):
