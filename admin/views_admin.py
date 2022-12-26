@@ -362,7 +362,7 @@ class OrderViewAdmin(MyModelView):
 class ActionsAdmin(MyModelView):
     column_editable_list = ['type',]
     column_filters = ['user.username', 'user.lang', 'type']
-    column_filter_labels = {
+    column_labels = {
         'user.username': 'Username',
         'user.lang': 'Language',
         'type': 'Type'
