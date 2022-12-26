@@ -13,7 +13,7 @@ from keyboards.inline.callbacks import chat_callback, call_callback
 from keyboards.inline.keyboards import get_chat_keyboard, call_answer_keyboard, connect_meet
 from loader import dp, bot
 from states.states import chat_state
-from utils.google_meet import get_meet_url
+from utils.google_meet import get_meet_url, wait_meet_join_thread
 from utils.supervisor import supervisor
 
 
@@ -56,6 +56,7 @@ async def call_handler(callback: types.CallbackQuery, callback_data: dict, state
         chat.call_rejected = False
         await chat.save()
         url = get_meet_url()
+        wait_meet_join_thread(url)
         await callback.message.edit_text(
             user.message('connect_meet'),
             reply_markup=connect_meet(user, url)

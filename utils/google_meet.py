@@ -1,5 +1,8 @@
 import asyncio
 import base64
+import threading
+import time
+
 import requests
 from selenium import webdriver
 from selenium.common import NoSuchElementException
@@ -109,7 +112,7 @@ def init_chrome():
     options = webdriver.ChromeOptions()
 
     options.add_argument("--disable-blink-features")
-    # options.add_argument("--headless")
+    options.add_argument("--headless")
 
     userdatadir = r'C:/Users/Matvey/AppData/Local/Google/Chrome/User Data'
     options.add_argument(f"--user-data-dir={userdatadir}")
@@ -128,37 +131,47 @@ def init_chrome():
     return driver
 
 
-async def wait_join_meet(url: str) -> None:
+def wait_join_meet(url: str) -> None:
+    print(url)
     driver = init_chrome()
     driver.get(url)
     j = 0
+    k = 0
+    i = 0
+    time.sleep(2)
+
+    while k < 10:
+
+        try:
+            driver.find_element(by.By.XPATH, "//span[text()='Пропустить']").find_element(by.By.XPATH, '..').click()
+        except NoSuchElementException:
+            print('no elem')
+            time.sleep(1)
+            k += 1
+        else:
+            break
+
     while j < 10:
 
         try:
-            driver.find_element(by.By.XPATH, "//button[text()='Присоединиться']").click()
+            driver.find_element(by.By.XPATH, "//span[text()='Присоединиться']").find_element(by.By.XPATH, '..').click()
         except NoSuchElementException:
             print('no elem')
-            await asyncio.sleep(1)
+            time.sleep(1)
             j += 1
         else:
             break
 
-    i = 0
     while i < 60:
         try:
-            driver.find_element(by.By.XPATH, "//button[text()='Разрешить']").click()
+            driver.find_element(by.By.XPATH, "//span[text()='Разрешить']").find_element(by.By.XPATH, '..').click()
         except NoSuchElementException:
-            await asyncio.sleep(5)
+            time.sleep(5)
             i += 1
         else:
             driver.close()
             driver.quit()
             return
-        # if len(elems) > 3:
-        #     elems[-1].click()
-        #     driver.close()
-        #     driver.quit()
-        #     return
 
         i += 1
 
@@ -166,8 +179,11 @@ async def wait_join_meet(url: str) -> None:
     driver.quit()
 
 
-if __name__ == '__main__':
-    loop = asyncio.new_event_loop()
-    loop.create_task(wait_join_meet(get_meet_url()))
-    loop.run_forever()
+def wait_meet_join_thread(url: str) -> None:
+    threading.Thread(target=wait_join_meet, args=(url,), name=url).start()
+
+
+# if __name__ == '__main__':
+#     e = get_meet_url()
+#     wait_meet_join_thread(e)
 
