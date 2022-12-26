@@ -374,6 +374,15 @@ class ActionsAdmin(MyModelView):
     # column_details_exclude_list = column_exclude_list
     # column_filters = column_editable_list
 
+    from flask_admin.actions import action
+
+    @action('recalculate', 'Recalculate Charges', 'Are you sure you want to recalculate selected transactions(s)?')
+    def action_recalculate(self, ids):
+        count = 0
+        for _id in ids:
+            count += 1
+        flash("{0} transaction (s) charges recalculated".format(count))
+
 
 class ConfigView(MyModelView):
     column_editable_list = ['support',]

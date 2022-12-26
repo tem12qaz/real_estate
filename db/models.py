@@ -149,7 +149,7 @@ class Object(Model):
 
             price=self.price, date=self.date, district=(await self.district).name,
             roi=self.roi, owner=(await self.owner).name,
-            additional=additional_text, name=self.name
+            additional=additional_text, name=self.name, un=(await bot.get_me()).username, id=self.id
         )
         return text
 
