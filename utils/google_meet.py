@@ -192,12 +192,12 @@ def init_chrome():
     options = webdriver.ChromeOptions()
     options = chrome_proxy_auth(options)
 
-    # options.add_argument('--headless')
+    options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     # options.add_argument('--profile-directory=Default')
 
-    userdatadir = r'C:\Users\tem12\AppData\Local\Google\Chrome\User Data'
+    userdatadir = r'/root/code/real_estate/chrome_data/'
     options.add_argument(f"--user-data-dir={userdatadir}")
     # options.add_argument("--disable-blink-features=AutomationControlled")
     # options.add_experimental_option("excludeSwitches", ["enable-automation"])
