@@ -116,14 +116,12 @@ def get_meet_url() -> str:
 def init_firefox():
     profile = webdriver.FirefoxProfile(
         r'/root/code/real_estate/firefox_profile/')
-        # r'C:\Users\tem12\AppData\Roaming\Mozilla\Firefox\Profiles\d52ioakx.default-release')
 
     profile.set_preference("dom.webdriver.enabled", False)
     profile.set_preference('useAutomationExtension', False)
     profile.set_preference("dom.disable_beforeunload", True)
     profile.set_preference("permissions.default.microphone", 1)
     profile.set_preference("permissions.default.camera", 1)
-    # profile.set_preference("dom.webnotifications.enabled", False)
     profile.update_preferences()
     desired = DesiredCapabilities.FIREFOX
 
@@ -133,36 +131,8 @@ def init_firefox():
 
     driver = webdriver.Firefox(firefox_profile=profile,
                                desired_capabilities=desired,
-                               options=options,
-                               # firefox_binary=r'C:\Program Files\Mozilla Firefox\firefox.exe'
+                               options=options
     )
-
-    return driver
-
-
-def init_chrome():
-    options = webdriver.ChromeOptions()
-
-    options.add_argument('--headless')
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-dev-shm-usage')
-    # options.add_argument('--profile-directory=Default')
-
-    userdatadir = r'/root/code/real_estate/chrome_data/'
-    options.add_argument(f"--user-data-dir={userdatadir}")
-    # options.add_argument("--disable-blink-features=AutomationControlled")
-    # options.add_experimental_option("excludeSwitches", ["enable-automation"])
-    # options.add_experimental_option('useAutomationExtension', False)
-    # options.add_argument("start-maximized")
-    # prefs = {"profile.managed_default_content_settings.images": 2}
-    # options.add_experimental_option("prefs", prefs)
-
-
-    driver = uc.Chrome(
-        # executable_path='chromedriver.exe',
-        options=options
-    )
-    driver.set_window_size(1920, 1080)
 
     return driver
 
