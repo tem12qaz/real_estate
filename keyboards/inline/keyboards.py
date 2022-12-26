@@ -278,10 +278,14 @@ async def support_keyboard(user: TelegramUser) -> InlineKeyboardMarkup:
 
 def connect_meet(user: TelegramUser, url: str) -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardMarkup(
-        inline_keyboard=[[InlineKeyboardButton(
-            text=user.button('connect_meet'),
-            web_app=WebAppInfo(url=url)
-        )]]
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text=user.button('connect_meet'),
+                    web_app=WebAppInfo(url=url)
+                )
+            ]
+        ]
     )
     return keyboard
 
