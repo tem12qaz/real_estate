@@ -115,7 +115,7 @@ def init_chrome():
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
 
-    userdatadir = r'/root/code/real_estate/chrome_data/'
+    userdatadir = r'/root/code/real_estate/chrome_datad/'
     options.add_argument(f"--user-data-dir={userdatadir}")
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
@@ -124,10 +124,12 @@ def init_chrome():
     prefs = {"profile.managed_default_content_settings.images": 2}
     options.add_experimental_option("prefs", prefs)
 
+
     driver = webdriver.Chrome(
         # executable_path='chromedriver.exe',
         options=options
     )
+    driver.set_window_size(1920, 1080)
 
     return driver
 
