@@ -7,6 +7,8 @@ import requests
 from selenium import webdriver
 from selenium.common import NoSuchElementException
 from selenium.webdriver.common import by
+import undetected_chromedriver as uc
+
 
 cookies = {
     '__Secure-ENID': '7.SE=YgS7e-NF9dlcFEoziWdqqiRWl8bZv8_1Tk-igBXJAUV-eqEHFZiwXQ7FzUgyPiG2_XpC7xIqOK2F3VwfhNtebNv02UjUl0GGp-u9MeIL5qGrJZ2jwbRnum7G2f2TkrF_xLtgUbAJ0lIlSVO2iis5_U3zG-gBKR_7wK0Y8cyjAew0qUMMAO_pKZmccnQJItoJOMzagOF984UgH95eg2l_neaNmZUUc340dJJdqp2EfwEUx9Haz8y7NkIHuK7zKCb74kObK-TDUnuPKw',
@@ -106,6 +108,14 @@ def decode_meet_url(base64_url: bytes) -> str:
 
 def get_meet_url() -> str:
     return decode_meet_url(get_meet_url_bytes())
+
+
+
+def test():
+    driver = uc.Chrome()
+    driver.get('https://ya.ru')
+    for name, value in cookies.items():
+        driver.add_cookie({'name': name, 'value': value})
 
 
 def init_chrome():
