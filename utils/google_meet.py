@@ -178,17 +178,6 @@ def wait_join_meet(url: str) -> None:
 
     driver.save_screenshot('ee.png')
 
-    # while k < 10:
-    #
-    #     try:
-    #         driver.find_element(by.By.XPATH, "//span[text()='Пропустить']").find_element(by.By.XPATH, '..').click()
-    #     except NoSuchElementException:
-    #         print('no elem')
-    #         time.sleep(1)
-    #         k += 1
-    #     else:
-    #         break
-
     while j < 10:
 
         try:
@@ -201,6 +190,17 @@ def wait_join_meet(url: str) -> None:
             break
 
     driver.save_screenshot('ee1.png')
+
+    while k < 10:
+
+        try:
+            driver.find_element(by.By.XPATH, "//span[text()='ОК']").find_element(by.By.XPATH, '..').click()
+        except NoSuchElementException:
+            print('no elem')
+            time.sleep(1)
+            k += 1
+        else:
+            break
 
 
     while i < 60:
