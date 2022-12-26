@@ -172,20 +172,12 @@ def wait_join_meet(url: str) -> None:
         else:
             break
 
-
     while i < 60:
         try:
             driver.find_element(by.By.XPATH, "//span[text()='Разрешить']").find_element(by.By.XPATH, '..').click()
         except NoSuchElementException:
-            time.sleep(5)
-            driver.save_screenshot('ee2.png')
-
-            i += 1
-        else:
-            driver.close()
-            driver.quit()
-            return
-
+            pass
+        time.sleep(5)
         i += 1
 
     driver.close()
