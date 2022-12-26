@@ -1,6 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 
-from data.config import TG_URL
+from data.config import TG_URL, HOST, MEET_PATH
 from db.models import TelegramUser, Config, Object, Chat, Developer
 from keyboards.inline.callbacks import language_callback, main_menu_callback, empty_callback, list_objects_callback, \
     open_object_callback, filter_district_callback, select_price_callback, \
@@ -282,7 +282,7 @@ def connect_meet(user: TelegramUser, url: str) -> InlineKeyboardMarkup:
             [
                 InlineKeyboardButton(
                     text=user.button('connect_meet'),
-                    web_app=WebAppInfo(url='https://google.com')
+                    web_app=WebAppInfo(url=HOST + MEET_PATH.format(url[-12:]))
                 )
             ]
         ]
