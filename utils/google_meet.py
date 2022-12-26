@@ -124,8 +124,8 @@ def init_firefox():
     profile.update_preferences()
     desired = DesiredCapabilities.FIREFOX
 
-    # options = webdriver.FirefoxOptions()
-    # options.headless = True
+    options = webdriver.FirefoxOptions()
+    options.headless = True
 
     driver = webdriver.Firefox(firefox_profile=profile,
                                desired_capabilities=desired,
