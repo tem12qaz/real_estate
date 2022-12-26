@@ -121,12 +121,14 @@ def init_firefox():
     profile.set_preference("dom.webdriver.enabled", False)
     profile.set_preference('useAutomationExtension', False)
     profile.set_preference("dom.disable_beforeunload", True)
+    profile.set_preference("permissions.default.microphone", 1)
+    profile.set_preference("permissions.default.camera", 1)
     # profile.set_preference("dom.webnotifications.enabled", False)
     profile.update_preferences()
     desired = DesiredCapabilities.FIREFOX
 
     options = webdriver.FirefoxOptions()
-    # options.headless = True
+    options.headless = True
     options.add_argument("--headless")
 
     driver = webdriver.Firefox(firefox_profile=profile,
