@@ -171,7 +171,7 @@ def wait_join_meet(url: str) -> None:
     j = 0
     k = 0
     i = 0
-    time.sleep(2)
+    time.sleep(7)
 
     driver.save_screenshot('ee.png')
 
