@@ -120,7 +120,7 @@ def init_firefox():
 
     profile.set_preference("dom.webdriver.enabled", False)
     profile.set_preference('useAutomationExtension', False)
-    profile.set_preference("dom.webnotifications.enabled", False)
+    # profile.set_preference("dom.webnotifications.enabled", False)
     profile.update_preferences()
     desired = DesiredCapabilities.FIREFOX
 
