@@ -7,6 +7,7 @@ import zipfile
 import requests
 from selenium import webdriver
 from selenium.common import NoSuchElementException
+from selenium.webdriver import DesiredCapabilities
 from selenium.webdriver.common import by
 import undetected_chromedriver as uc
 
@@ -112,85 +113,29 @@ def get_meet_url() -> str:
     return decode_meet_url(get_meet_url_bytes())
 
 
-def chrome_proxy_auth(chrome_options):
-    manifest_json = """
-    {
-        "version": "1.0.0",
-        "manifest_version": 2,
-        "name": "Chrome Proxy",
-        "permissions": [
-            "proxy",
-            "tabs",
-            "unlimitedStorage",
-            "storage",
-            "<all_urls>",
-            "webRequest",
-            "webRequestBlocking"
-        ],
-        "background": {
-            "scripts": ["background.js"]
-        },
-        "minimum_chrome_version":"22.0.0"
-    }
-    """
+def init_firefox():
+    profile = webdriver.FirefoxProfile(
+        r'C:\Users\tem12\AppData\Roaming\Mozilla\Firefox\Profiles\d52ioakx.default-release')
 
-    background_js = """
-    var config = {
-            mode: "fixed_servers",
-            rules: {
-            singleProxy: {
-                scheme: "http",
-                host: "%s",
-                port: parseInt(%s)
-            },
-            bypassList: ["localhost"]
-            }
-        };
+    profile.set_preference("dom.webdriver.enabled", False)
+    profile.set_preference('useAutomationExtension', False)
+    profile.set_preference("dom.popup_maximum", 0)
+    profile.update_preferences()
+    desired = DesiredCapabilities.FIREFOX
 
-    chrome.proxy.settings.set({value: config, scope: "regular"}, function() {});
+    # options = webdriver.FirefoxOptions()
+    # options.headless = True
 
-    function callbackFn(details) {
-        return {
-            authCredentials: {
-                username: "%s",
-                password: "%s"
-            }
-        };
-    }
+    driver = webdriver.Firefox(firefox_profile=profile,
+                               desired_capabilities=desired,
+                               # options=options,
+                               firefox_binary=r'C:\Program Files\Mozilla Firefox\firefox.exe')
 
-    chrome.webRequest.onAuthRequired.addListener(
-                callbackFn,
-                {urls: ["<all_urls>"]},
-                ['blocking']
-    );
-    """ % PROXY
-
-    pluginfile = 'proxy_auth_plugin.zip'
-
-    with zipfile.ZipFile(pluginfile, 'w') as zp:
-        zp.writestr("manifest.json", manifest_json)
-        zp.writestr("background.js", background_js)
-
-    chrome_options.add_extension(pluginfile)
-    return chrome_options
-
-# def test(e):
-#     driver = uc.Chrome()
-#     driver.get('https://google.com')
-#     for name, value in cookies.items():
-#         driver.add_cookie({'name': name, 'value': value})
-#
-#     driver.get(e)
-#     time.sleep(2323)
-
-
-# def login_chrome
-
+    return driver
 
 
 def init_chrome():
     options = webdriver.ChromeOptions()
-    options = chrome_proxy_auth(options)
 
     options.add_argument('--headless')
     options.add_argument('--no-sandbox')
@@ -218,7 +163,7 @@ def init_chrome():
 
 def wait_join_meet(url: str) -> None:
     print(url)
-    driver = init_chrome()
+    driver = init_firefox()
     driver.get(url)
     j = 0
     k = 0
@@ -272,6 +217,8 @@ def wait_meet_join_thread(url: str) -> None:
 
 if __name__ == '__main__':
     e = get_meet_url()
+    print(e)
+
 
     # test(e)
     wait_meet_join_thread(e)
