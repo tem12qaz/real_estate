@@ -141,6 +141,8 @@ def wait_join_meet(url: str) -> None:
     i = 0
     time.sleep(2)
 
+    driver.save_screenshot('ee.png')
+
     while k < 10:
 
         try:
