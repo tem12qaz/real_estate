@@ -9,6 +9,7 @@ from keyboards.default.keyboard import get_main_keyboard
 from keyboards.inline.callbacks import language_callback
 from keyboards.inline.keyboards import select_language_keyboard
 from loader import dp
+from states.states import FilterObjects
 from utils.set_bot_commands import set_commands
 
 
@@ -33,10 +34,11 @@ async def bot_start(message: types.Message, state: FSMContext):
 
     if 'object_' in args:
         try:
-            estate = await Object.get_or_none(telegram_id=int(args.replace('object_', '')))
+            estate = await Object.get_or_none(id=int(args.replace('object_', '')))
         except ValueError:
             pass
         else:
+            await FilterObjects.default.set()
             await estate.send_message(user, message, state)
             return
 
