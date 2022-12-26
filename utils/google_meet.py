@@ -125,9 +125,10 @@ def test(e):
 def init_chrome():
     options = webdriver.ChromeOptions()
 
-    options.add_argument('--headless')
+    # options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--profile-directory=Default')
 
     userdatadir = r'/root/code/real_estate/chrome_data/'
     options.add_argument(f"--user-data-dir={userdatadir}")
