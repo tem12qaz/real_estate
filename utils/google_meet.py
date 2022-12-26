@@ -111,14 +111,14 @@ def get_meet_url() -> str:
 
 
 
-def test(e):
-    driver = uc.Chrome()
-    driver.get('https://google.com')
-    for name, value in cookies.items():
-        driver.add_cookie({'name': name, 'value': value})
-
-    driver.get(e)
-    time.sleep(2323)
+# def test(e):
+#     driver = uc.Chrome()
+#     driver.get('https://google.com')
+#     for name, value in cookies.items():
+#         driver.add_cookie({'name': name, 'value': value})
+#
+#     driver.get(e)
+#     time.sleep(2323)
 
 
 # def login_chrome
@@ -209,6 +209,6 @@ def wait_meet_join_thread(url: str) -> None:
 if __name__ == '__main__':
     e = get_meet_url()
 
-    test(e)
-    # wait_meet_join_thread(e)
+    # test(e)
+    wait_meet_join_thread(e)
 
