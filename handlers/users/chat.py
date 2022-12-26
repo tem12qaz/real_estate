@@ -62,7 +62,8 @@ async def call_handler(callback: types.CallbackQuery, callback_data: dict, state
             reply_markup=connect_meet(user, url)
         )
         await bot.send_message(
-            chat_id,
+            (await(await chat.seller).manager).telegram_id,
+            # chat_id,
             companion.message('connect_meet'),
             reply_markup=connect_meet(companion, url)
         )
