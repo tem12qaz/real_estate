@@ -19,6 +19,8 @@ MODERATE_TOUR_URL = HOST + '/admin/tour/moderate'
 
 XLSX_PATH = '/root/code/real_estate/admin/xlsx/'
 
+PROXY = ('45.10.250.252', 8000, 'RsxBk6', 'VvyECT')
+
 
 SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{PG_USER}:{PG_PASSWORD}@{PG_HOST}/{PG_DATABASE}'
 SQLALCHEMY_ECHO = True

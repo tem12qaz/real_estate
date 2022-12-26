@@ -2,6 +2,7 @@ import asyncio
 import base64
 import threading
 import time
+import zipfile
 
 import requests
 from selenium import webdriver
@@ -9,6 +10,7 @@ from selenium.common import NoSuchElementException
 from selenium.webdriver.common import by
 import undetected_chromedriver as uc
 
+from admin.config import PROXY
 
 cookies = {
     '__Secure-ENID': '7.SE=YgS7e-NF9dlcFEoziWdqqiRWl8bZv8_1Tk-igBXJAUV-eqEHFZiwXQ7FzUgyPiG2_XpC7xIqOK2F3VwfhNtebNv02UjUl0GGp-u9MeIL5qGrJZ2jwbRnum7G2f2TkrF_xLtgUbAJ0lIlSVO2iis5_U3zG-gBKR_7wK0Y8cyjAew0qUMMAO_pKZmccnQJItoJOMzagOF984UgH95eg2l_neaNmZUUc340dJJdqp2EfwEUx9Haz8y7NkIHuK7zKCb74kObK-TDUnuPKw',
@@ -110,6 +112,67 @@ def get_meet_url() -> str:
     return decode_meet_url(get_meet_url_bytes())
 
 
+def chrome_proxy_auth(chrome_options):
+    manifest_json = """
+    {
+        "version": "1.0.0",
+        "manifest_version": 2,
+        "name": "Chrome Proxy",
+        "permissions": [
+            "proxy",
+            "tabs",
+            "unlimitedStorage",
+            "storage",
+            "<all_urls>",
+            "webRequest",
+            "webRequestBlocking"
+        ],
+        "background": {
+            "scripts": ["background.js"]
+        },
+        "minimum_chrome_version":"22.0.0"
+    }
+    """
+
+    background_js = """
+    var config = {
+            mode: "fixed_servers",
+            rules: {
+            singleProxy: {
+                scheme: "http",
+                host: "%s",
+                port: parseInt(%s)
+            },
+            bypassList: ["localhost"]
+            }
+        };
+
+    chrome.proxy.settings.set({value: config, scope: "regular"}, function() {});
+
+    function callbackFn(details) {
+        return {
+            authCredentials: {
+                username: "%s",
+                password: "%s"
+            }
+        };
+    }
+
+    chrome.webRequest.onAuthRequired.addListener(
+                callbackFn,
+                {urls: ["<all_urls>"]},
+                ['blocking']
+    );
+    """ % PROXY
+
+    pluginfile = 'proxy_auth_plugin.zip'
+
+    with zipfile.ZipFile(pluginfile, 'w') as zp:
+        zp.writestr("manifest.json", manifest_json)
+        zp.writestr("background.js", background_js)
+
+    chrome_options.add_extension(pluginfile)
+    return chrome_options
 
 # def test(e):
 #     driver = uc.Chrome()
@@ -127,13 +190,14 @@ def get_meet_url() -> str:
 
 def init_chrome():
     options = webdriver.ChromeOptions()
+    options = chrome_proxy_auth(options)
 
-    options.add_argument('--headless')
+    # options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     # options.add_argument('--profile-directory=Default')
 
-    userdatadir = r'/root/code/real_estate/chrome_data/'
+    userdatadir = r'C:\Users\tem12\AppData\Local\Google\Chrome\User Data'
     options.add_argument(f"--user-data-dir={userdatadir}")
     # options.add_argument("--disable-blink-features=AutomationControlled")
     # options.add_experimental_option("excludeSwitches", ["enable-automation"])
