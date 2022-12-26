@@ -2,16 +2,12 @@ import asyncio
 import base64
 import requests
 from selenium import webdriver
+from selenium.common import NoSuchElementException
 from selenium.webdriver.common import by
-from selenium_stealth import stealth
-
 
 cookies = {
     '__Secure-ENID': '7.SE=YgS7e-NF9dlcFEoziWdqqiRWl8bZv8_1Tk-igBXJAUV-eqEHFZiwXQ7FzUgyPiG2_XpC7xIqOK2F3VwfhNtebNv02UjUl0GGp-u9MeIL5qGrJZ2jwbRnum7G2f2TkrF_xLtgUbAJ0lIlSVO2iis5_U3zG-gBKR_7wK0Y8cyjAew0qUMMAO_pKZmccnQJItoJOMzagOF984UgH95eg2l_neaNmZUUc340dJJdqp2EfwEUx9Haz8y7NkIHuK7zKCb74kObK-TDUnuPKw',
     'SEARCH_SAMESITE': 'CgQIhZcB',
-    'OSID': 'Rwi5zVPrWiPdLJ9Radh9ABXytpeeth6IB1k-Y-5HwHNrOrG1VJMotujqV4GTL4uIcoSUhA.',
-    '__Secure-OSID': 'Rwi5zVPrWiPdLJ9Radh9ABXytpeeth6IB1k-Y-5HwHNrOrG1Ei4e3bSNKG_Quyz23Efkmw.',
-    'OTZ': '6811431_44_44_123780_40_436260',
     'AEC': 'AakniGOPPQlQupnz_0yBF-4q6pP5oxbwRILKD1-uwwoGoy-BouRyyoAlzQY',
     'SID': 'SAi5zd1xY1InIR1svNMdEMZzcRhmIdIAg4cNa14x0W_TlJNsSj9YbnXb0W1yG5G0SwKp_Q.',
     '__Secure-1PSID': 'SAi5zd1xY1InIR1svNMdEMZzcRhmIdIAg4cNa14x0W_TlJNs0BQ_zCStnupGn3VlwNcMfw.',
@@ -22,12 +18,11 @@ cookies = {
     'SAPISID': 'ZrULBJFkLGxsurF_/AIf3d1TAkXidpb3FR',
     '__Secure-1PAPISID': 'ZrULBJFkLGxsurF_/AIf3d1TAkXidpb3FR',
     '__Secure-3PAPISID': 'ZrULBJFkLGxsurF_/AIf3d1TAkXidpb3FR',
-    '1P_JAR': '2022-12-25-23',
-    'NID': '511=R0XSx632JWEjewyxfD3OF3eFmnhM8pEIpqwwOzE4oENZ8ZBO64hLj9mRAH398YAtXcs7TqjNVZlQ4v-tDYttxuuG50n3vcWbiXv5xgOVP5EHdSC0kGgrZSGa16c44lTjlyrADaxOoIfR-r9Y6JV0sFML6HZfXYrLRhdJ8YCIqrbnStvRsO8676oSo3o6n_0MKwgstkPlKWeF_3ajfZ3SDY9VhkREZiLpvUQYavGLoCR_kWvTOaTGdwBqrXoZAKRRmF1Tf2ctjx7zQYUXaENaFLZm7lv-aPN8ca1CG2IX14vgdJfom39N_GRrfD5O-hW2d7-4Af54GpUbmW07BQ',
-    'COMPASS': 'meet-ui=CgAQ6rajnQYaRwAJa4lXbKHY_YS-23pYX7BVH933fdP9rO13z7UVW_744DHga_SdhYtrQXXd_4FQn15HyziSoJga1xiWR3RU04fGN3NF6R24',
-    'SIDCC': 'AIKkIs2wPCDwFzoikLSWuXyJxgvVCaVo46HBTL55xWuvIyDuhcBoFJVxWQQPwq4vqaauM-NC-ecY',
-    '__Secure-1PSIDCC': 'AIKkIs0ukmVAwksy5H22Syi9CCvxkXSfaJHII1_EMM7BJeBiGF6mMWWguN6sjZw4HYYv6JsL6fKf',
-    '__Secure-3PSIDCC': 'AIKkIs1s0Unie2IrUO2T074ELcWok4AzpNHJCQxFbdw-vlz-vXHcaWohlxU33VnRoOg0D_iXxh30',
+    '1P_JAR': '2022-12-25-22',
+    'NID': '511=D6OCuX4PPQL_XUQ1-BnZE2hiTqy6337z1VRT3umVG7ZK8II6pQ9QxnJ2AMw09rNcCUSAMzwvJ2N-s_PoRJvwG-YI90ro7iFRz_YYGllXMBFg1-JcHF0nT4rG6m67UpquPiIKLHVqtrUC6gFqj9fLut1iPLlOBUVLrkBEFDNWsbrh3WCo15Xl7QvQFCVbV5vs-it9puiN_iiJMsAwvDvLaLtXL2Km3fNbSIjtuHT-NfRxcXiTvde-LvDwzu3BE4HEL2ytkqsXjm1hb-v1jI26F-fi9shB0oMkhTPaluEXOMYEOKbTwbNaEqdCWQeINl2fg8Vzc_TZJc3yHrgUrQ',
+    'SIDCC': 'AIKkIs32tVjFBP0RsRDPfwkSCZOe98gUrFiROrHrjhnY6HSScSPNVNicHWUCriTzBvq0lCzMwPyB',
+    '__Secure-1PSIDCC': 'AIKkIs0OeB4qT37sf79eCpw9kwU6MyIv5s-0UQufa7jeQP4EP02K4EZZUO916uJ534HqyIfvEdlT',
+    '__Secure-3PSIDCC': 'AIKkIs0O3qppNNr6dKwwgdwdq_hGxwk_9dcYe4AI6tNkzQ5C6_ZObLz3BJNCB0i3ChIUULT1mUDG',
 }
 
 
@@ -113,47 +108,52 @@ def get_meet_url() -> str:
 def init_chrome():
     options = webdriver.ChromeOptions()
 
-    # options.add_argument("--disable-blink-features")
-    # # options.add_argument("--headless")
-    #
-    # options.add_argument("--disable-blink-features=AutomationControlled")
-    # options.add_experimental_option("excludeSwitches", ["enable-automation"])
-    # options.add_experimental_option('useAutomationExtension', False)
-    # options.add_argument("start-maximized")
-    # prefs = {"profile.managed_default_content_settings.images": 2}
-    # options.add_experimental_option("prefs", prefs)
+    options.add_argument("--disable-blink-features")
+    # options.add_argument("--headless")
 
-    driver = webdriver.Firefox(
-        executable_path='geckodriver.exe'
-        # executable_path='chromedriver.exe',
-        # options=options
+    userdatadir = r'C:/Users/Matvey/AppData/Local/Google/Chrome/User Data'
+    options.add_argument(f"--user-data-dir={userdatadir}")
+    options.add_argument("--disable-blink-features=AutomationControlled")
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    options.add_experimental_option('useAutomationExtension', False)
+    options.add_argument("start-maximized")
+    prefs = {"profile.managed_default_content_settings.images": 2}
+    options.add_experimental_option("prefs", prefs)
+
+    driver = webdriver.Chrome(
+        executable_path='chromedriver.exe',
+        options=options
     )
-
-    # stealth(
-    #     driver,
-    #     languages=["en-US", "en"],
-    #     vendor="Google Inc.",
-    #     platform="Win32",
-    #     webgl_vendor="Intel Inc.",
-    #     renderer="Intel Iris OpenGL Engine",
-    #     fix_hairline=True,
-    # )
 
     return driver
 
 
 async def wait_join_meet(url: str) -> None:
     driver = init_chrome()
-    driver.get('https://ya.ru/')
-    for name, value in cookies_meet.items():
-        driver.add_cookie({'name': name, 'value': value})
-
     driver.get(url)
+    j = 0
+    while j < 10:
+
+        try:
+            driver.find_element(by.By.XPATH, "//button[text()='Присоединиться']").click()
+        except NoSuchElementException:
+            print('no elem')
+            await asyncio.sleep(1)
+            j += 1
+        else:
+            break
+
     i = 0
     while i < 60:
-        await asyncio.sleep(5)
-
-        elems = driver.find_elements(by.By.CLASS_NAME, 'VfPpkd-LgbsSe-OWXEXe-dgl2Hf')
+        try:
+            driver.find_element(by.By.XPATH, "//button[text()='Разрешить']").click()
+        except NoSuchElementException:
+            await asyncio.sleep(5)
+            i += 1
+        else:
+            driver.close()
+            driver.quit()
+            return
         # if len(elems) > 3:
         #     elems[-1].click()
         #     driver.close()
