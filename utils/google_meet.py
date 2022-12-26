@@ -3,6 +3,8 @@ import base64
 import requests
 from selenium import webdriver
 from selenium.webdriver.common import by
+from selenium_stealth import stealth
+
 
 cookies = {
     '__Secure-ENID': '7.SE=YgS7e-NF9dlcFEoziWdqqiRWl8bZv8_1Tk-igBXJAUV-eqEHFZiwXQ7FzUgyPiG2_XpC7xIqOK2F3VwfhNtebNv02UjUl0GGp-u9MeIL5qGrJZ2jwbRnum7G2f2TkrF_xLtgUbAJ0lIlSVO2iis5_U3zG-gBKR_7wK0Y8cyjAew0qUMMAO_pKZmccnQJItoJOMzagOF984UgH95eg2l_neaNmZUUc340dJJdqp2EfwEUx9Haz8y7NkIHuK7zKCb74kObK-TDUnuPKw',
@@ -111,20 +113,31 @@ def get_meet_url() -> str:
 def init_chrome():
     options = webdriver.ChromeOptions()
 
-    options.add_argument("--disable-blink-features")
-    # options.add_argument("--headless")
+    # options.add_argument("--disable-blink-features")
+    # # options.add_argument("--headless")
+    #
+    # options.add_argument("--disable-blink-features=AutomationControlled")
+    # options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    # options.add_experimental_option('useAutomationExtension', False)
+    # options.add_argument("start-maximized")
+    # prefs = {"profile.managed_default_content_settings.images": 2}
+    # options.add_experimental_option("prefs", prefs)
 
-    options.add_argument("--disable-blink-features=AutomationControlled")
-    options.add_experimental_option("excludeSwitches", ["enable-automation"])
-    options.add_experimental_option('useAutomationExtension', False)
-    options.add_argument("start-maximized")
-    prefs = {"profile.managed_default_content_settings.images": 2}
-    options.add_experimental_option("prefs", prefs)
-
-    driver = webdriver.Chrome(
-        executable_path='chromedriver.exe',
-        options=options
+    driver = webdriver.Firefox(
+        executable_path='geckodriver.exe'
+        # executable_path='chromedriver.exe',
+        # options=options
     )
+
+    # stealth(
+    #     driver,
+    #     languages=["en-US", "en"],
+    #     vendor="Google Inc.",
+    #     platform="Win32",
+    #     webgl_vendor="Intel Inc.",
+    #     renderer="Intel Iris OpenGL Engine",
+    #     fix_hairline=True,
+    # )
 
     return driver
 
