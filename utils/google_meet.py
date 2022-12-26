@@ -126,6 +126,7 @@ def init_firefox():
 
     options = webdriver.FirefoxOptions()
     options.headless = True
+    options.add_argument("--headless")
 
     driver = webdriver.Firefox(firefox_profile=profile,
                                desired_capabilities=desired,
