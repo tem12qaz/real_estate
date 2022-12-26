@@ -58,13 +58,23 @@ async def call_handler(callback: types.CallbackQuery, callback_data: dict, state
         url = get_meet_url()
         wait_meet_join_thread(url)
         await callback.message.edit_text(
-            user.message('connect_meet'),
+            user.message('connect_meet').format(url=url),
             reply_markup=connect_meet(user, url)
         )
         await bot.send_message(
             (await(await chat.seller).manager).telegram_id,
             # chat_id,
-            companion.message('connect_meet'),
+            companion.message('connect_meet').format(url=url),
+            reply_markup=connect_meet(companion, url)
+        )
+        await bot.send_message(
+            chat_id,
+            companion.message('connect_meet').format(url=url),
+            reply_markup=connect_meet(companion, url)
+        )
+        await bot.send_message(
+            (await(await chat.seller).manager).telegram_id,
+            companion.message('connect_meet').format(url=url),
             reply_markup=connect_meet(companion, url)
         )
 
