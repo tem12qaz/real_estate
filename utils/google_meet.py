@@ -115,8 +115,8 @@ def get_meet_url() -> str:
 
 def init_firefox():
     profile = webdriver.FirefoxProfile(
-        r'/root/code/real_estate/firefox_profile/')
-        # r'C:\Users\tem12\AppData\Roaming\Mozilla\Firefox\Profiles\d52ioakx.default-release')
+        # r'/root/code/real_estate/firefox_profile/')
+        r'C:\Users\tem12\AppData\Roaming\Mozilla\Firefox\Profiles\d52ioakx.default-release')
 
     profile.set_preference("dom.webdriver.enabled", False)
     profile.set_preference('useAutomationExtension', False)
@@ -128,13 +128,13 @@ def init_firefox():
     desired = DesiredCapabilities.FIREFOX
 
     options = webdriver.FirefoxOptions()
-    options.headless = True
-    options.add_argument("--headless")
+    # options.headless = True
+    # options.add_argument("--headless")
 
     driver = webdriver.Firefox(firefox_profile=profile,
                                desired_capabilities=desired,
                                options=options,
-                               # firefox_binary=r'C:\Program Files\Mozilla Firefox\firefox.exe'
+                               firefox_binary=r'C:\Program Files\Mozilla Firefox\firefox.exe'
     )
 
     return driver
