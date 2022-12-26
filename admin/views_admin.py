@@ -379,7 +379,7 @@ class ActionsAdmin(MyModelView):
     @action('recalculate', 'Recalculate Charges', 'Are you sure you want to recalculate selected transactions(s)?')
     def action_recalculate(self, ids):
         count = 0
-        l = len(self.get_query())
+        l = len(self.get_query().all())
         # for _id in ids:
         #     count += 1
         flash(f"transaction ({l}) charges recalculated")
