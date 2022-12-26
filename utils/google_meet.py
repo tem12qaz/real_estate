@@ -130,7 +130,7 @@ def init_firefox():
 
     driver = webdriver.Firefox(firefox_profile=profile,
                                desired_capabilities=desired,
-                               # options=options,
+                               options=options,
                                # firefox_binary=r'C:\Program Files\Mozilla Firefox\firefox.exe'
     )
 
