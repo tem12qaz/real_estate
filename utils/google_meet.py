@@ -190,14 +190,14 @@ def chrome_proxy_auth(chrome_options):
 
 def init_chrome():
     options = webdriver.ChromeOptions()
-    # options = chrome_proxy_auth(options)
+    options = chrome_proxy_auth(options)
 
-    # options.add_argument('--headless')
+    options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     # options.add_argument('--profile-directory=Default')
 
-    userdatadir = r'C:\Users\tem12\AppData\Local\Google\Chrome\User Data'
+    userdatadir = r'/root/code/real_estate/chrome_data/'
     options.add_argument(f"--user-data-dir={userdatadir}")
     # options.add_argument("--disable-blink-features=AutomationControlled")
     # options.add_experimental_option("excludeSwitches", ["enable-automation"])
@@ -207,11 +207,11 @@ def init_chrome():
     # options.add_experimental_option("prefs", prefs)
 
 
-    driver = webdriver.Chrome(
+    driver = uc.Chrome(
         # executable_path='chromedriver.exe',
         options=options
     )
-    # driver.set_window_size(1920, 1080)
+    driver.set_window_size(1920, 1080)
 
     return driver
 
@@ -220,13 +220,12 @@ def wait_join_meet(url: str) -> None:
     print(url)
     driver = init_chrome()
     driver.get(url)
-    print('--')
     j = 0
     k = 0
     i = 0
     time.sleep(2)
 
-    # driver.save_screenshot('ee.png')
+    driver.save_screenshot('ee.png')
 
     while k < 10:
 
