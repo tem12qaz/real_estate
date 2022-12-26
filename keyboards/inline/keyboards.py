@@ -282,7 +282,7 @@ def connect_meet(user: TelegramUser, url: str) -> InlineKeyboardMarkup:
             [
                 InlineKeyboardButton(
                     text=user.button('connect_meet'),
-                    web_app=WebAppInfo(url=url)
+                    web_app=WebAppInfo(url='https://google.com')
                 )
             ]
         ]
