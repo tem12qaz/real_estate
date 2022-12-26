@@ -114,7 +114,7 @@ def init_chrome():
     options.add_argument("--disable-blink-features")
     options.add_argument("--headless")
 
-    userdatadir = r'C:/Users/Matvey/AppData/Local/Google/Chrome/User Data'
+    userdatadir = r'/root/code/real_estate/chrome_data/'
     options.add_argument(f"--user-data-dir={userdatadir}")
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
@@ -124,7 +124,7 @@ def init_chrome():
     options.add_experimental_option("prefs", prefs)
 
     driver = webdriver.Chrome(
-        executable_path='chromedriver.exe',
+        # executable_path='chromedriver.exe',
         options=options
     )
 
