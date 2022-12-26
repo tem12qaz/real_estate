@@ -115,11 +115,12 @@ def get_meet_url() -> str:
 
 def init_firefox():
     profile = webdriver.FirefoxProfile(
-        r'C:\Users\tem12\AppData\Roaming\Mozilla\Firefox\Profiles\d52ioakx.default-release')
+        r'/root/code/real_estate/firefox_profile/')
+        # r'C:\Users\tem12\AppData\Roaming\Mozilla\Firefox\Profiles\d52ioakx.default-release')
 
     profile.set_preference("dom.webdriver.enabled", False)
     profile.set_preference('useAutomationExtension', False)
-    profile.set_preference("dom.webnotifications.enabled", False);
+    profile.set_preference("dom.webnotifications.enabled", False)
     profile.update_preferences()
     desired = DesiredCapabilities.FIREFOX
 
@@ -129,7 +130,8 @@ def init_firefox():
     driver = webdriver.Firefox(firefox_profile=profile,
                                desired_capabilities=desired,
                                # options=options,
-                               firefox_binary=r'C:\Program Files\Mozilla Firefox\firefox.exe')
+                               # firefox_binary=r'C:\Program Files\Mozilla Firefox\firefox.exe'
+    )
 
     return driver
 
@@ -193,6 +195,9 @@ def wait_join_meet(url: str) -> None:
             j += 1
         else:
             break
+
+    driver.save_screenshot('ee1.png')
+
 
     while i < 60:
         try:
