@@ -410,7 +410,7 @@ class ActionsAdmin(MyModelView):
         return redirect(url, code=307)
 
     @expose('/mail', methods=['GET'])
-    def action_change_cost(self):
+    def mail_button(self):
         url = get_redirect_target() or self.get_url('.index_view')
         return redirect(url, code=307)
 
