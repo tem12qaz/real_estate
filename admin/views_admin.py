@@ -18,7 +18,7 @@ from flask_login import current_user
 from markupsafe import Markup
 from sqlalchemy import func
 from werkzeug.utils import secure_filename
-from wtforms import PasswordField, ValidationError, HiddenField, Form, StringField
+from wtforms import PasswordField, ValidationError, HiddenField, Form, TextAreaField
 from wtforms.validators import InputRequired
 
 from admin.config import UPDATE_BUTTON_URL, UPDATE_MESSAGE_URL, SEND_MESSAGE_URL, XLSX_PATH
@@ -31,7 +31,7 @@ from admin.models import Photo, File
 
 class ChangeForm(Form):
     ids = HiddenField()
-    text = StringField(validators=[InputRequired()])
+    text = TextAreaField(validators=[InputRequired()])
 
 
 def name_gen(obj, file_data):
