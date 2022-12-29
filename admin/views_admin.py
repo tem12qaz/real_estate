@@ -361,6 +361,8 @@ class OrderViewAdmin(MyModelView):
 
 class ActionsAdmin(MyModelView):
     column_editable_list = ['type',]
+    list_template = 'templates/admin/mail.html'
+
     column_filters = ['user.username', 'user.lang', 'type']
     column_labels = {
         'user.username': 'Username',
@@ -389,25 +391,11 @@ class ActionsAdmin(MyModelView):
         }
     }
 
-    from flask_admin.actions import action
-
-    # @action('mail', 'Mail')
-    # def action_change_cost(self, ids):
-    #     url = get_redirect_target() or self.get_url('.index_view')
-    #     return redirect(url, code=307)
-    #
-    # @expose('/', methods=['POST'])
-    # def index(self):
-    #     if request.method == 'POST':
-    #         url = get_redirect_target() or self.get_url('.index_view')
-    #         ids = request.form.getlist('rowid')
-    #         joined_ids = ','.join(ids)
-    #         change_form = ChangeForm()
-    #         change_form.ids.data = joined_ids
-    #         self._template_args['url'] = url
-    #         self._template_args['change_form'] = change_form
-    #         self._template_args['change_modal'] = True
-    #         return self.index_view()
+    def render(self, template, **kwargs):
+        # we are only interested in the list page
+        if template == self.list_template:
+            pass
+        return super(ActionsAdmin, self).render(template)
 
 
 class ConfigView(MyModelView):
