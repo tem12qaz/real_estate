@@ -422,6 +422,27 @@ class ActionsAdmin(MyModelView):
             joined_ids = ','.join(ids)
             change_form = ChangeForm()
             change_form.ids.data = joined_ids
+            print(f'''
+            
+            
+            
+            
+            
+            
+            
+            IDSS-------------------------------------------
+            
+            {joined_ids}
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            ''')
             self._template_args['url'] = url
             self._template_args['change_form'] = change_form
             self._template_args['change_modal'] = True
