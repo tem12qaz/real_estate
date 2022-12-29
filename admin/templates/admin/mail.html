@@ -2,9 +2,7 @@
 
 {% block model_menu_bar_after_filters %}
 <li class="nav-item">
-  <a class="nav-link" title="Mail" href="/admin/action/mail">
-    Mail
-  </a>
+  <a class="nav-link" href="javascript:void(0)" onclick="return modelActions.execute('change_cost');">Mail</a>
 </li>
 {% endblock model_menu_bar_after_filters %}
 
@@ -38,4 +36,5 @@
             });
         {% endif %}
     </script>
+    <script src="/templates/admin/custom_actions.js"></script>
 {% endblock tail %}

@@ -404,11 +404,6 @@ class ActionsAdmin(MyModelView):
             pass
         return super(ActionsAdmin, self).render(template, **kwargs)
 
-    @action('change_cost', 'Change Cost')
-    def action_change_cost(self, ids):
-        url = get_redirect_target() or self.get_url('.index_view')
-        return redirect(url, code=307)
-
     @expose('/mail', methods=['GET'])
     def mail_button(self):
         url = get_redirect_target() or self.get_url('.index_view')
@@ -426,6 +421,11 @@ class ActionsAdmin(MyModelView):
             self._template_args['change_form'] = change_form
             self._template_args['change_modal'] = True
             return self.index_view()
+
+    @expose('/mail_send/', methods=['POST'])
+    def update_view(self):
+        if request.method == 'POST':
+            pass
 
 
 class ConfigView(MyModelView):
