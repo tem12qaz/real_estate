@@ -17,7 +17,8 @@ from flask_login import current_user
 from markupsafe import Markup
 from sqlalchemy import func
 from werkzeug.utils import secure_filename
-from wtforms import PasswordField, ValidationError
+from wtforms import PasswordField, ValidationError, HiddenField, Form, StringField
+from wtforms.validators import InputRequired
 
 from admin.config import UPDATE_BUTTON_URL, UPDATE_MESSAGE_URL, SEND_MESSAGE_URL, XLSX_PATH
 from admin.flask_app_init import db
@@ -25,6 +26,11 @@ from admin.models import Photo, File
 
 
 # from loader import logger
+
+
+class ChangeForm(Form):
+    ids = HiddenField()
+    text = StringField(validators=[InputRequired()])
 
 
 def name_gen(obj, file_data):
@@ -396,6 +402,24 @@ class ActionsAdmin(MyModelView):
         if template == self.list_template:
             pass
         return super(ActionsAdmin, self).render(template, **kwargs)
+
+    @expose('/mail', methods=['GET'])
+    def action_change_cost(self, ids):
+        url = get_redirect_target() or self.get_url('.index_view')
+        return redirect(url, code=307)
+
+    @expose('/', methods=['POST'])
+    def index(self):
+        if request.method == 'POST':
+            url = get_redirect_target() or self.get_url('.index_view')
+            # ids = request.form.getlist('rowid')
+            # joined_ids = ','.join(ids)
+            change_form = ChangeForm()
+            # change_form.ids.data = joined_ids
+            self._template_args['url'] = url
+            self._template_args['change_form'] = change_form
+            self._template_args['change_modal'] = True
+            return self.index_view()
 
 
 class ConfigView(MyModelView):
