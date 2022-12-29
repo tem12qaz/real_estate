@@ -7,6 +7,7 @@ import time
 import requests as requests
 from flask import abort, redirect, url_for, request, flash, send_file, after_this_request
 from flask_admin import expose, BaseView
+from flask_admin.actions import action
 from flask_admin.contrib import sqla
 from flask_admin.contrib.sqla.fields import InlineModelFormList
 from flask_admin.contrib.sqla.form import InlineModelConverter
@@ -402,6 +403,11 @@ class ActionsAdmin(MyModelView):
         if template == self.list_template:
             pass
         return super(ActionsAdmin, self).render(template, **kwargs)
+
+    @action('change_cost', 'Change Cost')
+    def action_change_cost(self, ids):
+        url = get_redirect_target() or self.get_url('.index_view')
+        return redirect(url, code=307)
 
     @expose('/mail', methods=['GET'])
     def action_change_cost(self):
