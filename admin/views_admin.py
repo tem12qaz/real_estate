@@ -398,6 +398,11 @@ class ActionsAdmin(MyModelView):
         }
     }
 
+    @action('send_mail', 'Mail')
+    def action_change_cost(self, ids):
+        url = get_redirect_target() or self.get_url('.index_view')
+        return redirect(url, code=307)
+
     def render(self, template, **kwargs):
         # we are only interested in the list page
         if template == self.list_template:
