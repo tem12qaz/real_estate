@@ -401,6 +401,29 @@ class ActionsAdmin(MyModelView):
     @action('send_mail', 'Mail')
     def action_change_cost(self, ids):
         url = get_redirect_target() or self.get_url('.index_view')
+        print(f'''
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        {ids}
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        ''')
         return redirect(url, code=307)
 
     def render(self, template, **kwargs):
@@ -408,11 +431,6 @@ class ActionsAdmin(MyModelView):
         if template == self.list_template:
             pass
         return super(ActionsAdmin, self).render(template, **kwargs)
-
-    @expose('/mail', methods=['GET'])
-    def mail_button(self):
-        url = get_redirect_target() or self.get_url('.index_view')
-        return redirect(url, code=307)
 
     @expose('/', methods=['POST'])
     def index(self):
@@ -437,11 +455,16 @@ class ActionsAdmin(MyModelView):
                     ids = list(map(int, change_form.ids.data.split(',')))
                     actions: list[Action] = db.session.query(Action).filter(Action.id.in_(ids)).distinct(Action.user_id)
                 else:
-                    actions: list[Action] = self.get_query().distinct(Action.user_id)
+                    # actions: list[Action] = self.get_query().distinct(Action.user_id)
+                    self._template_args['url'] = url
+                    self._template_args['change_form'] = change_form
+                    self._template_args['change_modal'] = True
+                    return self.index_view()
 
                 users = []
                 for action_ in actions:
                     users.append(action_.user.telegram_id)
+
 
 
                 print(f'''
