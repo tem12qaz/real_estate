@@ -427,7 +427,7 @@ class ActionsAdmin(MyModelView):
             self._template_args['change_modal'] = True
             return self.index_view()
 
-    @expose('/mail_send/', methods=['POST'])
+    @expose('/update/', methods=['POST'])
     def update_view(self):
         if request.method == 'POST':
             pass
