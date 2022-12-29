@@ -401,29 +401,11 @@ class ActionsAdmin(MyModelView):
     @action('send_mail', 'Mail')
     def action_change_cost(self, ids):
         url = get_redirect_target() or self.get_url('.index_view')
-        print(f'''
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        {ids}
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        ''')
+        if not ids:
+            actions: list[Action] = self.get_query()
+            for action_ in actions:
+                ids.append(action_.id)
+
         return redirect(url, code=307)
 
     def render(self, template, **kwargs):
