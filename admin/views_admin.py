@@ -395,7 +395,7 @@ class ActionsAdmin(MyModelView):
         # we are only interested in the list page
         if template == self.list_template:
             pass
-        return super(ActionsAdmin, self).render(template)
+        return super(ActionsAdmin, self).render(template, **kwargs)
 
 
 class ConfigView(MyModelView):
