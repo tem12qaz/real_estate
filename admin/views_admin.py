@@ -374,15 +374,40 @@ class ActionsAdmin(MyModelView):
     # column_details_exclude_list = column_exclude_list
     # column_filters = column_editable_list
 
+    form_ajax_refs = {
+        'user': {
+            'fields': ['telegram_id', 'username'],
+            'page_size': 10
+        },
+        'developer': {
+            'fields': ['name'],
+            'page_size': 10
+        },
+        'object': {
+            'fields': ['name'],
+            'page_size': 10
+        }
+    }
+
     from flask_admin.actions import action
 
-    @action('recalculate', 'Recalculate Charges', 'Are you sure you want to recalculate selected transactions(s)?')
-    def action_recalculate(self, ids):
-        count = 0
-        l = len(self.get_query().all())
-        # for _id in ids:
-        #     count += 1
-        flash(f"transaction ({l}) charges recalculated")
+    # @action('mail', 'Mail')
+    # def action_change_cost(self, ids):
+    #     url = get_redirect_target() or self.get_url('.index_view')
+    #     return redirect(url, code=307)
+    #
+    # @expose('/', methods=['POST'])
+    # def index(self):
+    #     if request.method == 'POST':
+    #         url = get_redirect_target() or self.get_url('.index_view')
+    #         ids = request.form.getlist('rowid')
+    #         joined_ids = ','.join(ids)
+    #         change_form = ChangeForm()
+    #         change_form.ids.data = joined_ids
+    #         self._template_args['url'] = url
+    #         self._template_args['change_form'] = change_form
+    #         self._template_args['change_modal'] = True
+    #         return self.index_view()
 
 
 class ConfigView(MyModelView):
