@@ -422,27 +422,6 @@ class ActionsAdmin(MyModelView):
             joined_ids = ','.join(ids)
             change_form = ChangeForm()
             change_form.ids.data = joined_ids
-            print(f'''
-            
-            
-            
-            
-            
-            
-            
-            IDSS-------------------------------------------
-            
-            "{joined_ids}"
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            ''')
             self._template_args['url'] = url
             self._template_args['change_form'] = change_form
             self._template_args['change_modal'] = True
@@ -456,7 +435,7 @@ class ActionsAdmin(MyModelView):
             if change_form.validate():
                 if change_form.ids.data:
                     ids = list(map(int, change_form.ids.data.split(',')))
-                    actions: list[Action] = db.session.query(Action).filter(Action.id.in_()).distinct(Action.user_id)
+                    actions: list[Action] = db.session.query(Action).filter(Action.id.in_(ids)).distinct(Action.user_id)
                 else:
                     actions: list[Action] = self.get_query().distinct(Action.user_id)
 
