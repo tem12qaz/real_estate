@@ -361,7 +361,7 @@ class OrderViewAdmin(MyModelView):
 
 class ActionsAdmin(MyModelView):
     column_editable_list = ['type',]
-    list_template = 'templates/admin/mail.html'
+    list_template = 'admin/mail.html'
 
     column_filters = ['user.username', 'user.lang', 'type']
     column_labels = {
