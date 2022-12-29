@@ -418,10 +418,10 @@ class ActionsAdmin(MyModelView):
     def index(self):
         if request.method == 'POST':
             url = get_redirect_target() or self.get_url('.index_view')
-            # ids = request.form.getlist('rowid')
-            # joined_ids = ','.join(ids)
+            ids = request.form.getlist('rowid')
+            joined_ids = ','.join(ids)
             change_form = ChangeForm()
-            # change_form.ids.data = joined_ids
+            change_form.ids.data = joined_ids
             self._template_args['url'] = url
             self._template_args['change_form'] = change_form
             self._template_args['change_modal'] = True
