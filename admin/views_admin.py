@@ -432,7 +432,7 @@ class ActionsAdmin(MyModelView):
             
             IDSS-------------------------------------------
             
-            {joined_ids}
+            "{joined_ids}"
             
             
             
