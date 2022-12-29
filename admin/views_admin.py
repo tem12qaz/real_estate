@@ -404,7 +404,7 @@ class ActionsAdmin(MyModelView):
         return super(ActionsAdmin, self).render(template, **kwargs)
 
     @expose('/mail', methods=['GET'])
-    def action_change_cost(self, ids):
+    def action_change_cost(self):
         url = get_redirect_target() or self.get_url('.index_view')
         return redirect(url, code=307)
 
