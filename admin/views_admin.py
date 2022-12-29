@@ -23,7 +23,7 @@ from wtforms.validators import InputRequired
 
 from admin.config import UPDATE_BUTTON_URL, UPDATE_MESSAGE_URL, SEND_MESSAGE_URL, XLSX_PATH
 from admin.flask_app_init import db
-from admin.models import Photo, File
+from admin.models import Photo, File, Action
 
 
 # from loader import logger
@@ -451,7 +451,48 @@ class ActionsAdmin(MyModelView):
     @expose('/mail_send/', methods=['POST'])
     def update_view(self):
         if request.method == 'POST':
-            pass
+            url = get_redirect_target() or self.get_url('.index_view')
+            change_form = ChangeForm(request.form)
+            if change_form.validate():
+                if change_form.ids.data:
+                    ids = list(map(int, change_form.ids.data.split(',')))
+                    actions: list[Action] = db.session.query(Action).filter(Action.id.in_()).distinct(Action.user_id)
+                else:
+                    actions: list[Action] = self.get_query().distinct(Action.user_id)
+
+                users = []
+                for action_ in actions:
+                    users.append(action_.user.telegram_id)
+
+
+                print(f'''
+                
+                
+                
+                
+                
+                
+                TELEGRAM IDS
+                {users}
+                
+                
+                
+                
+                
+                
+                ''')
+
+                # cost = change_form.cost.data
+                # _update_mappings = [{'id': rowid, 'cost': cost} for rowid in ids]
+                # db.session.bulk_update_mappings(Project, _update_mappings)
+                # db.session.commit()
+                # flash(f"Set cost for {len(ids)} record{'s' if len(ids) > 1 else ''} to {cost}.", category='info')
+                return redirect(url)
+            else:
+                self._template_args['url'] = url
+                self._template_args['change_form'] = change_form
+                self._template_args['change_modal'] = True
+                return self.index_view()
 
 
 class ConfigView(MyModelView):
