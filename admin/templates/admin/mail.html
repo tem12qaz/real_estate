@@ -29,13 +29,13 @@
     </div><!-- /.modal -->
 {% endblock body %}
 
-<!--{% block tail %}-->
-<!--    {{ super() }}-->
-<!--    <script>-->
-<!--        {% if change_modal %}-->
-<!--            $(document).ready(function(){-->
-<!--                $("#changeModal").modal('show');-->
-<!--            });-->
-<!--        {% endif %}-->
-<!--    </script>-->
-<!--{% endblock tail %}-->
+{% block tail %}
+    {{ super() }}
+    <script>
+        {% if change_modal %}
+            $(document).ready(function(){
+                $("#changeModal").modal('show');
+            });
+        {% endif %}
+    </script>
+{% endblock tail %}
