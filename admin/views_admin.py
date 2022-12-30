@@ -53,7 +53,6 @@ class CustomImageFieldWidget(ImageUploadInput):
                      '<input %(file)s>')
 
 
-
 class CustomImageField(ImageUploadField):
     widget = CustomImageFieldWidget()
 
@@ -229,6 +228,7 @@ class DistrictView(MyModelView):
 
 class ObjectAdmin(MyModelView):
     can_export = True
+
     # export_types = ['xlsx']
 
     # column_editable_list = ['name', 'description', 'included', 'terms']
@@ -367,7 +367,7 @@ class OrderViewAdmin(MyModelView):
 
 
 class ActionsAdmin(MyModelView):
-    column_editable_list = ['type',]
+    column_editable_list = ['type', ]
     list_template = 'admin/mail.html'
 
     column_filters = ['user.username', 'user.lang', 'type']
@@ -401,40 +401,7 @@ class ActionsAdmin(MyModelView):
     @action('send_mail', 'Mail')
     def action_change_cost(self, ids):
         url = get_redirect_target() or self.get_url('.index_view')
-        if not ids:
-            actions: list[Action] = self.get_query()
-            print(f'''
-            
-            
-            
-            
-            
-            PRE IDSSSSS
-            
-            
-            
-            
-            
-            {self.get_query()}
-            
-            
-            
-            
-            
-            
-            
-            
-            ''')
-            for action_ in actions:
-                ids.append(action_.id)
-
         return redirect(url, code=307)
-
-    def render(self, template, **kwargs):
-        # we are only interested in the list page
-        if template == self.list_template:
-            pass
-        return super(ActionsAdmin, self).render(template, **kwargs)
 
     @expose('/', methods=['POST'])
     def index(self):
@@ -459,17 +426,21 @@ class ActionsAdmin(MyModelView):
                     ids = list(map(int, change_form.ids.data.split(',')))
                     actions: list[Action] = db.session.query(Action).filter(Action.id.in_(ids)).distinct(Action.user_id)
                 else:
-                    # actions: list[Action] = self.get_query().distinct(Action.user_id)
-                    self._template_args['url'] = url
-                    self._template_args['change_form'] = change_form
-                    self._template_args['change_modal'] = True
-                    return self.index_view()
+                    view_args = self._get_list_extra_args()
+                    sort_column = self._get_column_by_idx(view_args.sort)
+                    if sort_column is not None:
+                        sort_column = sort_column[0]
+
+                    # Get count and data
+                    count, actions = self.get_list(
+                        0, sort_column, view_args.sort_desc,
+                        view_args.search, view_args.filters,
+                        page_size=self.export_max_rows, execute=False
+                    ).distinct(Action.user_id)
 
                 users = []
                 for action_ in actions:
                     users.append(action_.user.telegram_id)
-
-
 
                 print(f'''
                 
@@ -479,6 +450,8 @@ class ActionsAdmin(MyModelView):
                 
                 
                 TELEGRAM IDS
+                {count}
+                
                 {users}
                 
                 
@@ -502,7 +475,7 @@ class ActionsAdmin(MyModelView):
 
 
 class ConfigView(MyModelView):
-    column_editable_list = ['support',]
+    column_editable_list = ['support', ]
     column_searchable_list = column_editable_list
     # column_exclude_list = ['password']
     # form_excluded_columns = column_exclude_list
