@@ -42,6 +42,7 @@ YOOKASSA_REDIRECT_URL = \
 
 YOOKASSA_OAUTH_URL = 'https://yookassa.ru/oauth/v2/token'
 
+SEND_TIME = (20, 0, 0)
 
 
 CRYPTO_SALT = '1UAarqi0IoshqEree9rjOsfl5A6YajX1WSjsufud'

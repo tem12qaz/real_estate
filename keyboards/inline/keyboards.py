@@ -117,21 +117,21 @@ async def object_keyboard(estate: Object, user: TelegramUser, photo_index: int) 
         #         object_id=estate.id, action='presentation'
         #     )),
         # ],
-        [
-            InlineKeyboardButton(text=user.button('chat'), callback_data=object_callback.new(
-                object_id=estate.id, action='chat'
-            )),
-        ],
+        # [
+        #     InlineKeyboardButton(text=user.button('chat'), callback_data=object_callback.new(
+        #         object_id=estate.id, action='chat'
+        #     )),
+        # ],
         [
             InlineKeyboardButton(text=user.button('call'), callback_data=object_callback.new(
                 object_id=estate.id, action='call'
             )),
         ],
-        [
-            InlineKeyboardButton(text=user.button('video'), callback_data=object_callback.new(
-                object_id=estate.id, action='video'
-            )),
-        ],
+        # [
+        #     InlineKeyboardButton(text=user.button('video'), callback_data=object_callback.new(
+        #         object_id=estate.id, action='video'
+        #     )),
+        # ],
         [
             InlineKeyboardButton(text=user.button('back'), callback_data=object_callback.new(
                 action='back', object_id=estate.id
@@ -282,7 +282,7 @@ def connect_meet(user: TelegramUser, url: str) -> InlineKeyboardMarkup:
             [
                 InlineKeyboardButton(
                     text=user.button('connect_meet'),
-                    web_app=WebAppInfo(url=HOST + MEET_PATH.format(meet=url[-12:]))
+                    url=HOST + MEET_PATH.format(meet=url[-12:])
                 )
             ]
         ]
@@ -331,14 +331,16 @@ async def chats_keyboard(user: TelegramUser) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
 
 
-async def group_chats_keyboard(developer: Developer) -> InlineKeyboardMarkup:
+async def group_chats_keyboard(developer: Developer, new_msg: int = 0, chats: list[Chat] = None) -> InlineKeyboardMarkup:
     inline_keyboard = []
-    for chat in await developer.chats:
+    if not chats:
+        chats = await developer.chats
+    for chat in chats:
         estate = await chat.object
         inline_keyboard.append(
             [
                 InlineKeyboardButton(text='Chat id' + str(chat.id) + ' ' + estate.name, callback_data=chat_callback.new(
-                    chat_id=chat.id, new_msg=0
+                    chat_id=chat.id, new_msg=new_msg
                 ))
             ]
         )

@@ -7,7 +7,7 @@ data = json.dumps(
     {
         'users': [772311962],
         'text': 'ee',
-        'sum'
+        'sum': 'ref'
     }
 )
 
