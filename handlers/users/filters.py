@@ -79,6 +79,10 @@ async def select_district_handler(callback: types.CallbackQuery, callback_data: 
 
     district_id = int(callback_data.get('district_id'))
     page = int(callback_data.get('page'))
+
+    if (await state.get_data()).get('district_id') is None:
+        await state.update_data(district_id=[])
+
     async with state.proxy() as data:
         if district_id in data['district_id']:
             data['district_id'].remove(district_id)
