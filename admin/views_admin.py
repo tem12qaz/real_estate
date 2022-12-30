@@ -435,12 +435,14 @@ class ActionsAdmin(MyModelView):
                     count, actions = self.get_list(
                         0, sort_column, view_args.sort_desc,
                         view_args.search, view_args.filters,
-                        page_size=self.export_max_rows, execute=False
+                        page_size=self.export_max_rows
                     ).distinct(Action.user_id)
 
                 users = []
                 for action_ in actions:
                     users.append(action_.user.telegram_id)
+
+                users = list(set(users))
 
                 print(f'''
                 
