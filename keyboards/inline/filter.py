@@ -131,7 +131,7 @@ def get_price_keyboard(user: TelegramUser, prices: list[str]) -> InlineKeyboardM
             ))
         ],
         [InlineKeyboardButton(text=user.button('back'),
-                              callback_data=filter_district_callback.new(_='_'))],
+                              callback_data=filter_district_callback.new(page=0))],
 
     ]
 
