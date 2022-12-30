@@ -29,6 +29,7 @@ SQLALCHEMY_ECHO = True
 SECURITY_URL_PREFIX = "/admin"
 SECURITY_PASSWORD_HASH = "pbkdf2_sha512"
 SECURITY_PASSWORD_SALT = "ATt87_jinvfweHA_341ELKigfn_6578_CFghaerGdfb_JAEGj"
+SECURITY_REQUEST_SALT = "ATt87_BN89hnui78GBUKJJL_LLKFERbbh0878j_GFC3_VK"
 
 # Flask-Security URLs, overridden because they don't put a / at the end
 SECURITY_LOGIN_URL = "/login/"

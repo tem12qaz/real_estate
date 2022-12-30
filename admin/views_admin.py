@@ -21,12 +21,14 @@ from werkzeug.utils import secure_filename
 from wtforms import PasswordField, ValidationError, HiddenField, Form, TextAreaField
 from wtforms.validators import InputRequired
 
-from admin.config import UPDATE_BUTTON_URL, UPDATE_MESSAGE_URL, SEND_MESSAGE_URL, XLSX_PATH
+from admin.config import UPDATE_BUTTON_URL, UPDATE_MESSAGE_URL, SEND_MESSAGE_URL, XLSX_PATH, SECURITY_REQUEST_SALT
 from admin.flask_app_init import db
 from admin.models import Photo, File, Action
 
 
 # from loader import logger
+from data.config import BOT_TOKEN
+from utils.sha256 import sha256
 
 
 class ChangeForm(Form):
@@ -446,7 +448,8 @@ class ActionsAdmin(MyModelView):
                     return self.index_view()
                 data = json.dumps({
                     'users': users,
-                    'text': change_form.text.data
+                    'text': change_form.text.data,
+                    'sum': sha256(SECURITY_REQUEST_SALT + BOT_TOKEN)
                 })
                 requests.post(SEND_MESSAGE_URL, data=data)
                 flash(f"Message sent to {len(users)} users", category='info')
