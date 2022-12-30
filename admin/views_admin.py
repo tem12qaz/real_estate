@@ -422,7 +422,7 @@ class ActionsAdmin(MyModelView):
                 )
             users = []
             for action_ in actions:
-                users.append(action_.user.telegram_id)
+                users.append(str(action_.user.telegram_id))
 
             ids = list(set(users))
 
