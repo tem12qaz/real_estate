@@ -408,25 +408,24 @@ class ActionsAdmin(MyModelView):
         if request.method == 'POST':
             url = get_redirect_target() or self.get_url('.index_view')
             ids = request.form.getlist('rowid')
-            print(f'''
+            if ids:
+                actions: list[Action] = db.session.query(Action).filter(Action.id.in_(ids)).distinct(Action.user_id)
+            else:
+                view_args = self._get_list_extra_args()
+                sort_column = self._get_column_by_idx(view_args.sort)
+                if sort_column is not None:
+                    sort_column = sort_column[0]
+                _, actions = self.get_list(
+                    0, sort_column, view_args.sort_desc,
+                    view_args.search, view_args.filters,
+                    page_size=self.export_max_rows
+                )
+            users = []
+            for action_ in actions:
+                users.append(action_.user.telegram_id)
 
+            ids = list(set(users))
 
-
-
-
-
-                                    TELEGRAM IDS
-
-
-                                    {self._get_list_filter_args()}
-
-
-
-
-
-
-
-                                    ''')
             joined_ids = ','.join(ids)
             change_form = ChangeForm()
             change_form.ids.data = joined_ids
@@ -441,27 +440,8 @@ class ActionsAdmin(MyModelView):
             url = get_redirect_target() or self.get_url('.index_view')
             change_form = ChangeForm(request.form)
             if change_form.validate():
-                if change_form.ids.data:
-                    ids = list(map(int, change_form.ids.data.split(',')))
-                    actions: list[Action] = db.session.query(Action).filter(Action.id.in_(ids)).distinct(Action.user_id)
-                else:
-                    view_args = self._get_list_extra_args()
-                    sort_column = self._get_column_by_idx(view_args.sort)
-                    if sort_column is not None:
-                        sort_column = sort_column[0]
+                users = list(map(int, change_form.ids.data.split(',')))
 
-                    # Get count and data
-                    count, actions = self.get_list(
-                        0, sort_column, view_args.sort_desc,
-                        view_args.search, view_args.filters,
-                        page_size=self.export_max_rows
-                    )
-
-                users = []
-                for action_ in actions:
-                    users.append(action_.user.telegram_id)
-
-                users = list(set(users))
 
                 print(f'''
                 
@@ -471,10 +451,6 @@ class ActionsAdmin(MyModelView):
                 
                 
                 TELEGRAM IDS
-                {count}
-                
-                
-                {self._get_list_filter_args()}
                 
                 {users}
                 
