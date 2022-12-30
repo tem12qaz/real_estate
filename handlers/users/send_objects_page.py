@@ -19,12 +19,12 @@ async def send_objects_page(message: types.Message, user: TelegramUser,
     date = data.get('date')
     districts_id_list = data.get('district_id')
     sales = data.get('sales')
-    price = data.get('price')
+    prices = data.get('prices')
     page = data.get('page')
     if not page:
         page = 0
 
-    queryset: QuerySet = filter_objects(sales, date, districts_id_list, price)
+    queryset: QuerySet = filter_objects(sales, date, districts_id_list, prices)
     objs = (await queryset.limit((page + 1) + 1))[page:]
     if not objs:
         if callback:

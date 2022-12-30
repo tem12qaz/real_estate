@@ -6,12 +6,13 @@ from aiogram.dispatcher.filters import ChatTypeFilter
 from aiogram.types import ChatType, InputFile, InputMediaPhoto
 from tortoise.queryset import QuerySet
 
-from data.config import FLOOD_RATE, BASE_PATH
+from data.config import FLOOD_RATE, BASE_PATH, DISTRICTS_IN_COLUMN
 from db.filter_objects import filter_objects
-from db.models import TelegramUser, Object, Developer
+from db.models import TelegramUser, Object, Developer, District
 from handlers.users.send_objects_page import send_objects_page
 from keyboards.default.keyboard import get_main_keyboard
 from keyboards.inline.callbacks import main_menu_callback
+from keyboards.inline.filter import get_list_districts_keyboard
 from keyboards.inline.keyboards import get_support_keyboard, get_list_objects_keyboard, chats_keyboard, \
     select_language_keyboard, group_chats_keyboard
 from loader import dp
@@ -30,14 +31,23 @@ async def main_menu_handler(message: types.Message, state: FSMContext):
     if message.text == user.button('find') or message.text == user.button('sales') or \
             message.text == '/find' or message.text == '/sales':
         await state.finish()
-        await FilterObjects.first()
+        await FilterObjects.district.set()
         if message.text == user.button('find') or message.text == '/find':
             sales = False
         else:
             sales = True
 
         await state.update_data(sales=sales, page=0)
-        await send_objects_page(message, user, state)
+        # await send_objects_page(message, user, state)
+        page = 0
+        await state.update_data(page=page)
+        districts = await District.all().limit(((page + 1) * DISTRICTS_IN_COLUMN) + 1)
+        districts = districts[page * DISTRICTS_IN_COLUMN:]
+        all_count = await District.all().count()
+        await message.answer(
+            user.message('select_districts'),
+            reply_markup=await get_list_districts_keyboard(user, districts, all_count, page, state)
+        )
         return
 
     elif message.text == user.button('chats') or message.text == '/chats':

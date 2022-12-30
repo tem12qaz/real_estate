@@ -111,19 +111,32 @@ async def filter_price_handler(callback: types.CallbackQuery, callback_data: dic
 
     if price == '_':
         await callback.answer()
-
+        if (await state.get_data()).get('prices') is None:
+            await state.update_data(prices=[])
         await FilterObjects.price.set()
+        prices = (await state.get_data())['prices']
+
         await callback.message.answer(
             user.message('select_price'),
-            reply_markup=get_price_keyboard(user)
+            reply_markup=get_price_keyboard(user, prices)
         )
         await callback.message.delete()
 
     else:
-        await state.update_data(price=price)
-        if await send_objects_page(callback.message, user, state, callback):
-            await callback.message.delete()
-            await FilterObjects.default.set()
+        async with state.proxy() as data:
+            if price in data['prices']:
+                data['prices'].remove(price)
+            else:
+                data['prices'].append([price])
+
+        prices = (await state.get_data())['prices']
+        await callback.message.answer(
+            user.message('select_price'),
+            reply_markup=get_price_keyboard(user, prices)
+        )
+        # if await send_objects_page(callback.message, user, state, callback):
+        #     await callback.message.delete()
+        #     await FilterObjects.default.set()
 
 
 @dp.callback_query_handler(ChatTypeFilter(ChatType.PRIVATE), price_drop_callback.filter(),
@@ -136,7 +149,7 @@ async def drop_price_handler(callback: types.CallbackQuery, state: FSMContext):
 
     await user.update_time()
 
-    await state.update_data(price=None)
+    await state.update_data(prices=[])
     await send_objects_page(callback.message, user, state, callback)
     await FilterObjects.default.set()
 

@@ -64,35 +64,23 @@ def get_list_objects_keyboard(user: TelegramUser,
                 ),
             ],
             # [InlineKeyboardButton(text=user.button('filter_date'), callback_data=filter_date_callback.new(_='_'))],
-            [InlineKeyboardButton(text=user.button('filter_price'),
+            # [InlineKeyboardButton(text=user.button('filter_price'),
+            #                       callback_data=select_price_callback.new(price='_'))],
+            # [InlineKeyboardButton(text=user.button('filter_district'),
+            #                       callback_data=filter_district_callback.new(page=0))],
+            [InlineKeyboardButton(text=user.button('back'),
                                   callback_data=select_price_callback.new(price='_'))],
-            [InlineKeyboardButton(text=user.button('filter_district'),
-                                  callback_data=filter_district_callback.new(page=0))],
-            [
-                InlineKeyboardButton(
-                    text=user.button('main_menu'),
-                    callback_data=main_menu_callback.new(
-                        _='_'
-                    )
-                )
-            ]
 
         ]
     else:
         inline_keyboard = [
             # [InlineKeyboardButton(text=user.button('filter_date'), callback_data=filter_date_callback.new(_='_'))],
-            [InlineKeyboardButton(text=user.button('filter_price'),
+            # [InlineKeyboardButton(text=user.button('filter_price'),
+            #                       callback_data=select_price_callback.new(price='_'))],
+            # [InlineKeyboardButton(text=user.button('filter_district'),
+            #                       callback_data=filter_district_callback.new(_='_'))],
+            [InlineKeyboardButton(text=user.button('back'),
                                   callback_data=select_price_callback.new(price='_'))],
-            [InlineKeyboardButton(text=user.button('filter_district'),
-                                  callback_data=filter_district_callback.new(_='_'))],
-            [
-                InlineKeyboardButton(
-                    text=user.button('main_menu'),
-                    callback_data=main_menu_callback.new(
-                        _='_'
-                    )
-                )
-            ]
         ]
 
     return InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
