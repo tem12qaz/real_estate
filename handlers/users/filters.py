@@ -131,7 +131,7 @@ async def filter_price_handler(callback: types.CallbackQuery, callback_data: dic
             if price in data['prices']:
                 data['prices'].remove(price)
             else:
-                data['prices'].append([price])
+                data['prices'].append(price)
 
         prices = (await state.get_data())['prices']
         await callback.message.edit_text(
