@@ -100,7 +100,7 @@ async def get_list_districts_keyboard(user: TelegramUser,
 
 
 def get_price_keyboard(user: TelegramUser, prices: list[str]) -> InlineKeyboardMarkup:
-    selected = user.message('selected')
+    selected = user.button('selected')
     buttons = tuple(PriceButtons.buttons.keys())
     inline_keyboard = [
         [
