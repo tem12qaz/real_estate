@@ -454,6 +454,9 @@ class ActionsAdmin(MyModelView):
                 TELEGRAM IDS
                 {count}
                 
+                
+                {self._get_list_filter_args()}
+                
                 {users}
                 
                 
