@@ -154,8 +154,13 @@ async def drop_price_handler(callback: types.CallbackQuery, state: FSMContext):
     await user.update_time()
 
     await state.update_data(prices=[])
-    await send_objects_page(callback.message, user, state, callback)
-    await FilterObjects.default.set()
+    # await send_objects_page(callback.message, user, state, callback)
+    # await FilterObjects.default.set()
+    await callback.message.answer(
+        user.message('select_price'),
+        reply_markup=get_price_keyboard(user, [])
+    )
+    await callback.message.delete()
 
 
 @dp.callback_query_handler(ChatTypeFilter(ChatType.PRIVATE), filter_date_callback.filter(),
