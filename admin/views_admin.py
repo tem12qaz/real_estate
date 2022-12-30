@@ -434,7 +434,8 @@ class ActionsAdmin(MyModelView):
                     # Get count and data
                     count, actions = self.get_list(
                         0, sort_column, view_args.sort_desc,
-                        view_args.search, view_args.filters
+                        view_args.search, view_args.filters,
+                        page_size=self.export_max_rows, execute=False
                     ).distinct(Action.user_id)
 
                 users = []
