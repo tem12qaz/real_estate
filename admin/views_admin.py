@@ -441,30 +441,6 @@ class ActionsAdmin(MyModelView):
             change_form = ChangeForm(request.form)
             if change_form.validate():
                 users = list(map(int, change_form.ids.data.split(',')))
-
-
-                print(f'''
-                
-                
-                
-                
-                
-                
-                TELEGRAM IDS
-                
-                {users}
-                
-                
-                
-                
-                
-                
-                ''')
-
-                # cost = change_form.cost.data
-                # _update_mappings = [{'id': rowid, 'cost': cost} for rowid in ids]
-                # db.session.bulk_update_mappings(Project, _update_mappings)
-                # db.session.commit()
                 # flash(f"Set cost for {len(ids)} record{'s' if len(ids) > 1 else ''} to {cost}.", category='info')
                 return redirect(url)
             else:
