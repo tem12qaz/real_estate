@@ -108,17 +108,17 @@ def get_price_keyboard(user: TelegramUser, prices: list[str]) -> InlineKeyboardM
                                  callback_data=select_price_callback.new(
                 price=buttons[0]
             )),
-            InlineKeyboardButton(text=user.button(buttons[1]) + (selected if buttons[0] in prices else ''),
+            InlineKeyboardButton(text=user.button(buttons[1]) + (selected if buttons[1] in prices else ''),
                                  callback_data=select_price_callback.new(
                 price=buttons[1]
             ))
          ],
         [
-            InlineKeyboardButton(text=user.button(buttons[2]) + (selected if buttons[0] in prices else ''),
+            InlineKeyboardButton(text=user.button(buttons[2]) + (selected if buttons[2] in prices else ''),
                                  callback_data=select_price_callback.new(
                 price=buttons[2]
             )),
-            InlineKeyboardButton(text=user.button(buttons[3]) + (selected if buttons[0] in prices else ''),
+            InlineKeyboardButton(text=user.button(buttons[3]) + (selected if buttons[3] in prices else ''),
                                  callback_data=select_price_callback.new(
                 price=buttons[3]
             ))
