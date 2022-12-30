@@ -112,9 +112,9 @@ async def filter_price_handler(callback: types.CallbackQuery, callback_data: dic
     await user.update_time()
 
     price = callback_data['price']
+    await callback.answer()
 
     if price == '_':
-        await callback.answer()
         if (await state.get_data()).get('prices') is None:
             await state.update_data(prices=[])
         await FilterObjects.price.set()
@@ -134,7 +134,7 @@ async def filter_price_handler(callback: types.CallbackQuery, callback_data: dic
                 data['prices'].append([price])
 
         prices = (await state.get_data())['prices']
-        await callback.message.answer(
+        await callback.message.edit_text(
             user.message('select_price'),
             reply_markup=get_price_keyboard(user, prices)
         )
