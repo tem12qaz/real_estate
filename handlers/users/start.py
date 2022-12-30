@@ -4,12 +4,13 @@ from aiogram.dispatcher.filters.builtin import CommandStart, ChatTypeFilter
 from aiogram.types import ChatType
 
 from data.config import FLOOD_RATE
-from db.models import TelegramUser, Object
+from db.models import TelegramUser, Object, Action
 from keyboards.default.keyboard import get_main_keyboard
 from keyboards.inline.callbacks import language_callback
 from keyboards.inline.keyboards import select_language_keyboard
 from loader import dp
 from states.states import FilterObjects
+from utils.actions_type import ActionsEnum
 from utils.set_bot_commands import set_commands
 
 
@@ -24,6 +25,9 @@ async def bot_start(message: types.Message, state: FSMContext):
         user = await TelegramUser.create(telegram_id=message.from_user.id,
                                          username=message.from_user.username)
 
+        await Action.create(
+            user=user, object=None, developer=None, type=ActionsEnum.start
+        )
         await message.answer(
             user.message('select_language'),
             reply_markup=select_language_keyboard(user)

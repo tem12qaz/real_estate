@@ -156,13 +156,13 @@ class Action(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     type = db.Column(db.Enum(ActionsEnum))
 
-    developer_id = db.Column(db.Integer(), db.ForeignKey("developer.id", ondelete='CASCADE'), nullable=False)
+    developer_id = db.Column(db.Integer(), db.ForeignKey("developer.id", ondelete='CASCADE'), nullable=True)
     developer = relationship("Developer", back_populates="actions")
 
     user_id = db.Column(db.Integer(), db.ForeignKey("telegramuser.id", ondelete='CASCADE'), nullable=False)
     user = relationship("TelegramUser", back_populates="actions")
 
-    object_id = db.Column(db.Integer(), db.ForeignKey("object.id", ondelete='CASCADE'), nullable=False)
+    object_id = db.Column(db.Integer(), db.ForeignKey("object.id", ondelete='CASCADE'), nullable=True)
     object = relationship("Object", back_populates="actions")
 
 

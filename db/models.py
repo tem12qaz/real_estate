@@ -57,9 +57,9 @@ class TelegramUser(Model):
 class Action(Model):
     id = fields.IntField(pk=True)
     type = fields.CharEnumField(ActionsEnum)
-    developer = fields.ForeignKeyField('models.Developer', related_name='actions', index=True)
+    developer = fields.ForeignKeyField('models.Developer', related_name='actions', index=True, null=True)
     user = fields.ForeignKeyField('models.TelegramUser', related_name='actions', index=True)
-    object = fields.ForeignKeyField('models.Object', related_name='actions', index=True)
+    object = fields.ForeignKeyField('models.Object', related_name='actions', index=True, null=True)
 
 
 class Message(Model):
