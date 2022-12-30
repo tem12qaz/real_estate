@@ -440,13 +440,19 @@ class ActionsAdmin(MyModelView):
             url = get_redirect_target() or self.get_url('.index_view')
             change_form = ChangeForm(request.form)
             if change_form.validate():
-                users = list(map(int, change_form.ids.data.split(',')))
-                # flash(f"Set cost for {len(ids)} record{'s' if len(ids) > 1 else ''} to {cost}.", category='info')
+                users = change_form.ids.data.split(',')
+                if len(users) == 0:
+                    flash(f"Need at least one user to send", category='warning')
+                    return self.index_view()
+                data = {
+                    'users': users,
+                    'text': change_form.text.data
+                }
+                requests.post(SEND_MESSAGE_URL, data=data)
+                flash(f"Message sent to {len(users)} users", category='info')
                 return redirect(url)
             else:
-                self._template_args['url'] = url
-                self._template_args['change_form'] = change_form
-                self._template_args['change_modal'] = True
+                flash(f"Form invalid", category='error')
                 return self.index_view()
 
 
