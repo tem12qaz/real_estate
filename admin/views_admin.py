@@ -403,19 +403,19 @@ class ActionsAdmin(MyModelView):
         url = get_redirect_target() or self.get_url('.index_view')
         if not ids:
             actions: list[Action] = self.get_query()
-            print('''
+            print(f'''
             
             
             
             
             
+            PRE IDSSSSS
             
             
             
             
             
-            
-            
+            {self.get_query()}
             
             
             
@@ -425,7 +425,6 @@ class ActionsAdmin(MyModelView):
             
             
             ''')
-            print(self.get_count_query())
             for action_ in actions:
                 ids.append(action_.id)
 
