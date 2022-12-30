@@ -6,7 +6,8 @@ import requests
 data = json.dumps(
     {
         'users': [772311962],
-        'text': 'ee'
+        'text': 'ee',
+        'sum'
     }
 )
 

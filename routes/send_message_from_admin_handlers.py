@@ -10,7 +10,7 @@ async def send_message_from_admin_handler(req: web.Request) -> web.Response:
     data = await req.json()
     users = data['users']
     text = data['text']
-    sha = data['sha256']
+    sha = data['sum']
 
     if sha == sha256(SECURITY_REQUEST_SALT + BOT_TOKEN):
         for user in users:
