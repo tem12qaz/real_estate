@@ -401,6 +401,25 @@ class ActionsAdmin(MyModelView):
     @action('send_mail', 'Mail')
     def action_change_cost(self, ids):
         url = get_redirect_target() or self.get_url('.index_view')
+        print(f'''
+
+
+
+
+
+
+                        TELEGRAM IDS
+
+
+                        {self._get_list_filter_args()}
+
+
+
+
+
+
+
+                        ''')
         return redirect(url, code=307)
 
     @expose('/', methods=['POST'])
