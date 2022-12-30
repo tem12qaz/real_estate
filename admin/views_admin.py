@@ -444,10 +444,10 @@ class ActionsAdmin(MyModelView):
                 if len(users) == 0:
                     flash(f"Need at least one user to send", category='warning')
                     return self.index_view()
-                data = {
+                data = json.dumps({
                     'users': users,
                     'text': change_form.text.data
-                }
+                })
                 requests.post(SEND_MESSAGE_URL, data=data)
                 flash(f"Message sent to {len(users)} users", category='info')
                 return redirect(url)
