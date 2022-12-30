@@ -35,7 +35,7 @@ async def list_districts_handler(callback: types.CallbackQuery, callback_data: d
     all_count = await District.all().count()
 
     if await state.get_state() != FilterObjects.district.state:
-        await callback.message.delete()
+        # await callback.message.delete()
         await FilterObjects.district.set()
 
     await callback.message.edit_text(
