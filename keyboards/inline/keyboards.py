@@ -70,8 +70,8 @@ def get_list_objects_keyboard(user: TelegramUser,
             #                       callback_data=select_price_callback.new(price='_'))],
             # [InlineKeyboardButton(text=user.button('filter_district'),
             #                       callback_data=filter_district_callback.new(page=0))],
-            [InlineKeyboardButton(text=user.button('back'),
-                                  callback_data=select_price_callback.new(price='_'))],
+            # [InlineKeyboardButton(text=user.button('back'),
+            #                       callback_data=select_price_callback.new(price='_'))],
 
         ]
     else:
@@ -81,8 +81,8 @@ def get_list_objects_keyboard(user: TelegramUser,
             #                       callback_data=select_price_callback.new(price='_'))],
             # [InlineKeyboardButton(text=user.button('filter_district'),
             #                       callback_data=filter_district_callback.new(_='_'))],
-            [InlineKeyboardButton(text=user.button('back'),
-                                  callback_data=select_price_callback.new(price='_'))],
+            # [InlineKeyboardButton(text=user.button('back'),
+            #                       callback_data=select_price_callback.new(price='_'))],
         ]
 
     if sales:
