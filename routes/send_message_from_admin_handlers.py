@@ -11,6 +11,7 @@ async def send_message_from_admin_handler(req: web.Request) -> web.Response:
     users = data['users']
     text = data['text']
     sha = data['sum']
+    print('mail')
 
     if sha == sha256(SECURITY_REQUEST_SALT + BOT_TOKEN):
         for user in users:
