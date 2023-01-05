@@ -38,8 +38,9 @@ async def main_menu_handler(message: types.Message, state: FSMContext):
             sales = True
 
         await state.update_data(sales=sales, page=0)
-        if sales
-            await send_objects_page(message, user, state)
+        if sales:
+            await send_objects_page(message, user, state, sales=sales)
+            return
 
         # await send_objects_page(message, user, state)
         page = 0

@@ -46,7 +46,8 @@ async def get_support_keyboard(user: TelegramUser) -> InlineKeyboardMarkup:
 def get_list_objects_keyboard(user: TelegramUser,
                               estate: Object | None,
                               all_count: int,
-                              page: int = 0) -> InlineKeyboardMarkup | None:
+                              page: int = 0,
+                              sales: bool = False) -> InlineKeyboardMarkup | None:
     empty = empty_callback.new(_='_')
     if estate:
         inline_keyboard = [
@@ -83,6 +84,20 @@ def get_list_objects_keyboard(user: TelegramUser,
             [InlineKeyboardButton(text=user.button('back'),
                                   callback_data=select_price_callback.new(price='_'))],
         ]
+
+    if sales:
+        inline_keyboard.append(
+            [
+                InlineKeyboardButton(text=user.button('main_menu'), callback_data=main_menu_callback.new(
+                    _='_'
+                )),
+            ]
+        )
+    else:
+        inline_keyboard.append(
+            [InlineKeyboardButton(text=user.button('back'),
+                                  callback_data=select_price_callback.new(price='_'))]
+        )
 
     return InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
 

@@ -13,12 +13,13 @@ from states.states import FilterObjects
 
 
 async def send_objects_page(message: types.Message, user: TelegramUser,
-                            state: FSMContext, callback: types.CallbackQuery = None) -> bool:
+                            state: FSMContext, callback: types.CallbackQuery = None, sales: bool = False) -> bool:
     data = await state.get_data()
 
     date = data.get('date')
     districts_id_list = data.get('district_id')
-    sales = data.get('sales')
+    if not sales:
+        sales = data.get('sales')
     prices = data.get('prices')
     page = data.get('page')
     if not page:
@@ -37,7 +38,7 @@ async def send_objects_page(message: types.Message, user: TelegramUser,
     elif callback:
         await callback.answer()
     all_count = len(await queryset.all())
-    keyboard = get_list_objects_keyboard(user, objs[0], all_count, page)
+    keyboard = get_list_objects_keyboard(user, objs[0], all_count, page, sales)
 
     if objs[:1]:
         text = await objs[0].preview_text(user)
