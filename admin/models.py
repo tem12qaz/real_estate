@@ -45,6 +45,8 @@ class TelegramUser(db.Model):
     telegram_id = db.Column(db.BigInteger, unique=True, nullable=False)
     username = db.Column(db.String(256), unique=True, nullable=True)
     lang = db.Column(db.String(4), default='en')
+    payback = db.Column(db.String(32), nullable=True)
+    mail = db.Column(db.Boolean(), nullable=False, default=True)
 
     experience = db.Column(db.Boolean(), nullable=True)
     bali_only = db.Column(db.Boolean(), nullable=True)
@@ -130,6 +132,7 @@ class Object(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     price = db.Column(db.Integer(), nullable=False)
     name = db.Column(db.String(128), nullable=False)
+    description = db.Column(db.Text(), nullable=False)
     date = db.Column(db.Date(), nullable=False)
     roi = db.Column(db.Integer(), nullable=False)
     presentation_path = db.Column(db.String(128), nullable=True)
@@ -165,6 +168,9 @@ class Action(db.Model):
     object_id = db.Column(db.Integer(), db.ForeignKey("object.id", ondelete='CASCADE'), nullable=True)
     object = relationship("Object", back_populates="actions")
 
+    chat_id = db.Column(db.Integer(), db.ForeignKey("chat.id", ondelete='CASCADE'), nullable=True)
+    chat = relationship("Chat", back_populates="actions")
+
 
 class Config(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
@@ -195,6 +201,8 @@ class Chat(db.Model):
     object = relationship("Object", back_populates="chats")
 
     messages = relationship("ChatMessage", back_populates="chat", cascade='all,delete')
+
+    actions = relationship("Action", back_populates="chat", cascade='all,delete')
 
     call_rejected = db.Column(db.Boolean(), default=False)
     # contact_requested = db.Column(db.Boolean(), default=False)

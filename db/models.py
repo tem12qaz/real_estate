@@ -33,7 +33,7 @@ class TelegramUser(Model):
     telegram_id = fields.BigIntField(unique=True, index=True)
     username = fields.CharField(128, unique=True, null=True)
     lang = fields.CharField(4, default='en')
-
+    mail = fields.BooleanField(default=True)
     experience = fields.BooleanField(null=True)
     bali_only = fields.BooleanField(null=True)
     features = fields.BooleanField(null=True)
@@ -60,6 +60,7 @@ class Action(Model):
     developer = fields.ForeignKeyField('models.Developer', related_name='actions', index=True, null=True)
     user = fields.ForeignKeyField('models.TelegramUser', related_name='actions', index=True)
     object = fields.ForeignKeyField('models.Object', related_name='actions', index=True, null=True)
+    chat = fields.ForeignKeyField('models.Chat', related_name='actions', index=True, null=True)
 
 
 class Message(Model):
@@ -124,15 +125,23 @@ class Object(Model):
     roi = fields.IntField()
     presentation_path = fields.CharField(128, null=True)
     name = fields.CharField(128)
+    payback = fields.CharField(32, null=True)
+    description = fields.TextField()
     active = fields.BooleanField(default=True)
     sale = fields.BooleanField(default=False)
 
     async def preview_text(self, user: TelegramUser):
+        rating = (await self.owner).rating
+        rating_info = user.message('rating_text').format(
+            rating=rating
+        )
+        additional_text = (rating_info if rating else '')
         text = user.message('object_preview').format(
             name=self.name,
             price=self.price, date=date_formatter(self.date),
             district=(await self.district).name, roi=self.roi, owner=(await self.owner).name
         )
+        text = (text + NEWLINE + additional_text) if rating else text
         return text
 
     async def text(self, user: TelegramUser):
@@ -144,12 +153,19 @@ class Object(Model):
         orders_info = user.message('successful_orders_text').format(
             orders=orders
         )
-        additional_text = (rating_info if rating else '') + NEWLINE + (orders_info if orders else '')
+        payback = self.payback
+        payback_info = user.message('payback_text').format(
+            payback=payback
+        )
+
+        additional_text = (rating_info if rating else '') + NEWLINE + (orders_info if orders else '') \
+                            + ((NEWLINE + payback_info) if payback else '')
         text = user.message('object_text').format(
 
             price=self.price, date=self.date, district=(await self.district).name,
             roi=self.roi, owner=(await self.owner).name,
-            additional=additional_text, name=self.name, un=(await bot.get_me()).username, id=self.id
+            additional=additional_text, name=self.name, un=(await bot.get_me()).username, id=self.id,
+            description=self.description
         )
         return text
 

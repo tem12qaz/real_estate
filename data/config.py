@@ -32,6 +32,7 @@ YOOKASSA_CLIENT_SECRET = 'DOOk_GNvT9ZRQncVLFeWej1qEOyIs_HaNUM_ajkS1hLunGAm06-arr
 UPDATE_MESSAGE_PATH = '/vgKzr3JPWqOTVRiugLivVAV0iDbqSQCv'
 UPDATE_BUTTON_PATH = '/H1vWYrEvefiqmspvUrvfsEaNsXFAMYFN'
 MEET_PATH = '/meet_redirect_{meet}'
+MEET_REDIRECT_PATH = '/meet_redirect_{meet}_{chat_id}'
 SEND_MESSAGE_PATH = '/UZuq7Ftdmcov6HnSdvT33iX5MFaKepI3'
 YOOKASSA_WEBHOOK_HANDLER_PATH = '/webhook_operator_{operator_id}'
 YOOKASSA_AUTH_HANDLER_PATH = '/yookassa'

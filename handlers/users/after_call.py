@@ -73,10 +73,10 @@ async def after_call_handler(callback: types.CallbackQuery, callback_data: dict,
         if action == 'yes':
             await state.update_data(all='yes', text='')
             await callback.message.edit_text(
-                user.message('after_call_type'),
-                reply_markup=after_call_type_keyboard(user, chat)
+                user.message('after_call_call'),
+                reply_markup=after_call_success_keyboard(user, chat)
             )
-            await AfterCall.type.set()
+            await AfterCall.call.set()
 
         elif action == 'no' or action == 'partially':
             await state.update_data(all=action, chat_id=chat.id)
@@ -86,6 +86,15 @@ async def after_call_handler(callback: types.CallbackQuery, callback_data: dict,
                 user.message('after_call_text'),
                 reply_markup=None
             )
+
+    elif current_state == AfterCall.call.state:
+        await state.update_data(call=action)
+        await callback.message.edit_text(
+            user.message('after_call_type'),
+            reply_markup=after_call_type_keyboard(user, chat)
+        )
+        await AfterCall.type.set()
+
     elif current_state == AfterCall.type.state:
         data = await state.get_data()
         seller = await chat.seller
@@ -96,7 +105,8 @@ async def after_call_handler(callback: types.CallbackQuery, callback_data: dict,
                 all=manager.message(data['all']),
                 all_info_text=manager.message('after_call_text') if data['text'] else '',
                 additional=data['text'],
-                type=manager.message(action),
+                type=manager.button(action),
+                call=data['call'],
                 un=user.username,
                 chat_id=chat.id,
                 estate=(await chat.object).name
@@ -125,8 +135,8 @@ async def after_call_text_handler(message: types.Message, state: FSMContext):
     await user.update_time()
     await state.update_data(text=f'"{message.text}"')
     await message.answer(
-        user.message('after_call_type'),
-        reply_markup=after_call_type_keyboard(user, chat)
+        user.message('after_call_call'),
+        reply_markup=after_call_success_keyboard(user, chat)
     )
-    await AfterCall.type.set()
+    await AfterCall.call.set()
 

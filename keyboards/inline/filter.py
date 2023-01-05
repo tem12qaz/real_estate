@@ -2,6 +2,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from data.config import DISTRICTS_IN_COLUMN
+from db.filter_objects import filter_objects
 from db.models import TelegramUser, District
 from keyboards.inline.callbacks import empty_callback, district_callback, filter_district_callback, \
     list_objects_callback, districts_drop_callback, price_drop_callback, select_price_callback, date_drop_callback, \
@@ -99,30 +100,26 @@ async def get_list_districts_keyboard(user: TelegramUser,
     return InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
 
 
-def get_price_keyboard(user: TelegramUser, prices: list[str]) -> InlineKeyboardMarkup:
+async def get_price_keyboard(user: TelegramUser, prices: list[str]) -> InlineKeyboardMarkup:
     selected = user.button('selected')
     buttons = tuple(PriceButtons.buttons.keys())
     inline_keyboard = [
-        [
-            InlineKeyboardButton(text=user.button(buttons[0]) + (selected if buttons[0] in prices else ''),
-                                 callback_data=select_price_callback.new(
-                price=buttons[0]
-            )),
-            InlineKeyboardButton(text=user.button(buttons[1]) + (selected if buttons[1] in prices else ''),
-                                 callback_data=select_price_callback.new(
-                price=buttons[1]
-            ))
-         ],
-        [
-            InlineKeyboardButton(text=user.button(buttons[2]) + (selected if buttons[2] in prices else ''),
-                                 callback_data=select_price_callback.new(
-                price=buttons[2]
-            )),
-            InlineKeyboardButton(text=user.button(buttons[3]) + (selected if buttons[3] in prices else ''),
-                                 callback_data=select_price_callback.new(
-                price=buttons[3]
-            ))
-        ],
+        # [
+        #     InlineKeyboardButton(text=user.button(buttons[0]) + (selected if buttons[0] in prices else ''),
+        #                          callback_data=select_price_callback.new(
+        #         price=buttons[0]
+        #     )),
+        #     InlineKeyboardButton(text=user.button(buttons[1]) + (selected if buttons[1] in prices else ''),
+        #                          callback_data=select_price_callback.new(
+        #         price=buttons[1]
+        #     ))
+        #  ],
+        # [
+        #     InlineKeyboardButton(text=user.button(buttons[2]) + (selected if buttons[2] in prices else ''),
+        #                          callback_data=select_price_callback.new(
+        #         price=buttons[2]
+        #     )),
+        # ],
         [InlineKeyboardButton(text=user.button('apply') if prices else user.button('select_all'),
                               callback_data=list_objects_callback.new(page=0))],
         [
@@ -134,6 +131,41 @@ def get_price_keyboard(user: TelegramUser, prices: list[str]) -> InlineKeyboardM
                               callback_data=filter_district_callback.new(page=0))],
 
     ]
+
+    if filter_objects(prices=[buttons[0]]).get_or_none():
+        inline_keyboard.insert(
+            0,
+            [
+                InlineKeyboardButton(text=user.button(buttons[0]) + (selected if buttons[0] in prices else ''),
+                                     callback_data=select_price_callback.new(
+                                         price=buttons[0]
+                                     )),
+            ]
+        )
+
+    if filter_objects(prices=[buttons[1]]).get_or_none():
+        inline_keyboard.insert(
+            1,
+            [
+                InlineKeyboardButton(text=user.button(buttons[1]) + (selected if buttons[1] in prices else ''),
+                                     callback_data=select_price_callback.new(
+                                         price=buttons[1]
+                                     )),
+            ]
+        )
+
+    if filter_objects(prices=[buttons[2]]).get_or_none():
+        inline_keyboard.insert(
+            2,
+            [
+                InlineKeyboardButton(text=user.button(buttons[2]) + (selected if buttons[2] in prices else ''),
+                                     callback_data=select_price_callback.new(
+                                         price=buttons[2]
+                                     )),
+            ]
+        )
+
+
 
     return InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
 

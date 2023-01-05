@@ -20,6 +20,7 @@ class AfterCall(StatesGroup):
     success = State()
     all = State()
     additional = State()
+    call = State()
     type = State()
 
 

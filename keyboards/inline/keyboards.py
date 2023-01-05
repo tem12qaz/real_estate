@@ -270,7 +270,7 @@ def connect_meet(user: TelegramUser, url: str) -> InlineKeyboardMarkup:
             [
                 InlineKeyboardButton(
                     text=user.button('connect_meet'),
-                    url=MEET_PATH.format(meet=url[-12:])
+                    url=url
                 )
             ]
         ]

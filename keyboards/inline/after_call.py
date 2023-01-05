@@ -91,23 +91,29 @@ def after_call_type_keyboard(user: TelegramUser, chat: Chat) -> InlineKeyboardMa
         inline_keyboard=[
             [
                 InlineKeyboardButton(
-                    text=user.button('meet'),
+                    text=user.button('presentation'),
                     callback_data=after_call_callback.new(
-                        action='meet', chat_id=chat.id
+                        action='presentation', chat_id=chat.id
                     )
                 ),
                 InlineKeyboardButton(
-                    text=user.button('presentation'),
+                    text=user.button('meet'),
                     callback_data=after_call_callback.new(
-                       action='presentation', chat_id=chat.id
+                       action='meet', chat_id=chat.id
                     )
                 )
             ],
             [
                 InlineKeyboardButton(
-                    text=user.button('no'),
+                    text=user.button('later'),
                     callback_data=after_call_callback.new(
-                        action='no', chat_id=chat.id
+                        action='later', chat_id=chat.id
+                    )
+                ),
+                InlineKeyboardButton(
+                    text=user.button('not_suitable'),
+                    callback_data=after_call_callback.new(
+                        action='not_suitable', chat_id=chat.id
                     )
                 )
             ]

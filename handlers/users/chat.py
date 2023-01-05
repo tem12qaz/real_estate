@@ -6,7 +6,7 @@ from aiogram.dispatcher.filters import ChatTypeFilter
 from aiogram.types import ChatType
 from tortoise.exceptions import DoesNotExist
 
-from data.config import FLOOD_RATE, tz
+from data.config import FLOOD_RATE, tz, MEET_REDIRECT_PATH
 from db.models import TelegramUser, Chat, ChatMessage
 from filters.filters import MainMenuExcludeFilter
 from keyboards.inline.callbacks import chat_callback, call_callback
@@ -55,27 +55,29 @@ async def call_handler(callback: types.CallbackQuery, callback_data: dict, state
         supervisor.after_call(chat)
         chat.call_rejected = False
         await chat.save()
-        url = get_meet_url()
+        url_ = get_meet_url()[-12:]
+        url = MEET_REDIRECT_PATH.format(chat_id=chat_id, meet=url_)
         await callback.message.edit_text(
             user.message('connect_meet').format(url=url),
             reply_markup=connect_meet(user, url)
         )
-        await bot.send_message(
-            (await(await chat.seller).manager).telegram_id,
-            # chat_id,
-            companion.message('connect_meet').format(url=url),
-            reply_markup=connect_meet(companion, url)
-        )
+        # await bot.send_message(
+        #     (await(await chat.seller).manager).telegram_id,
+        #     # chat_id,
+        #     companion.message('connect_meet').format(url=url),
+        #     reply_markup=connect_meet(companion, url)
+        # )
+        url = f'https://meet.google.com/{url_}/'
         await bot.send_message(
             chat_id,
             companion.message('connect_meet').format(url=url),
-            # reply_markup=connect_meet(companion, url)
-        )
-        await bot.send_message(
-            (await(await chat.seller).manager).telegram_id,
-            companion.message('connect_meet').format(url=url),
             reply_markup=connect_meet(companion, url)
         )
+        # await bot.send_message(
+        #     (await(await chat.seller).manager).telegram_id,
+        #     companion.message('connect_meet').format(url=url),
+        #     reply_markup=connect_meet(companion, url)
+        # )
 
     elif action == 'reject':
         await callback.message.delete()

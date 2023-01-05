@@ -122,7 +122,7 @@ async def filter_price_handler(callback: types.CallbackQuery, callback_data: dic
 
         await callback.message.answer(
             user.message('select_price'),
-            reply_markup=get_price_keyboard(user, prices)
+            reply_markup=await get_price_keyboard(user, prices)
         )
         await callback.message.delete()
 
@@ -136,7 +136,7 @@ async def filter_price_handler(callback: types.CallbackQuery, callback_data: dic
         prices = (await state.get_data())['prices']
         await callback.message.edit_text(
             user.message('select_price'),
-            reply_markup=get_price_keyboard(user, prices)
+            reply_markup=await get_price_keyboard(user, prices)
         )
         # if await send_objects_page(callback.message, user, state, callback):
         #     await callback.message.delete()
@@ -158,7 +158,7 @@ async def drop_price_handler(callback: types.CallbackQuery, state: FSMContext):
     # await FilterObjects.default.set()
     await callback.message.answer(
         user.message('select_price'),
-        reply_markup=get_price_keyboard(user, [])
+        reply_markup=await get_price_keyboard(user, [])
     )
     await callback.message.delete()
 
