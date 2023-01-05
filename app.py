@@ -33,7 +33,7 @@ if __name__ == '__main__':
     aiohttp_app.add_routes([web.get(UPDATE_MESSAGE_PATH, update_messages_handler)])
     aiohttp_app.add_routes([web.get(UPDATE_BUTTON_PATH, update_buttons_handler)])
     aiohttp_app.add_routes([web.post(SEND_MESSAGE_PATH, send_message_from_admin_handler)])
-    # aiohttp_app.add_routes([web.get(MEET_PATH, meet_redirect)])
+    aiohttp_app.add_routes([web.get(MEET_PATH, meet_redirect)])
 
     executor = set_webhook(
         dispatcher=dp,
