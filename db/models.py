@@ -233,7 +233,7 @@ class Object(Model):
 
             message = await message.answer(
                 await chat.text(user),
-                reply_markup=await get_chat_keyboard(user, chat, True)
+                reply_markup=await get_chat_keyboard(user, chat, True, callback.message)
             )
             await state.update_data(chat_message_id=message.message_id, chat_id=chat.id)
             await chat_state.set()

@@ -1,3 +1,4 @@
+from aiogram import types
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 
 from data.config import TG_URL, HOST, MEET_PATH
@@ -211,7 +212,7 @@ def bool_form_keyboard(user: TelegramUser) -> InlineKeyboardMarkup:
     return keyboard
 
 
-async def get_chat_keyboard(user: TelegramUser, chat: Chat, active: bool = False) -> InlineKeyboardMarkup:
+async def get_chat_keyboard(user: TelegramUser, chat: Chat, active: bool = False, message: types.Message = None) -> InlineKeyboardMarkup:
     text = user.button('open_chat') if not active else user.button('close_chat')
     inline_keyboard = [
         [
@@ -220,7 +221,7 @@ async def get_chat_keyboard(user: TelegramUser, chat: Chat, active: bool = False
             ))
         ]
     ]
-    if active and user == await (await chat.seller).manager:
+    if active and ((str(message.chat.id) == (await chat.seller).chat_id) or not message):
         inline_keyboard.insert(
             0,
             [
