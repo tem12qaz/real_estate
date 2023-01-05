@@ -453,19 +453,6 @@ class ActionsAdmin(MyModelView):
                     'sum': sha256(SECURITY_REQUEST_SALT + BOT_TOKEN)
                 })
                 requests.post(SEND_MESSAGE_URL, data=data)
-                print(f'''
-                
-                
-                
-                
-                
-                {users}
-                
-                
-                
-                
-                
-                ''')
                 flash(f"Message sent to {len(users)} users", category='info')
                 return redirect(url)
             else:
