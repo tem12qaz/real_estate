@@ -45,7 +45,6 @@ class TelegramUser(db.Model):
     telegram_id = db.Column(db.BigInteger, unique=True, nullable=False)
     username = db.Column(db.String(256), unique=True, nullable=True)
     lang = db.Column(db.String(4), default='en')
-    payback = db.Column(db.String(32), nullable=True)
     mail = db.Column(db.Boolean(), nullable=False, default=True)
 
     experience = db.Column(db.Boolean(), nullable=True)
@@ -138,6 +137,8 @@ class Object(db.Model):
     presentation_path = db.Column(db.String(128), nullable=True)
     active = db.Column(db.Boolean(), nullable=False, default=True)
     sale = db.Column(db.Boolean(), nullable=False, default=False)
+    payback = db.Column(db.String(32), nullable=True)
+
 
     owner_id = db.Column(db.Integer(), db.ForeignKey("developer.id", ondelete='CASCADE'), nullable=False)
     owner = relationship("Developer", back_populates="objects")
