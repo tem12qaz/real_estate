@@ -132,7 +132,7 @@ async def get_price_keyboard(user: TelegramUser, prices: list[str]) -> InlineKey
 
     ]
 
-    if filter_objects(prices=[buttons[0]]).get_or_none():
+    if await filter_objects(prices=[buttons[0]]).get_or_none():
         inline_keyboard.insert(
             0,
             [
@@ -143,7 +143,7 @@ async def get_price_keyboard(user: TelegramUser, prices: list[str]) -> InlineKey
             ]
         )
 
-    if filter_objects(prices=[buttons[1]]).get_or_none():
+    if await filter_objects(prices=[buttons[1]]).get_or_none():
         inline_keyboard.insert(
             1,
             [
@@ -154,7 +154,7 @@ async def get_price_keyboard(user: TelegramUser, prices: list[str]) -> InlineKey
             ]
         )
 
-    if filter_objects(prices=[buttons[2]]).get_or_none():
+    if await filter_objects(prices=[buttons[2]]).get_or_none():
         inline_keyboard.insert(
             2,
             [
