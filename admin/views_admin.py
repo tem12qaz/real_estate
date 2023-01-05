@@ -425,6 +425,17 @@ class ActionsAdmin(MyModelView):
             users = []
             for action_ in actions:
                 print(action_.user.mail)
+                print('''
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                ''')
                 if action_.user.mail:
                     users.append(str(action_.user.telegram_id))
 
