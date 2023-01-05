@@ -6,7 +6,7 @@ from aiogram.dispatcher.filters import ChatTypeFilter
 from aiogram.types import ChatType
 from tortoise.exceptions import DoesNotExist
 
-from data.config import FLOOD_RATE, tz, MEET_REDIRECT_PATH
+from data.config import FLOOD_RATE, tz, MEET_REDIRECT_PATH, HOST
 from db.models import TelegramUser, Chat, ChatMessage
 from filters.filters import MainMenuExcludeFilter
 from keyboards.inline.callbacks import chat_callback, call_callback
@@ -56,7 +56,7 @@ async def call_handler(callback: types.CallbackQuery, callback_data: dict, state
         chat.call_rejected = False
         await chat.save()
         url_ = get_meet_url()[-12:]
-        url = MEET_REDIRECT_PATH.format(chat_id=chat_id, meet=url_)
+        url = HOST + MEET_REDIRECT_PATH.format(chat_id=chat.id, meet=url_)
         await callback.message.edit_text(
             user.message('connect_meet').format(url=url),
             reply_markup=connect_meet(user, url)
