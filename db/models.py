@@ -126,7 +126,7 @@ class Object(Model):
     presentation_path = fields.CharField(128, null=True)
     name = fields.CharField(128)
     payback = fields.CharField(32, null=True)
-    description = fields.TextField()
+    description = fields.TextField(null=True)
     active = fields.BooleanField(default=True)
     sale = fields.BooleanField(default=False)
 

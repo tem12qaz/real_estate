@@ -132,7 +132,7 @@ class Object(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     price = db.Column(db.Integer(), nullable=False)
     name = db.Column(db.String(128), nullable=False)
-    description = db.Column(db.Text(), nullable=False)
+    description = db.Column(db.Text(), nullable=True)
     date = db.Column(db.Date(), nullable=False)
     roi = db.Column(db.Integer(), nullable=False)
     presentation_path = db.Column(db.String(128), nullable=True)
