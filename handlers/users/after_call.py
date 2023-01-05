@@ -106,7 +106,7 @@ async def after_call_handler(callback: types.CallbackQuery, callback_data: dict,
                 all_info_text=manager.message('after_call_text') if data['text'] else '',
                 additional=data['text'],
                 type=manager.button(action),
-                call=data['call'],
+                call=manager.button(data['call']),
                 un=user.username,
                 chat_id=chat.id,
                 estate=(await chat.object).name
