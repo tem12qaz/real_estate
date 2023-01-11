@@ -9,15 +9,15 @@ from keyboards.inline.callbacks import language_callback, main_menu_callback, em
     after_call_callback
 
 
-def select_language_keyboard(user: TelegramUser) -> InlineKeyboardMarkup:
+def select_language_keyboard(user: TelegramUser, object_id: int = '_') -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
             [
                 InlineKeyboardButton(text=user.button('en'), callback_data=language_callback.new(
-                    language='en'
+                    language='en', object_id=object_id
                 )),
                 InlineKeyboardButton(text=user.button('ru'), callback_data=language_callback.new(
-                    language='ru'
+                    language='ru', object_id=object_id
                 )),
             ]
         ]

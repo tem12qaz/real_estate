@@ -2,6 +2,7 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.builtin import CommandStart, ChatTypeFilter
 from aiogram.types import ChatType
+from tortoise.exceptions import DoesNotExist
 
 from data.config import FLOOD_RATE
 from db.models import TelegramUser, Object, Action
@@ -28,10 +29,19 @@ async def bot_start(message: types.Message, state: FSMContext):
         await Action.create(
             user=user, object=None, developer=None, type=ActionsEnum.start
         )
-        await message.answer(
-            user.message('select_language'),
-            reply_markup=select_language_keyboard(user)
-        )
+        if 'object_' in args:
+            try:
+                estate = await Object.get_or_none(id=int(args.replace('object_', '')))
+            except ValueError:
+                await message.answer(
+                    user.message('select_language'),
+                    reply_markup=select_language_keyboard(user)
+                )
+            else:
+                await message.answer(
+                    user.message('select_language'),
+                    reply_markup=select_language_keyboard(user, estate.id)
+                )
         return
 
     await user.update_time()
@@ -63,14 +73,27 @@ async def language_handler(callback: types.CallbackQuery, callback_data: dict, s
     await user.update_time()
 
     lang = callback_data['language']
+    object_id = callback_data['object_id']
 
     user.lang = lang
     await user.save()
     await set_commands(user)
 
-    await callback.message.answer(
-        user.message('start_message'),
-        reply_markup=get_main_keyboard(user)
-    )
-
-    await callback.message.delete()
+    if object_id != '_':
+        try:
+            estate = await Object.get(id=int(object_id))
+        except (ValueError, DoesNotExist):
+            await callback.message.answer(
+                user.message('start_message'),
+                reply_markup=get_main_keyboard(user)
+            )
+        else:
+            await FilterObjects.default.set()
+            await estate.send_message(user, callback.message, state)
+            return
+    else:
+        await callback.message.answer(
+            user.message('start_message'),
+            reply_markup=get_main_keyboard(user)
+        )
+        await callback.message.delete()
