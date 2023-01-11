@@ -44,7 +44,7 @@ async def call_handler(callback: types.CallbackQuery, callback_data: dict, state
 
     action = callback_data['action']
 
-    if action == 'call' and int(user.telegram_id) in map(lambda x: x.id, await bot.get_chat_administrators((await chat.seller).chat_id)):
+    if action == 'call' and int(user.telegram_id) in map(lambda x: x.user.id, await bot.get_chat_administrators((await chat.seller).chat_id)):
         await callback.answer(user.message('wait_answer'), show_alert=True)
         await bot.send_message(
             companion.telegram_id,
@@ -187,7 +187,7 @@ async def chat_handler(message: types.Message, state: FSMContext):
         companion = await seller.manager
         companion_name = user.message('customer')
         is_customer = True
-    elif int(user.telegram_id) in map(lambda x: x.id, await bot.get_chat_administrators((await chat.seller).chat_id)):
+    elif int(user.telegram_id) in map(lambda x: x.user.id, await bot.get_chat_administrators((await chat.seller).chat_id)):
         companion: TelegramUser = await chat.customer
         chat_id = companion.telegram_id
         companion_name = (await chat.seller).name
