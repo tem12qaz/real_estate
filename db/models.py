@@ -315,7 +315,8 @@ class Chat(Model):
             companion = operator.name
 
         messages_ = ''
-        messages: list[ChatMessage] = await self.messages
+        # await ChatMessage.filter()
+        messages: list[ChatMessage] = await self.messages.order_by('time')
         if messages:
             for mess in messages:
                 messages_ += user.message('chat_message_form').format(
