@@ -24,7 +24,7 @@ async def bot_start(message: types.Message, state: FSMContext):
 
     if user is None:
         user = await TelegramUser.create(telegram_id=message.from_user.id,
-                                         username=message.from_user.username)
+                                         username=message.from_user.username, lang='ru')
 
         await Action.create(
             user=user, object=None, developer=None, type=ActionsEnum.start
