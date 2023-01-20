@@ -11,6 +11,6 @@ def get_main_keyboard(user: TelegramUser) -> ReplyKeyboardMarkup:
     support = KeyboardButton(user.button('support'))
     lang = KeyboardButton(user.button('language'))
 
-    main_keyboard.add(find, sales, profile, support, lang)
+    main_keyboard.add(find, sales, support, lang)
 
     return main_keyboard

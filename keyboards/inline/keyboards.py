@@ -121,16 +121,19 @@ async def object_keyboard(estate: Object, user: TelegramUser, photo_index: int) 
         #         object_id=estate.id, action='presentation'
         #     )),
         # ],
+        # [
+        #     InlineKeyboardButton(text=user.button('chat'), callback_data=object_callback.new(
+        #         object_id=estate.id, action='chat'
+        #     )),
+        # ],
         [
-            InlineKeyboardButton(text=user.button('chat'), callback_data=object_callback.new(
-                object_id=estate.id, action='chat'
-            )),
+            InlineKeyboardButton(text=user.button('chat'), url=TG_URL.format(un=(await estate.manager).username)),
         ],
-        [
-            InlineKeyboardButton(text=user.button('call'), callback_data=object_callback.new(
-                object_id=estate.id, action='call'
-            )),
-        ],
+        # [
+        #     InlineKeyboardButton(text=user.button('call'), callback_data=object_callback.new(
+        #         object_id=estate.id, action='call'
+        #     )),
+        # ],
         # [
         #     InlineKeyboardButton(text=user.button('video'), callback_data=object_callback.new(
         #         object_id=estate.id, action='video'
@@ -142,25 +145,25 @@ async def object_keyboard(estate: Object, user: TelegramUser, photo_index: int) 
             )),
         ]
     ]
-    if await estate.files:
-        inline_keyboard.insert(
-            1,
-            [
-                InlineKeyboardButton(text=user.button('files'), callback_data=object_callback.new(
-                    action='files', object_id=estate.id
-                )),
-            ]
-        )
+    # if await estate.files:
+    #     inline_keyboard.insert(
+    #         1,
+    #         [
+    #             InlineKeyboardButton(text=user.button('files'), callback_data=object_callback.new(
+    #                 action='files', object_id=estate.id
+    #             )),
+    #         ]
+    #     )
 
-    if estate.presentation_path:
-        inline_keyboard.insert(
-            1,
-            [
-                InlineKeyboardButton(text=user.button('get_presentation'), callback_data=object_callback.new(
-                    action='presentation', object_id=estate.id
-                )),
-            ]
-        )
+    # if estate.presentation_path:
+    #     inline_keyboard.insert(
+    #         1,
+    #         [
+    #             InlineKeyboardButton(text=user.button('get_presentation'), callback_data=object_callback.new(
+    #                 action='presentation', object_id=estate.id
+    #             )),
+    #         ]
+    #     )
 
     return InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
 

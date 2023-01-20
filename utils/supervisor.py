@@ -116,7 +116,7 @@ class Supervisor:
 
     def start(self):
         self.loop.create_task(self.cycle())
-        self.loop.create_task(self.daily_chats())
+        # self.loop.create_task(self.daily_chats())
 
 
 supervisor = Supervisor(loop)

@@ -157,6 +157,7 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
                 user=user, object=estate, developer=await estate.owner, type=getattr(ActionsEnum, action)
             )
 
+
         await state.update_data(prev_state=(await state.get_state()))
 
         if user.state != 'finish':

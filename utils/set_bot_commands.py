@@ -14,7 +14,7 @@ async def set_commands(user: TelegramUser):
         [
             types.BotCommand("find", user.button('find')),
             types.BotCommand("sales", user.button('sales')),
-            types.BotCommand("chats", user.button('chats')),
+            # types.BotCommand("chats", user.button('chats')),
             types.BotCommand("support", user.button('support')),
             types.BotCommand("language", user.button('language')),
         ],

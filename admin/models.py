@@ -56,13 +56,8 @@ class TelegramUser(db.Model):
     last_message = db.Column(db.DateTime(), nullable=False)
     state = db.Column(db.String(16), nullable=False)
 
-    # referer_id = db.Column(db.Integer, db.ForeignKey('telegramuser.id', ondelete='SET NULL'), nullable=True)
-    # referrals = relationship("TelegramUser", backref=backref('referer', remote_side=[id]))
-    developer_manager = relationship("Developer", back_populates="manager", cascade='delete')
-    # developer_director = relationship("Developer", back_populates="director", cascade='delete')
+    object_manager = relationship("Object", back_populates="manager", cascade='delete')
 
-    # orders = relationship("Order", back_populates="customer")
-    # promos = relationship("PromoUses", back_populates="user", cascade='all,delete')
     chats = relationship("Chat", back_populates="customer", cascade='all,delete')
     actions = relationship("Action", back_populates="user", cascade='all,delete')
 
@@ -84,15 +79,8 @@ class Developer(db.Model):
     rating = db.Column(db.Float(), nullable=True, default=5.)
     successful_orders = db.Column(db.Integer(), nullable=True)
 
-    manager_id = db.Column(db.Integer(), db.ForeignKey("telegramuser.id", ondelete='CASCADE'))
-    # director_id = db.Column(db.Integer(), db.ForeignKey("telegramuser.id", ondelete='CASCADE'))
-    # director = relationship("TelegramUser", back_populates="developer_director", uselist=False, foreign_keys=[director_id])
-    manager = relationship("TelegramUser", back_populates="developer_manager", uselist=False)
-
     objects = relationship("Object", back_populates="owner", cascade='all,delete')
     actions = relationship("Action", back_populates="developer", cascade='all,delete')
-
-    # orders = relationship("Order", back_populates="seller")
     chats = relationship("Chat", back_populates="seller", cascade='all,delete')
 
     def __repr__(self):
@@ -139,9 +127,11 @@ class Object(db.Model):
     sale = db.Column(db.Boolean(), nullable=False, default=False)
     payback = db.Column(db.String(32), nullable=True)
 
-
     owner_id = db.Column(db.Integer(), db.ForeignKey("developer.id", ondelete='CASCADE'), nullable=False)
     owner = relationship("Developer", back_populates="objects")
+
+    manager_id = db.Column(db.Integer(), db.ForeignKey("telegramuser.id", ondelete='CASCADE'))
+    manager = relationship("TelegramUser", back_populates="developer_manager", uselist=False)
 
     district_id = db.Column(db.Integer(), db.ForeignKey("district.id", ondelete='CASCADE'), nullable=False)
     district = relationship("District", back_populates="objects")
