@@ -301,7 +301,7 @@ class Chat(Model):
     id = fields.IntField(pk=True)
     customer = fields.ForeignKeyField('models.TelegramUser', related_name='chats', index=True)
     seller = fields.ForeignKeyField('models.Developer', related_name='chats', index=True)
-    object = fields.ForeignKeyField('models.Object', related_name='chats', index=True)
+    object = fields.ForeignKeyField('models.Object', related_name='chats', index=True, nullable=True)
     call_rejected = fields.BooleanField(default=False)
     datetime = fields.DatetimeField()
 

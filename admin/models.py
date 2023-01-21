@@ -188,7 +188,7 @@ class Chat(db.Model):
     seller_id = db.Column(db.Integer(), db.ForeignKey("developer.id", ondelete='CASCADE'))
     seller = relationship("Developer", back_populates="chats")
 
-    object_id = db.Column(db.Integer(), db.ForeignKey("object.id", ondelete='CASCADE'))
+    object_id = db.Column(db.Integer(), db.ForeignKey("object.id", ondelete='CASCADE'), nullable=True)
     object = relationship("Object", back_populates="chats")
 
     messages = relationship("ChatMessage", back_populates="chat", cascade='all,delete')
