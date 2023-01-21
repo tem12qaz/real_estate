@@ -44,7 +44,7 @@ class TelegramUser(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     telegram_id = db.Column(db.BigInteger, unique=True, nullable=False)
     username = db.Column(db.String(256), unique=True, nullable=True)
-    lang = db.Column(db.String(4), default='en')
+    lang = db.Column(db.String(4), default='ru')
     mail = db.Column(db.Boolean(), nullable=False, default=True)
 
     experience = db.Column(db.Boolean(), nullable=True)

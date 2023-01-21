@@ -33,7 +33,7 @@ class TelegramUser(Model):
     id = fields.IntField(pk=True)
     telegram_id = fields.BigIntField(unique=True, index=True)
     username = fields.CharField(128, unique=True, null=True)
-    lang = fields.CharField(4, default='en')
+    lang = fields.CharField(4, default='ru')
     mail = fields.BooleanField(default=True)
     experience = fields.BooleanField(null=True)
     bali_only = fields.BooleanField(null=True)
