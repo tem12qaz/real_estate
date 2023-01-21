@@ -64,7 +64,7 @@ class Supervisor:
         )
         # print(users)
         for user in users:
-            if await user.developer_manager:
+            if await user.object_manager:
                 continue
             await self.send_message(user)
             await user.update_time()
