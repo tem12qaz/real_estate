@@ -131,7 +131,7 @@ class Object(db.Model):
     owner = relationship("Developer", back_populates="objects")
 
     manager_id = db.Column(db.Integer(), db.ForeignKey("telegramuser.id", ondelete='CASCADE'))
-    manager = relationship("TelegramUser", back_populates="developer_manager", uselist=False)
+    manager = relationship("TelegramUser", back_populates="object_manager", uselist=False)
 
     district_id = db.Column(db.Integer(), db.ForeignKey("district.id", ondelete='CASCADE'), nullable=False)
     district = relationship("District", back_populates="objects")
