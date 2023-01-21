@@ -145,25 +145,25 @@ async def object_keyboard(estate: Object, user: TelegramUser, photo_index: int) 
             )),
         ]
     ]
-    # if await estate.files:
-    #     inline_keyboard.insert(
-    #         1,
-    #         [
-    #             InlineKeyboardButton(text=user.button('files'), callback_data=object_callback.new(
-    #                 action='files', object_id=estate.id
-    #             )),
-    #         ]
-    #     )
+    if await estate.files:
+        inline_keyboard.insert(
+            1,
+            [
+                InlineKeyboardButton(text=user.button('files'), callback_data=object_callback.new(
+                    action='files', object_id=estate.id
+                )),
+            ]
+        )
 
-    # if estate.presentation_path:
-    #     inline_keyboard.insert(
-    #         1,
-    #         [
-    #             InlineKeyboardButton(text=user.button('get_presentation'), callback_data=object_callback.new(
-    #                 action='presentation', object_id=estate.id
-    #             )),
-    #         ]
-    #     )
+    if estate.presentation_path:
+        inline_keyboard.insert(
+            1,
+            [
+                InlineKeyboardButton(text=user.button('get_presentation'), callback_data=object_callback.new(
+                    action='presentation', object_id=estate.id
+                )),
+            ]
+        )
 
     return InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
 
