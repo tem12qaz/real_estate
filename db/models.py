@@ -20,7 +20,7 @@ class Developer(Model):
     id = fields.IntField(pk=True)
     name = fields.CharField(128)
     # director = fields.OneToOneField('models.TelegramUser', related_name='developer_director')
-    manager = fields.OneToOneField('models.TelegramUser', related_name='developer_manager')
+    # manager = fields.OneToOneField('models.TelegramUser', related_name='developer_manager')
 
     chat_id = fields.CharField(32)
     photo = fields.CharField(128)
