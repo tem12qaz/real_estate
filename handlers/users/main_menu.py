@@ -93,20 +93,20 @@ async def go_to_main_menu_handler(callback: types.CallbackQuery, state: FSMConte
         reply_markup=get_main_keyboard(user)
     )
     await callback.message.delete()
-
-
-@dp.message_handler(ChatTypeFilter([ChatType.GROUP, ChatType.SUPERGROUP]), state='*')
-@dp.throttled(rate=FLOOD_RATE)
-async def group_chat_handler(message: types.Message, state: FSMContext):
-    user = await TelegramUser.get_or_none(telegram_id=message.from_user.id)
-    if user is None:
-        return
-
-    if message.text == '/chats':
-        developer = await Developer.get_or_none(chat_id=str(message.chat.id))
-
-        if developer:
-            await message.answer(
-                text=user.message('group_chats'),
-                reply_markup=await group_chats_keyboard(developer)
-            )
+#
+#
+# @dp.message_handler(ChatTypeFilter([ChatType.GROUP, ChatType.SUPERGROUP]), state='*')
+# @dp.throttled(rate=FLOOD_RATE)
+# async def group_chat_handler(message: types.Message, state: FSMContext):
+#     user = await TelegramUser.get_or_none(telegram_id=message.from_user.id)
+#     if user is None:
+#         return
+#
+#     if message.text == '/chats':
+#         developer = await Developer.get_or_none(chat_id=str(message.chat.id))
+#
+#         if developer:
+#             await message.answer(
+#                 text=user.message('group_chats'),
+#                 reply_markup=await group_chats_keyboard(developer)
+#             )
