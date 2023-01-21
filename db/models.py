@@ -128,7 +128,7 @@ class Object(Model):
     description = fields.TextField(null=True)
     active = fields.BooleanField(default=True)
     sale = fields.BooleanField(default=False)
-    manager = fields.OneToOneField('models.TelegramUser', related_name='object_manager')
+    # manager = fields.OneToOneField('models.TelegramUser', related_name='object_manager')
 
     async def preview_text(self, user: TelegramUser):
         rating = (await self.owner).rating
