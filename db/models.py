@@ -4,13 +4,14 @@ import io
 
 from aiogram import types
 from aiogram.dispatcher import FSMContext
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from flask_security import UserMixin, RoleMixin
 from tortoise import fields
 from tortoise.fields import SET_NULL
 from tortoise.models import Model
 
-from data.config import NEWLINE, BASE_PATH, tz
-from keyboards.inline.keyboards import go_to_chat_keyboard
+from data.config import NEWLINE, BASE_PATH, tz, TG_URL
+# from keyboards.inline.keyboards import go_to_chat_keyboard
 from loader import bot
 from states.states import chat_state
 from utils.actions_type import ActionsEnum
@@ -232,6 +233,15 @@ class Object(Model):
                 if not manager:
                     manager = await config.manager
 
+            def go_to_chat_keyboard(user: TelegramUser, manager: TelegramUser) -> InlineKeyboardMarkup:
+                keyboard = InlineKeyboardMarkup(
+                    inline_keyboard=[
+                        [
+                            InlineKeyboardButton(text=user.button('chat'), url=TG_URL.format(un=manager.username)),
+                        ],
+                    ]
+                )
+                return keyboard
             await message.answer(
                 user.message('go_to_chat'),
                 reply_markup=go_to_chat_keyboard(user, manager)
