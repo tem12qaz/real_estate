@@ -163,7 +163,7 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
             await callback.answer()
             user.state = 'form'
             await user.save()
-            supervisor.form_notify(user)
+            # supervisor.form_notify(user)
             await StartForm.first()
             await state.update_data(contact=action, object_id=estate.id)
             text_message = data.get('text_message')
