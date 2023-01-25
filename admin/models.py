@@ -75,7 +75,7 @@ class Developer(db.Model):
     __tablename__ = 'developer'
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(256), nullable=False)
-    chat_id = db.Column(db.String(32), nullable=False)
+    # chat_id = db.Column(db.String(32), nullable=False)
     photo = db.Column(db.String(128), nullable=False)
     message = db.Column(db.Text(), nullable=False)
     rating = db.Column(db.Float(), nullable=True, default=5.)

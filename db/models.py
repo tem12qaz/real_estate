@@ -24,7 +24,7 @@ class Developer(Model):
     # director = fields.OneToOneField('models.TelegramUser', related_name='developer_director')
     manager = fields.OneToOneField('models.TelegramUser', related_name='developer_manager', null=True)
 
-    chat_id = fields.CharField(32)
+    # chat_id = fields.CharField(32)
     photo = fields.CharField(128)
     message = fields.TextField()
     rating = fields.FloatField(default=5., null=True)
