@@ -26,7 +26,7 @@ class Developer(Model):
 
     # chat_id = fields.CharField(32)
     photo = fields.CharField(128)
-    message = fields.TextField()
+    # message = fields.TextField()
     rating = fields.FloatField(default=5., null=True)
     successful_orders = fields.IntField(null=True)
 
