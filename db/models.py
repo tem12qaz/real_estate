@@ -165,7 +165,6 @@ class Object(Model):
         additional_text = (rating_info if rating else '') + NEWLINE + (orders_info if orders else '') \
                             + ((NEWLINE + payback_info) if payback else '')
         text = user.message('object_text').format(
-
             price=self.price, date=self.date, district=(await self.district).name,
             roi=self.roi, owner=(await self.owner).name,
             additional=additional_text, name=self.name, un=(await bot.get_me()).username, id=self.id,
@@ -199,8 +198,15 @@ class Object(Model):
         from keyboards.inline.keyboards import get_chat_keyboard
 
         seller = await self.owner
-        companion = await seller.manager
+        manager = await self.manager
         config = await Config.get(id=1)
+
+        if not manager:
+            manager = await seller.manager
+            if not manager:
+                manager = await config.manager
+
+        companion = manager
         if config.presale_form:
 
             text_form = companion.message('form_chat').format(
@@ -226,12 +232,6 @@ class Object(Model):
             if callback:
                 await callback.answer()
                 message = callback.message
-
-            manager = await self.manager
-            if not manager:
-                manager = await seller.manager
-                if not manager:
-                    manager = await config.manager
 
             def go_to_chat_keyboard(user: TelegramUser, manager: TelegramUser) -> InlineKeyboardMarkup:
                 keyboard = InlineKeyboardMarkup(
