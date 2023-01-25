@@ -10,6 +10,7 @@ from tortoise.fields import SET_NULL
 from tortoise.models import Model
 
 from data.config import NEWLINE, BASE_PATH, tz
+from keyboards.inline.keyboards import go_to_chat_keyboard
 from loader import bot
 from states.states import chat_state
 from utils.actions_type import ActionsEnum
@@ -20,7 +21,7 @@ class Developer(Model):
     id = fields.IntField(pk=True)
     name = fields.CharField(128)
     # director = fields.OneToOneField('models.TelegramUser', related_name='developer_director')
-    # manager = fields.OneToOneField('models.TelegramUser', related_name='developer_manager')
+    manager = fields.OneToOneField('models.TelegramUser', related_name='developer_manager', null=True)
 
     chat_id = fields.CharField(32)
     photo = fields.CharField(128)
@@ -130,7 +131,7 @@ class Object(Model):
     description = fields.TextField(null=True)
     active = fields.BooleanField(default=True)
     sale = fields.BooleanField(default=False)
-    manager = fields.OneToOneField('models.TelegramUser', related_name='object_manager')
+    manager = fields.OneToOneField('models.TelegramUser', related_name='object_manager', null=True)
 
     async def preview_text(self, user: TelegramUser):
         rating = (await self.owner).rating
@@ -198,97 +199,127 @@ class Object(Model):
 
         seller = await self.owner
         companion = await seller.manager
+        config = await Config.get(id=1)
+        if config.presale_form:
 
-        text_form = companion.message('form_chat').format(
-            experience=companion.button('yes') if user.experience else companion.button('no'),
-            bali_only=companion.button('yes') if user.bali_only else companion.button('no'),
-            features=companion.button('yes') if user.features else companion.button('no'),
-            on_bali_now=companion.button('yes') if user.on_bali_now else companion.button('no'),
-            budget=user.budget
-        )
+            text_form = companion.message('form_chat').format(
+                id=self.id, name=self.name, dev_id=seller.id, dev_name=seller.name,
+                experience=companion.button('yes') if user.experience else companion.button('no'),
+                bali_only=companion.button('yes') if user.bali_only else companion.button('no'),
+                features=companion.button('yes') if user.features else companion.button('no'),
+                on_bali_now=companion.button('yes') if user.on_bali_now else companion.button('no'),
+                budget=user.budget
+            )
 
         if contact == 'chat':
-
             chat = await Chat.get_or_none(customer=user, seller=seller, object=self)
             if not chat:
-                chat = await Chat.create(
+                await Chat.create(
                     customer=user, seller=seller, object=self, datetime=datetime.datetime.now(tz)
                 )
-
-                mess = await ChatMessage.create(
-                    chat=chat, text=text_form, time=datetime.datetime.now(tz), is_customer=True
-                )
-                await ChatMessage.create(
-                    chat=chat, text=seller.message, time=datetime.datetime.now(tz), is_customer=False
-                )
-                await bot.send_message(
-                    seller.chat_id,
-                    user.message('new_chat_message_form').format(
-                        time=mess.time,
-                        name=user.message('customer'),
-                        text=text_form,
-                        id_=chat.id,
-                        estate=(await chat.object).name
-                    ),
-                    reply_markup=await get_chat_keyboard(user, chat, False)
-                )
-
-            message = await message.answer(
-                await chat.text(user),
-                reply_markup=await get_chat_keyboard(user, chat, True, message)
-            )
-            await state.update_data(chat_message_id=message.message_id, chat_id=chat.id)
-            await chat_state.set()
-
-        elif contact == 'call':
-            from keyboards.inline.keyboards import call_chat_keyboard
-
-            chat = await Chat.get_or_none(customer=user, seller=seller, object=self)
-            if not chat:
-                chat = await Chat.create(
-                    customer=user, seller=seller, object=self, datetime=datetime.datetime.now(tz)
-                )
-
-                await ChatMessage.create(
-                    chat=chat, text=text_form, time=datetime.datetime.now(tz), is_customer=True
-                )
-                await ChatMessage.create(
-                    chat=chat, text=seller.message, time=datetime.datetime.now(tz), is_customer=False
-                )
-            mess = await ChatMessage.create(
-                chat=chat, text=companion.message('call_request'), time=datetime.datetime.now(tz), is_customer=True
-            )
-
+                if config.presale_form:
+                    await bot.send_message(
+                        config.group,
+                        text_form
+                    )
             if callback:
-                await callback.answer(
-                    user.message('request_sent'), show_alert=True
-                )
-            else:
-                await message.answer(
-                    user.message('request_sent')
-                )
-            await bot.send_message(
-                seller.chat_id,
-                user.message('new_chat_message_form').format(
-                    time=mess.time,
-                    name=user.message('customer'),
-                    text=text_form + NEWLINE + companion.message('call_request'),
-                    id_=chat.id,
-                    estate=(await chat.object).name
-                ),
-                reply_markup=await get_chat_keyboard(user, chat, False)
-            )
-        elif contact == 'video':
-            pass
+                await callback.answer()
+                message = callback.message
 
-        if callback:
-            await callback.answer()
+            manager = await self.manager
+            if not manager:
+                manager = await seller.manager
+                if not manager:
+                    manager = await config.manager
+
+            await message.answer(
+                user.message('go_to_chat'),
+                reply_markup=go_to_chat_keyboard(user, manager)
+            )
+
+            # chat = await Chat.get_or_none(customer=user, seller=seller, object=self)
+            # if not chat:
+            #     chat = await Chat.create(
+            #         customer=user, seller=seller, object=self, datetime=datetime.datetime.now(tz)
+            #     )
+
+            #     mess = await ChatMessage.create(
+            #         chat=chat, text=text_form, time=datetime.datetime.now(tz), is_customer=True
+            #     )
+            #     await ChatMessage.create(
+            #         chat=chat, text=seller.message, time=datetime.datetime.now(tz), is_customer=False
+            #     )
+            #     await bot.send_message(
+            #         seller.chat_id,
+            #         user.message('new_chat_message_form').format(
+            #             time=mess.time,
+            #             name=user.message('customer'),
+            #             text=text_form,
+            #             id_=chat.id,
+            #             estate=(await chat.object).name
+            #         ),
+            #         reply_markup=await get_chat_keyboard(user, chat, False)
+            #     )
+            #
+            # message = await message.answer(
+            #     await chat.text(user),
+            #     reply_markup=await get_chat_keyboard(user, chat, True, message)
+            # )
+            # await state.update_data(chat_message_id=message.message_id, chat_id=chat.id)
+            # await chat_state.set()
+
+        # elif contact == 'call':
+        #     from keyboards.inline.keyboards import call_chat_keyboard
+        #
+        #     chat = await Chat.get_or_none(customer=user, seller=seller, object=self)
+        #     if not chat:
+        #         chat = await Chat.create(
+        #             customer=user, seller=seller, object=self, datetime=datetime.datetime.now(tz)
+        #         )
+        #
+        #         await ChatMessage.create(
+        #             chat=chat, text=text_form, time=datetime.datetime.now(tz), is_customer=True
+        #         )
+        #         await ChatMessage.create(
+        #             chat=chat, text=seller.message, time=datetime.datetime.now(tz), is_customer=False
+        #         )
+        #     mess = await ChatMessage.create(
+        #         chat=chat, text=companion.message('call_request'), time=datetime.datetime.now(tz), is_customer=True
+        #     )
+        #
+        #     if callback:
+        #         await callback.answer(
+        #             user.message('request_sent'), show_alert=True
+        #         )
+        #     else:
+        #         await message.answer(
+        #             user.message('request_sent')
+        #         )
+        #     await bot.send_message(
+        #         seller.chat_id,
+        #         user.message('new_chat_message_form').format(
+        #             time=mess.time,
+        #             name=user.message('customer'),
+        #             text=text_form + NEWLINE + companion.message('call_request'),
+        #             id_=chat.id,
+        #             estate=(await chat.object).name
+        #         ),
+        #         reply_markup=await get_chat_keyboard(user, chat, False)
+        #     )
+        # elif contact == 'video':
+        #     pass
+        #
+        # if callback:
+        #     await callback.answer()
 
 
 class Config(Model):
     id = fields.IntField(pk=True)
     support = fields.CharField(128)
-    # group = fields.CharField(128)
+    presale_form = fields.BooleanField(default=True)
+    group = fields.CharField(128, null=True)
+    manager = fields.OneToOneField('models.TelegramUser', related_name='main_manager')
+
 
 
 class ChatMessage(Model):

@@ -7,7 +7,7 @@ from aiogram.types import ChatType, InputMediaPhoto, InputFile
 from tortoise.exceptions import DoesNotExist
 
 from data.config import FLOOD_RATE, BASE_PATH
-from db.models import TelegramUser, Object, Action
+from db.models import TelegramUser, Object, Action, Config
 from handlers.users.send_objects_page import send_objects_page
 from keyboards.inline.callbacks import open_object_callback, object_photos_callback, object_callback, \
     delete_message_callback
@@ -157,10 +157,9 @@ async def object_card_handler(callback: types.CallbackQuery, callback_data: dict
                 user=user, object=estate, developer=await estate.owner, type=getattr(ActionsEnum, action)
             )
 
-
         await state.update_data(prev_state=(await state.get_state()))
 
-        if user.state != 'finish':
+        if user.state != 'finish' and (await Config.get(id=1)).presale_form:
             await callback.answer()
             user.state = 'form'
             await user.save()

@@ -57,6 +57,8 @@ class TelegramUser(db.Model):
     state = db.Column(db.String(16), nullable=False)
 
     object_manager = relationship("Object", back_populates="manager", cascade='delete')
+    developer_manager = relationship("Developer", back_populates="manager", cascade='delete')
+    main_manager = relationship("Config", back_populates="manager", cascade='delete')
 
     chats = relationship("Chat", back_populates="customer", cascade='all,delete')
     actions = relationship("Action", back_populates="user", cascade='all,delete')
@@ -82,6 +84,9 @@ class Developer(db.Model):
     objects = relationship("Object", back_populates="owner", cascade='all,delete')
     actions = relationship("Action", back_populates="developer", cascade='all,delete')
     chats = relationship("Chat", back_populates="seller", cascade='all,delete')
+
+    manager_id = db.Column(db.Integer(), db.ForeignKey("telegramuser.id", ondelete='CASCADE'), nullable=True)
+    manager = relationship("TelegramUser", back_populates="developer_manager", uselist=False)
 
     def __repr__(self):
         return str(self.name)
@@ -130,7 +135,7 @@ class Object(db.Model):
     owner_id = db.Column(db.Integer(), db.ForeignKey("developer.id", ondelete='CASCADE'), nullable=False)
     owner = relationship("Developer", back_populates="objects")
 
-    manager_id = db.Column(db.Integer(), db.ForeignKey("telegramuser.id", ondelete='CASCADE'))
+    manager_id = db.Column(db.Integer(), db.ForeignKey("telegramuser.id", ondelete='CASCADE'), nullable=True)
     manager = relationship("TelegramUser", back_populates="object_manager", uselist=False)
 
     district_id = db.Column(db.Integer(), db.ForeignKey("district.id", ondelete='CASCADE'), nullable=False)
@@ -166,6 +171,11 @@ class Action(db.Model):
 class Config(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     support = db.Column(db.String(128), nullable=False)
+    presale_form = db.Column(db.Boolean(), default=True)
+    group = db.Column(db.String(128), nullable=True)
+
+    manager_id = db.Column(db.Integer(), db.ForeignKey("telegramuser.id", ondelete='CASCADE'))
+    manager = relationship("TelegramUser", back_populates="main_manager", uselist=False)
 
 
 class District(db.Model):

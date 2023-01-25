@@ -102,6 +102,17 @@ def get_list_objects_keyboard(user: TelegramUser,
     return InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
 
 
+def go_to_chat_keyboard(user: TelegramUser, manager: TelegramUser) -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text=user.button('chat'), url=TG_URL.format(un=manager.username)),
+            ],
+        ]
+    )
+    return keyboard
+
+
 async def object_keyboard(estate: Object, user: TelegramUser, photo_index: int) -> InlineKeyboardMarkup:
     photos = await estate.photos
     inline_keyboard = [
@@ -121,14 +132,14 @@ async def object_keyboard(estate: Object, user: TelegramUser, photo_index: int) 
         #         object_id=estate.id, action='presentation'
         #     )),
         # ],
-        # [
-        #     InlineKeyboardButton(text=user.button('chat'), callback_data=object_callback.new(
-        #         object_id=estate.id, action='chat'
-        #     )),
-        # ],
         [
-            InlineKeyboardButton(text=user.button('chat'), url=TG_URL.format(un=(await estate.manager).username)),
+            InlineKeyboardButton(text=user.button('chat'), callback_data=object_callback.new(
+                object_id=estate.id, action='chat'
+            )),
         ],
+        # [
+        #     InlineKeyboardButton(text=user.button('chat'), url=TG_URL.format(un=(await estate.manager).username)),
+        # ],
         # [
         #     InlineKeyboardButton(text=user.button('call'), callback_data=object_callback.new(
         #         object_id=estate.id, action='call'
