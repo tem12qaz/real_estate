@@ -328,7 +328,7 @@ class Config(Model):
     support = fields.CharField(128)
     presale_form = fields.BooleanField(default=True)
     group = fields.CharField(128, null=True)
-    manager = fields.OneToOneField('models.TelegramUser', related_name='main_manager')
+    manager = fields.OneToOneField('models.TelegramUser', related_name='main_manager', null=True)
 
 
 
