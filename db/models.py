@@ -23,7 +23,7 @@ class Developer(Model):
     name = fields.CharField(128)
     # director = fields.OneToOneField('models.TelegramUser', related_name='developer_director')
     # manager = fields.OneToOneField('models.TelegramUser', related_name='developer_manager', null=True)
-    manager = fields.ForeignKeyField('models.TelegramUser', related_name='developers_manager', index=True, null=True)
+    manager = fields.ForeignKeyField('models.TelegramUser', related_name='developers_manager', null=True, on_delete='SET NULL')
 
 
     # chat_id = fields.CharField(32)
@@ -135,7 +135,7 @@ class Object(Model):
     active = fields.BooleanField(default=True)
     sale = fields.BooleanField(default=False)
     # manager = fields.OneToOneField('models.TelegramUser', related_name='object_manager', null=True)
-    manager = fields.ForeignKeyField('models.TelegramUser', related_name='object_manager', index=True, null=True)
+    manager = fields.ForeignKeyField('models.TelegramUser', related_name='object_manager', null=True, on_delete='SET NULL')
 
 
     async def preview_text(self, user: TelegramUser):
@@ -332,7 +332,7 @@ class Config(Model):
     support = fields.CharField(128)
     presale_form = fields.BooleanField(default=True)
     group = fields.CharField(128, null=True)
-    manager = fields.OneToOneField('models.TelegramUser', related_name='main_manager', null=True)
+    manager = fields.OneToOneField('models.TelegramUser', related_name='main_manager', null=True, on_delete='SET NULL')
 
 
 
