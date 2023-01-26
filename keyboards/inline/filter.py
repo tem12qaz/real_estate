@@ -133,7 +133,7 @@ async def get_price_keyboard(user: TelegramUser, prices: list[str]) -> InlineKey
     ]
     if await filter_objects(prices=[buttons[2]]).count():
         inline_keyboard.insert(
-            2,
+            0,
             [
                 InlineKeyboardButton(text=buttons[2] + (selected if buttons[2] in prices else ''),
                                      callback_data=select_price_callback.new(
@@ -144,7 +144,7 @@ async def get_price_keyboard(user: TelegramUser, prices: list[str]) -> InlineKey
 
     if await filter_objects(prices=[buttons[1]]).count():
         inline_keyboard.insert(
-            1,
+            0,
             [
                 InlineKeyboardButton(text=buttons[1] + (selected if buttons[1] in prices else ''),
                                      callback_data=select_price_callback.new(
