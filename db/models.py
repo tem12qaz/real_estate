@@ -23,6 +23,8 @@ class Developer(Model):
     name = fields.CharField(128)
     # director = fields.OneToOneField('models.TelegramUser', related_name='developer_director')
     # manager = fields.OneToOneField('models.TelegramUser', related_name='developer_manager', null=True)
+    manager = fields.ForeignKeyField('models.TelegramUser', related_name='developers_manager', index=True, null=True)
+
 
     # chat_id = fields.CharField(32)
     photo = fields.CharField(128)
@@ -132,7 +134,9 @@ class Object(Model):
     description = fields.TextField(null=True)
     active = fields.BooleanField(default=True)
     sale = fields.BooleanField(default=False)
-    manager = fields.OneToOneField('models.TelegramUser', related_name='object_manager', null=True)
+    # manager = fields.OneToOneField('models.TelegramUser', related_name='object_manager', null=True)
+    manager = fields.ForeignKeyField('models.TelegramUser', related_name='object_manager', index=True, null=True)
+
 
     async def preview_text(self, user: TelegramUser):
         rating = (await self.owner).rating
@@ -207,16 +211,6 @@ class Object(Model):
                 manager = await config.manager
 
         companion = manager
-        if config.presale_form:
-
-            text_form = companion.message('form_chat').format(
-                id=self.id, name=self.name, dev_id=seller.id, dev_name=seller.name,
-                experience=companion.button('yes') if user.experience else companion.button('no'),
-                bali_only=companion.button('yes') if user.bali_only else companion.button('no'),
-                features=companion.button('yes') if user.features else companion.button('no'),
-                on_bali_now=companion.button('yes') if user.on_bali_now else companion.button('no'),
-                budget=user.budget
-            )
 
         if contact == 'chat':
             chat = await Chat.get_or_none(customer=user, seller=seller, object=self)
@@ -224,11 +218,21 @@ class Object(Model):
                 await Chat.create(
                     customer=user, seller=seller, object=self, datetime=datetime.datetime.now(tz)
                 )
-                if config.presale_form:
-                    await bot.send_message(
-                        config.group,
-                        text_form
-                    )
+            if config.presale_form:
+                text_form = companion.message('form_chat').format(
+                    username=user.username,
+                    id=self.id, name=self.name, dev_id=seller.id, dev_name=seller.name,
+                    experience=companion.button('yes') if user.experience else companion.button('no'),
+                    bali_only=companion.button('yes') if user.bali_only else companion.button('no'),
+                    features=companion.button('yes') if user.features else companion.button('no'),
+                    on_bali_now=companion.button('yes') if user.on_bali_now else companion.button('no'),
+                    budget=user.budget
+                )
+                await bot.send_message(
+                    config.group,
+                    text_form
+                )
+
             if callback:
                 await callback.answer()
                 message = callback.message
