@@ -1,6 +1,6 @@
 from aiogram.utils.callback_data import CallbackData
 
-language_callback = CallbackData("select_language", 'language', 'object_id')
+language_callback = CallbackData("select_language", 'language', 'object_id', 'start')
 main_menu_callback = CallbackData("main_menu", "_")
 empty_callback = CallbackData("empty", "_")
 delete_message_callback = CallbackData("delete_message", "_")

@@ -61,7 +61,7 @@ def index():
 # Create admin
 admin = flask_admin.Admin(
     app,
-    'TuruTur Admin',
+    'RealEstate Admin',
     base_template='my_master.html',
     template_mode='bootstrap4',
 )

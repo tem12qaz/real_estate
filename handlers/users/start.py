@@ -40,7 +40,7 @@ async def bot_start(message: types.Message, state: FSMContext):
             else:
                 await message.answer(
                     user.message('select_language'),
-                    reply_markup=select_language_keyboard(user, estate.id)
+                    reply_markup=select_language_keyboard(user, estate.id, start=True)
                 )
         return
 
@@ -57,7 +57,7 @@ async def bot_start(message: types.Message, state: FSMContext):
             return
 
     await message.answer(
-        user.message('start_message'),
+        user.message('main_menu_message'),
         reply_markup=get_main_keyboard(user)
     )
 
@@ -74,6 +74,7 @@ async def language_handler(callback: types.CallbackQuery, callback_data: dict, s
 
     lang = callback_data['language']
     object_id = callback_data['object_id']
+    start = callback_data['start']
 
     user.lang = lang
     await user.save()
@@ -91,6 +92,12 @@ async def language_handler(callback: types.CallbackQuery, callback_data: dict, s
             await FilterObjects.default.set()
             await estate.send_message(user, callback.message, state)
             return
+    elif start == '_':
+        await callback.message.answer(
+            user.message('main_menu_message'),
+            reply_markup=get_main_keyboard(user)
+        )
+        await callback.message.delete()
     else:
         await callback.message.answer(
             user.message('start_message'),

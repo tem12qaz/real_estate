@@ -89,7 +89,7 @@ async def go_to_main_menu_handler(callback: types.CallbackQuery, state: FSMConte
     await state.finish()
     await callback.answer()
     await callback.message.answer(
-        text=user.message('start_message'),
+        text=user.message('main_menu_message'),
         reply_markup=get_main_keyboard(user)
     )
     await callback.message.delete()
