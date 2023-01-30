@@ -14,10 +14,10 @@ def select_language_keyboard(user: TelegramUser, object_id: int = '_', start: bo
         inline_keyboard=[
             [
                 InlineKeyboardButton(text=user.button('en'), callback_data=language_callback.new(
-                    language='en', object_id=object_id, start='start' if start else ''
+                    language='en', object_id=object_id, start='start' if start else '_'
                 )),
                 InlineKeyboardButton(text=user.button('ru'), callback_data=language_callback.new(
-                    language='ru', object_id=object_id, start='start' if start else ''
+                    language='ru', object_id=object_id, start='start' if start else '_'
                 )),
             ]
         ]
