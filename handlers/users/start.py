@@ -42,6 +42,11 @@ async def bot_start(message: types.Message, state: FSMContext):
                     user.message('select_language'),
                     reply_markup=select_language_keyboard(user, estate.id, start=True)
                 )
+        else:
+            await message.answer(
+                user.message('select_language'),
+                reply_markup=select_language_keyboard(user)
+            )
         return
 
     await user.update_time()
