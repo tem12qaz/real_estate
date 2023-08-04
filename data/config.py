@@ -3,8 +3,8 @@ import pathlib
 import pytz
 
 IP = 'localhost'
-PG_PASSWORD = 'H816gxC4bS9RzpIRShRI'
-PG_USER = 'myuser'
+PG_PASSWORD = ''
+PG_USER = ''
 PG_DATABASE = 'estate'
 database_uri = f'postgres://{PG_USER}:{PG_PASSWORD}@{IP}/{PG_DATABASE}'
 
@@ -17,20 +17,20 @@ redis = {
     'encoding': 'utf8'
 }
 
-BOT_TOKEN = '1661395033:AAEja4nN_rFQ00cInDy38sAqGhBIZLyU3lg'
-SECRET_PATTERN = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_='
+BOT_TOKEN = ''
+SECRET_PATTERN = ''
 
 HOST = ''
 WEBHOOK_PATH = ''
 WEBHOOK_URL = HOST + WEBHOOK_PATH
 
 
-YOOKASSA_CLIENT_ID = '17q83n30igo1ub142pdh9o9c1hoqguje'
-YOOKASSA_CLIENT_SECRET = 'DOOk_GNvT9ZRQncVLFeWej1qEOyIs_HaNUM_ajkS1hLunGAm06-arr_aKfugeqVJ'
+YOOKASSA_CLIENT_ID = ''
+YOOKASSA_CLIENT_SECRET = ''
 
 
-UPDATE_MESSAGE_PATH = '/vgKzr3JPWqOTVRiugLivVAV0iDbqSQCv'
-UPDATE_BUTTON_PATH = '/H1vWYrEvefiqmspvUrvfsEaNsXFAMYFN'
+UPDATE_MESSAGE_PATH = '/'
+UPDATE_BUTTON_PATH = '/'
 MEET_PATH = '/meet_redirect_{meet}'
 MEET_REDIRECT_PATH = '/meet_redirect_{meet}_{chat_id}'
 SEND_MESSAGE_PATH = '/UZuq7Ftdmcov6HnSdvT33iX5MFaKepI3'
@@ -46,7 +46,7 @@ YOOKASSA_OAUTH_URL = 'https://yookassa.ru/oauth/v2/token'
 SEND_TIME = (20, 0, 0)
 
 
-CRYPTO_SALT = '1UAarqi0IoshqEree9rjOsfl5A6YajX1WSjsufud'
+CRYPTO_SALT = ''
 
 
 FLOOD_RATE = 0.06
